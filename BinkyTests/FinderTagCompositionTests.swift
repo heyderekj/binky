@@ -26,7 +26,7 @@ final class FinderTagCompositionTests: XCTestCase {
     }
 
     func testPresetOverridesGlobal() {
-        var preset = CompressionPreset(name: "T")
+        var preset = Inbox(name: "T")
         preset.finderTagDefaultsByCategory = ["images": ["Client"]]
         let tags = FinderTagComposer.compose(
             naturalCategory: .images,
@@ -39,7 +39,7 @@ final class FinderTagCompositionTests: XCTestCase {
     }
 
     func testExplicitEmptyCategoryMapMeansNoCategoryTags() {
-        var preset = CompressionPreset(name: "T")
+        var preset = Inbox(name: "T")
         preset.finderTagDefaultsByCategory = ["pdf": []]
         let tags = FinderTagComposer.compose(
             naturalCategory: .pdf,
@@ -52,7 +52,7 @@ final class FinderTagCompositionTests: XCTestCase {
     }
 
     func testReplaceCategoryDefaultPolicy() {
-        var preset = CompressionPreset(name: "T")
+        var preset = Inbox(name: "T")
         preset.customFinderTags = ["Profile"]
         let rule = SortRule(
             id: UUID(),
@@ -94,14 +94,14 @@ final class FinderTagCompositionTests: XCTestCase {
         XCTAssertEqual(decoded.categoryDefaultReplacementTags, [])
     }
 
-    func testCompressionPresetDecodesWhenOmittingFinderTagDefaultsKey() throws {
+    func testInboxDecodesWhenOmittingFinderTagDefaultsKey() throws {
         let encoder = JSONEncoder()
-        let baseline = CompressionPreset(name: "Legacy")
+        let baseline = Inbox(name: "Legacy")
         var data = try encoder.encode(baseline)
         var raw = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
         raw.removeValue(forKey: "finderTagDefaultsByCategory")
         data = try JSONSerialization.data(withJSONObject: raw)
-        let decoded = try JSONDecoder().decode(CompressionPreset.self, from: data)
+        let decoded = try JSONDecoder().decode(Inbox.self, from: data)
         XCTAssertEqual(decoded.finderTagDefaultsByCategory, [:])
     }
 }

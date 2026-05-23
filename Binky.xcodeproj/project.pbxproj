@@ -14,7 +14,6 @@
 		AA000004000000000000004 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89ED8C350A5D404EA5F1CCF6 /* PreferencesView.swift */; };
 		AA000005000000000000005 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE17DC818E44D3F88D6F88A /* Strings.swift */; };
 		AA000008000000000000008 /* BinkyPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D3DAE858994431BC84C13F /* BinkyPreferences.swift */; };
-		AA000009000000000000009 /* DropZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D9DE1C999B470FBB27E454 /* DropZoneView.swift */; };
 		AA000012000000000000012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74EE7205601D464484113FEB /* Assets.xcassets */; };
 		AA000013000000000000013 /* Preview Content/Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E71A34AFC5CA41FDACAEE19D /* Preview Content/Preview Assets.xcassets */; };
 		AG000001000000000000001 /* View+AdaptiveGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AG100001000000000000001 /* View+AdaptiveGlass.swift */; };
@@ -34,6 +33,8 @@
 		DNKBLD1000010000000001 /* DinkyBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DNKBRG1000010000000001 /* DinkyBridge.swift */; };
 		NTEXP002000000000000001 /* NewTagExpiry.swift in Sources */ = {isa = PBXBuildFile; fileRef = NTEXP102000000000000001 /* NewTagExpiry.swift */; };
 		SPSH0020000000000000001 /* SortPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = SPSH0010000000000000001 /* SortPreviewSheet.swift */; };
+		DCPS0020000000000000001 /* DailyCalmPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCPS0010000000000000001 /* DailyCalmPreviewSheet.swift */; };
+		ONBD0020000000000000001 /* OnboardingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ONBD0010000000000000001 /* OnboardingSheet.swift */; };
 		FW000001000000000000001 /* FolderWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FW100001000000000000001 /* FolderWatcher.swift */; };
 		WR000001000000000000001 /* WatchRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = WR100001000000000000001 /* WatchRegistry.swift */; };
 		GH000001000000000000001 /* GlobalHotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = GH100001000000000000001 /* GlobalHotkeyManager.swift */; };
@@ -44,8 +45,6 @@
 		KS000001000000000000001 /* CustomShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = KS100001000000000000001 /* CustomShortcut.swift */; };
 		LCAT00000100000000000001 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = LCATREF0000000000000001 /* Localizable.xcstrings */; };
 		LL000001000000000000001 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = LL100001000000000000001 /* LaunchAtLoginManager.swift */; };
-		OES000001000000000000001 /* OrganizerEmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OES100001000000000000001 /* OrganizerEmptyStateView.swift */; };
-		ORGMAIN001000000000000001 /* OrganizerMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ORGMAIN100001000000000001 /* OrganizerMainView.swift */; };
 		ORGVM00000100000000000001 /* OrganizerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ORGVM10000100000000000001 /* OrganizerViewModel.swift */; };
 		RB000001000000000000001 /* ReviewPromptBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB100001000000000000001 /* ReviewPromptBanner.swift */; };
 		RSYNTH00001BR000001 /* RuleSynthesizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = RSYNTH10001FR000001 /* RuleSynthesizer.swift */; };
@@ -60,9 +59,8 @@
 		WFTSTBLD000000000000001 /* WhereFromsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = WFTSTREF000000000000001 /* WhereFromsTests.swift */; };
 		FTTST200001BK000001 /* FinderTagCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FTTST100001FR000001 /* FinderTagCompositionTests.swift */; };
 		ATOBKB00000000000000001 /* RoutinesOverhaulTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ATOBKF00000000000000001 /* RoutinesOverhaulTests.swift */; };
+		HRDNTBLD000000000000001 /* HardeningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = HRDNTREF000000000000001 /* HardeningTests.swift */; };
 		SPTKR200001BK000002 /* SortProgressTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = SPTKR100001FR000001 /* SortProgressTracker.swift */; };
-		BBAR200001BK000002 /* BinkySortProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAR100001FR000001 /* BinkySortProgressBar.swift */; };
-		CURS200001BK000002 /* CurrentlySortingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CURS100001FR000001 /* CurrentlySortingSheet.swift */; };
 		SRTVC00001BR000001 /* SortVoiceCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRTVC10001FR000001 /* SortVoiceCopy.swift */; };
 		RVTRI00001BR000001 /* ReviewFolderTriageSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = RVTRI10001FR000001 /* ReviewFolderTriageSheet.swift */; };
 /* End PBXBuildFile section */
@@ -82,7 +80,6 @@
 		1983E259BC5A494A9D936B63 /* BinkyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkyApp.swift; sourceTree = "<group>"; };
 		BKEXPRF00000100000001 /* BinkyExportedDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkyExportedDependencies.swift; sourceTree = "<group>"; };
 		4FE17DC818E44D3F88D6F88A /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
-		56D9DE1C999B470FBB27E454 /* DropZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropZoneView.swift; sourceTree = "<group>"; };
 		5BC7D00FC2B14EF09CB7F833 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		74EE7205601D464484113FEB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		89ED8C350A5D404EA5F1CCF6 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
@@ -106,6 +103,8 @@
 		SRTVC10001FR000001 /* SortVoiceCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortVoiceCopy.swift; sourceTree = "<group>"; };
 		RVTRI10001FR000001 /* ReviewFolderTriageSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewFolderTriageSheet.swift; sourceTree = "<group>"; };
 		SPSH0010000000000000001 /* SortPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortPreviewSheet.swift; sourceTree = "<group>"; };
+		DCPS0010000000000000001 /* DailyCalmPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyCalmPreviewSheet.swift; sourceTree = "<group>"; };
+		ONBD0010000000000000001 /* OnboardingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSheet.swift; sourceTree = "<group>"; };
 		E71A34AFC5CA41FDACAEE19D /* Preview Content/Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Content/Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F5D3DAE858994431BC84C13F /* BinkyPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkyPreferences.swift; sourceTree = "<group>"; };
 		BKSRURF00000100000001 /* SortRule+ReviewDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SortRule+ReviewDraft.swift"; sourceTree = "<group>"; };
@@ -114,17 +113,9 @@
 		FILHS10001FR000001 /* FileHashStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHashStore.swift; sourceTree = "<group>"; };
 		FW100001000000000000001 /* FolderWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderWatcher.swift; sourceTree = "<group>"; };
 		GH100001000000000000001 /* GlobalHotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotkeyManager.swift; sourceTree = "<group>"; };
-		HMDE0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = de.lproj/Help.md; sourceTree = "<group>"; };
 		HMEN0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = en.lproj/Help.md; sourceTree = "<group>"; };
 		HMES0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = es.lproj/Help.md; sourceTree = "<group>"; };
-		HMFR0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = fr.lproj/Help.md; sourceTree = "<group>"; };
-		HMIT0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = it.lproj/Help.md; sourceTree = "<group>"; };
 		HMJA0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = ja.lproj/Help.md; sourceTree = "<group>"; };
-		HMKO0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = ko.lproj/Help.md; sourceTree = "<group>"; };
-		HMNL0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = nl.lproj/Help.md; sourceTree = "<group>"; };
-		HMPT0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = "pt-BR.lproj/Help.md"; sourceTree = "<group>"; };
-		HMRU0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = ru.lproj/Help.md; sourceTree = "<group>"; };
-		HMTR0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = tr.lproj/Help.md; sourceTree = "<group>"; };
 		HMZH0000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = "zh-Hans.lproj/Help.md"; sourceTree = "<group>"; };
 		HMZHT000000000000000001 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Help.md; path = "zh-Hant.lproj/Help.md"; sourceTree = "<group>"; };
 		HS100001000000000000001 /* HistorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistorySheet.swift; sourceTree = "<group>"; };
@@ -133,8 +124,6 @@
 		KS100001000000000000001 /* CustomShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShortcut.swift; sourceTree = "<group>"; };
 		LCATREF0000000000000001 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		LL100001000000000000001 /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
-		OES100001000000000000001 /* OrganizerEmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizerEmptyStateView.swift; sourceTree = "<group>"; };
-		ORGMAIN100001000000000001 /* OrganizerMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizerMainView.swift; sourceTree = "<group>"; };
 		ORGVM10000100000000000001 /* OrganizerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizerViewModel.swift; sourceTree = "<group>"; };
 		RB100001000000000000001 /* ReviewPromptBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPromptBanner.swift; sourceTree = "<group>"; };
 		RSYNTH10001FR000001 /* RuleSynthesizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleSynthesizer.swift; sourceTree = "<group>"; };
@@ -151,9 +140,8 @@
 		WFTSTREF000000000000001 /* WhereFromsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereFromsTests.swift; sourceTree = "<group>"; };
 		FTTST100001FR000001 /* FinderTagCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderTagCompositionTests.swift; sourceTree = "<group>"; };
 		ATOBKF00000000000000001 /* RoutinesOverhaulTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutinesOverhaulTests.swift; sourceTree = "<group>"; };
+		HRDNTREF000000000000001 /* HardeningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardeningTests.swift; sourceTree = "<group>"; };
 		SPTKR100001FR000001 /* SortProgressTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortProgressTracker.swift; sourceTree = "<group>"; };
-		BBAR100001FR000001 /* BinkySortProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkySortProgressBar.swift; sourceTree = "<group>"; };
-		CURS100001FR000001 /* CurrentlySortingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentlySortingSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,11 +176,9 @@
 		32ED8DD8E46E4623979A137D /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BBAR100001FR000001 /* BinkySortProgressBar.swift */,
-				CURS100001FR000001 /* CurrentlySortingSheet.swift */,
 				SPSH0010000000000000001 /* SortPreviewSheet.swift */,
-				56D9DE1C999B470FBB27E454 /* DropZoneView.swift */,
-				OES100001000000000000001 /* OrganizerEmptyStateView.swift */,
+				DCPS0010000000000000001 /* DailyCalmPreviewSheet.swift */,
+				ONBD0010000000000000001 /* OnboardingSheet.swift */,
 				SSR100001000000000000001 /* SummaryStatRow.swift */,
 				SC100001000000000000001 /* SettingsChrome.swift */,
 				UB100001000000000000001 /* UpdateBanner.swift */,
@@ -224,7 +210,6 @@
 				DD000002000000000000002 /* AppDelegate.swift */,
 				96F9AD6A1BD04233828DC140 /* ContentView.swift */,
 				ORGVM10000100000000000001 /* OrganizerViewModel.swift */,
-				ORGMAIN100001000000000001 /* OrganizerMainView.swift */,
 				89ED8C350A5D404EA5F1CCF6 /* PreferencesView.swift */,
 				4FE17DC818E44D3F88D6F88A /* Strings.swift */,
 				LCATREF0000000000000001 /* Localizable.xcstrings */,
@@ -319,6 +304,7 @@
 				WFTSTREF000000000000001 /* WhereFromsTests.swift */,
 				FTTST100001FR000001 /* FinderTagCompositionTests.swift */,
 				ATOBKF00000000000000001 /* RoutinesOverhaulTests.swift */,
+				HRDNTREF000000000000001 /* HardeningTests.swift */,
 			);
 			path = BinkyTests;
 			sourceTree = "<group>";
@@ -451,17 +437,12 @@
 				QKSRT000001BLD00001 /* MainWindowMode.swift in Sources */,
 				AA000002000000000000002 /* ContentView.swift in Sources */,
 				ORGVM00000100000000000001 /* OrganizerViewModel.swift in Sources */,
-				ORGMAIN001000000000000001 /* OrganizerMainView.swift in Sources */,
-				OES000001000000000000001 /* OrganizerEmptyStateView.swift in Sources */,
 				SRTINT001000000000000001 /* SortFilesWithBinkyIntent.swift in Sources */,
 				AA000004000000000000004 /* PreferencesView.swift in Sources */,
 				AA000005000000000000005 /* Strings.swift in Sources */,
 				BKSRUBL00000100000001 /* SortRule+ReviewDraft.swift in Sources */,
 				AA000008000000000000008 /* BinkyPreferences.swift in Sources */,
-				AA000009000000000000009 /* DropZoneView.swift in Sources */,
 				SSR000001000000000000001 /* SummaryStatRow.swift in Sources */,
-				BBAR200001BK000002 /* BinkySortProgressBar.swift in Sources */,
-				CURS200001BK000002 /* CurrentlySortingSheet.swift in Sources */,
 				SC000001000000000000001 /* SettingsChrome.swift in Sources */,
 				UC000001000000000000001 /* UpdateChecker.swift in Sources */,
 				UB000001000000000000001 /* UpdateBanner.swift in Sources */,
@@ -478,6 +459,8 @@
 				RVTRI00001BR000001 /* ReviewFolderTriageSheet.swift in Sources */,
 				SRTVC00001BR000001 /* SortVoiceCopy.swift in Sources */,
 				SPSH0020000000000000001 /* SortPreviewSheet.swift in Sources */,
+				DCPS0020000000000000001 /* DailyCalmPreviewSheet.swift in Sources */,
+				ONBD0020000000000000001 /* OnboardingSheet.swift in Sources */,
 				HS000001000000000000001 /* HistorySheet.swift in Sources */,
 				SR000001000000000000001 /* SessionRecord.swift in Sources */,
 				ASH00001000000000000001 /* BinkyAppShortcuts.swift in Sources */,
@@ -500,6 +483,7 @@
 				WFTSTBLD000000000000001 /* WhereFromsTests.swift in Sources */,
 				FTTST200001BK000001 /* FinderTagCompositionTests.swift in Sources */,
 				ATOBKB00000000000000001 /* RoutinesOverhaulTests.swift in Sources */,
+				HRDNTBLD000000000000001 /* HardeningTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -573,6 +557,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				ARCHS = "$(ARCHS_STANDARD)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -598,6 +583,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -670,7 +656,7 @@
 				CODE_SIGN_ENTITLEMENTS = Binky/Binky.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.5.1;
+				CURRENT_PROJECT_VERSION = 2.0.0;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -683,7 +669,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.binky.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -701,7 +687,7 @@
 				CODE_SIGN_ENTITLEMENTS = Binky/Binky.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.5.1;
+				CURRENT_PROJECT_VERSION = 2.0.0;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -714,7 +700,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.5.1;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.binky.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -728,10 +714,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2.0.0;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.binky.app.BinkyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -746,10 +732,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2.0.0;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.binky.app.BinkyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

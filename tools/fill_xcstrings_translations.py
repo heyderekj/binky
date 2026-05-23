@@ -12,8 +12,10 @@ except ImportError:
     print("pip install deep-translator", file=sys.stderr)
     sys.exit(1)
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
-PATH = ROOT / "Dinky" / "Localizable.xcstrings"
+# Project paths centralized in `_paths.py` so this script is portable across
+# checkouts (no `Dinky/` legacy, no machine-specific absolutes).
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from _paths import XCSTRINGS_PATH as PATH
 
 LANGS = {
     "de": "de",

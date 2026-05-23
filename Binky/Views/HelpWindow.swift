@@ -19,7 +19,7 @@ struct HelpWindow: View {
                 Text(section.title).tag(section.id as HelpSection.ID?)
             }
             .listStyle(.sidebar)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 240)
+            .navigationSplitViewColumnWidth(min: 200, ideal: 220, max: 280)
         } detail: {
             ScrollView {
                 if let id = selection ?? sections.first?.id,

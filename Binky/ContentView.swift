@@ -15,6 +15,7 @@ struct ContentView: View {
 
     @State private var showingHistorySheet = false
     @ObservedObject private var diagnostics = DiagnosticsReporter.shared
+    @AppStorage("binky.onboarding.v2.completed") private var onboardingCompleted = false
 
     init(vm: OrganizerViewModel) {
         self.vm = vm
@@ -71,11 +72,17 @@ struct ContentView: View {
                 diagnostics.pendingCrashReport = nil
                 showingHistorySheet = false
             }
+            .sheet(isPresented: Binding(
+                get: { !onboardingCompleted },
+                set: { if !$0 { onboardingCompleted = true } }
+            )) {
+                OnboardingSheet()
+            }
     }
 
-    /// Single split layout; sidebar swaps between Quick Sort compact panel and full Routines controls.
+    /// v2: Daily Calm is the main window. The old OrganizerMainView is retired.
     private var coreBody: some View {
-        OrganizerMainView(vm: vm)
+        DailyCalmPreviewSheet()
     }
 
     /// First launch after upgrading: preserve muscle memory when someone already wired Routines up.

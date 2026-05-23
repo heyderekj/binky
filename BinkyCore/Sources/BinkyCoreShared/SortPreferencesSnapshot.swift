@@ -11,7 +11,7 @@ public struct SortPreferencesSnapshot: Sendable {
     public let finderTagDefaultsByCategory: [String: [String]]
     public let globalInboxRoot: URL
     public let watchRegistry: WatchPipelineRegistry
-    public let presetsByID: [UUID: CompressionPreset]
+    public let presetsByID: [UUID: Inbox]
     public let sortDuplicateMode: SortDuplicateHandlingMode
     public let sortSmartScreenshotNamesEnabled: Bool
     public let sortDetectReceiptsEnabled: Bool
@@ -36,7 +36,7 @@ public struct SortPreferencesSnapshot: Sendable {
         finderTagDefaultsByCategory: [String: [String]],
         globalInboxRoot: URL,
         watchRegistry: WatchPipelineRegistry,
-        presetsByID: [UUID: CompressionPreset],
+        presetsByID: [UUID: Inbox],
         sortDuplicateMode: SortDuplicateHandlingMode,
         sortSmartScreenshotNamesEnabled: Bool,
         sortDetectReceiptsEnabled: Bool,

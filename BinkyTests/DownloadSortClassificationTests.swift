@@ -58,6 +58,13 @@ final class DownloadSortClassificationTests: XCTestCase {
     func testTransientSuffixRoutesToReview() {
         XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/big.iso.crdownload")), .review)
         XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/foo.part")), .review)
+        // Newer browsers / download tools — added in 1.5.x harden pass.
+        XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/foo.crswap")), .review)
+        XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/movie.opdownload")), .review)
+        XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/big.iso.aria2")), .review)
+        XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/torrent.!ut")), .review)
+        // Microsoft Office lock files like ~$Document.docx must never be treated as real docs.
+        XCTAssertEqual(FileClassification.categorize(url: URL(fileURLWithPath: "/dl/~$Document.docx")), .review)
     }
 
     func testDotfileRoutesToReview() {

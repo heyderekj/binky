@@ -18,3 +18,7 @@ Binky-*.zip
 
 # Local Netlify folder
 .netlify
+
+# Python bytecode (tools/ helpers)
+__pycache__/
+*.pyc

@@ -15,12 +15,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # macOS 26 + Xcode 26 — full app + test suite. Required check.
+  # The SwiftPM step here also runs the BinkyCore tests against Xcode 26's
+  # toolchain, so we have toolchain coverage on the new SDK.
   macos:
-    # macOS 26 + Xcode 26 (e.g. SwiftUI `.glassEffect()`); macos-15 images only ship Xcode 16.x.
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
-      - name: Build and test
+
+      # BinkyCore SwiftPM tests run independently of the Xcode test bundle.
+      # This step is the v2 redesign's primary regression net for the new Pipeline /
+      # Suggestion / (eventually) Stage code that lives only in the SwiftPM package.
+      # It also lets BinkyCore-level failures surface even when the Xcode test
+      # runner is held up by the LaunchServices flake handled in the next step.
+      - name: BinkyCore SwiftPM tests
+        run: |
+          set -eo pipefail
+          cd BinkyCore
+          swift test --parallel
+
+      - name: Build and test (Xcode)
         run: |
           set -eo pipefail
           for attempt in 1 2 3; do
@@ -44,3 +58,21 @@ jobs:
             echo "xcodebuild exited 65 (LaunchServices test-runner flake on GitHub macOS). Sleeping 5s before attempt $((attempt + 1)) of 3…"
             sleep 5
           done
+
+  # macOS 14 + Xcode 15 — proves BinkyCore (the v2 foundation, deployment target
+  # macOS 14) still compiles and tests pass on the project's *minimum* SDK.
+  #
+  # We deliberately scope this job to the SwiftPM package, not the full app:
+  # the app target uses `glassEffect()` and other macOS 26 APIs that the
+  # macos-14 runner's Xcode 15 SDK doesn't ship symbols for. The SwiftPM
+  # package is platform(.macOS(.v14)) and stays clean of those — exactly the
+  # boundary we want toolchain coverage for.
+  swiftpm-macos14:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v5
+      - name: BinkyCore SwiftPM tests (macOS 14 toolchain)
+        run: |
+          set -eo pipefail
+          cd BinkyCore
+          swift test --parallel

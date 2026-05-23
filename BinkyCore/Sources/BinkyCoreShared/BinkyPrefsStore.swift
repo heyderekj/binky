@@ -93,7 +93,7 @@ public struct BinkyPrefsStore: Sendable {
 
     public func makeSortPreferencesSnapshot() -> SortPreferencesSnapshot {
         let presets = decodingSavedPresets()
-        var byPresetID: [UUID: CompressionPreset] = [:]
+        var byPresetID: [UUID: Inbox] = [:]
         for p in presets {
             byPresetID[p.id] = p
         }

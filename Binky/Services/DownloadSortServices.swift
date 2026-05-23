@@ -624,13 +624,41 @@ final class WatchSortCoordinator {
                 self.queuedIncoming.formUnion(batch)
                 return
             }
-            let outcome = await DownloadsSortOrchestrator.shared.sort(
-                files: batch,
-                prefs: prefs,
-                progress: SortProgressTracker.orchestratorClosure()
+
+            // v2: Watch mode generates suggestions only — never moves files
+            // automatically. The user reviews them in Daily Calm next time
+            // they open the app. This is the core trust-first design decision.
+            let inboxRoot = prefs.activeSortSweepRootDirectory()
+            let inboxRootResolver: InboxRootResolver = { category in
+                inboxRoot.appendingPathComponent(category.downloadsSubfolder, isDirectory: true)
+            }
+            let engine = SuggestionEngine(
+                adapters: [
+                    HeuristicSuggestionAdapter(inboxRoot: inboxRootResolver),
+                    FoundationModelsSuggestionAdapter(inboxRoot: inboxRootResolver),
+                ]
             )
-            guard outcome.hasWork else { return }
-            viewModel.deliverCompletedSort(outcome, prefs: prefs)
+            let store = SuggestionStore.shared
+
+            for url in batch {
+                guard !Task.isCancelled else { break }
+                // Skip files that already have a decision — don't re-propose.
+                do {
+                    let suggestions = try await engine.suggest(for: url)
+                    for s in suggestions where store.decision(for: s) == nil {
+                        // Record as pending — Daily Calm will show it.
+                        // We don't call store.record here because pending is
+                        // the absence of a record. The engine will re-propose
+                        // it on next Daily Calm refresh, which is the desired
+                        // behavior: "new file landed, show it next time."
+                        _ = s // Suggestion is ephemeral until user acts in Daily Calm.
+                    }
+                } catch {
+                    // Ingestion failure for one file doesn't block others.
+                    continue
+                }
+            }
+            // No deliverCompletedSort — v2 doesn't auto-move.
         }
     }
 
@@ -646,24 +674,9 @@ final class WatchSortCoordinator {
     }
 
     private func performResortAcrossWatchedInboxesAfterRulesChanged() async {
-        guard prefs.sortAutoRunWhenRulesChange else { return }
-        guard prefs.folderWatchEnabled, !prefs.folderWatchPaused else { return }
-        prefs.reconcileFolderBookmarksIfNeeded()
-
-        while DownloadsSortOrchestrator.shared.isSorting {
-            try? await Task.sleep(for: .milliseconds(200))
-        }
-        guard !Task.isCancelled else { return }
-
-        let work = DownloadsSortOrchestrator.topLevelInboxWorkItems(prefs: prefs)
-        guard work.hasAnyWork else { return }
-
-        let outcome = await DownloadsSortOrchestrator.shared.sort(
-            work: work,
-            prefs: prefs,
-            progress: SortProgressTracker.orchestratorClosure()
-        )
-        guard outcome.hasWork else { return }
-        viewModel.deliverCompletedSort(outcome, prefs: prefs)
+        // v2: rules changed → no automatic re-sort. The user will see updated
+        // suggestions next time they open Daily Calm (the engine re-evaluates
+        // on every refresh). This preserves the trust-first contract: Binky
+        // never moves files without explicit user approval.
     }
 }

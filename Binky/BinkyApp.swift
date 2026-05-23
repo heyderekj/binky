@@ -46,7 +46,7 @@ struct BinkyApp: App {
         }
         .windowStyle(.titleBar)
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 440, height: 440)
+        .defaultSize(width: 780, height: 560)
         .commands {
             CommandGroup(after: .newItem) {
                 BinkyShortcutCommands(prefs: root.prefs)
@@ -124,6 +124,21 @@ struct BinkyApp: App {
                 .tint(binkyTintColor)
         }
         .defaultSize(width: 820, height: 600)
+        .commandsRemoved()
+
+        // v2 dry-run preview window — hidden behind the
+        // `v2.dailyCalmPreviewEnabled` UserDefaults key so it's invisible to
+        // 1.x users by default. Flip with:
+        //   defaults write com.binky.app v2.dailyCalmPreviewEnabled -bool true
+        // The Help menu only renders the entry point when the flag is on,
+        // but the Window scene itself is always defined so `openWindow(id:)`
+        // works for testing without restarting the app.
+        Window("Daily Calm Preview", id: "daily-calm-preview") {
+            DailyCalmPreviewSheet()
+                .environmentObject(root.prefs)
+                .tint(binkyTintColor)
+        }
+        .defaultSize(width: 720, height: 600)
         .commandsRemoved()
     }
 }
@@ -267,6 +282,9 @@ private struct HelpMenuCommands: View {
                 )
             )
         }
+
+        // v2: Daily Calm is the main window; the separate preview entry is no
+        // longer needed. Kept as a comment so git blame shows the lineage.
     }
 }
 

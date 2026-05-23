@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 """Fix MT brand-name leaks in Localizable.xcstrings.
 
-Restores literal "Dinky" wherever a translator transliterated or translated it.
+Restores literal "Binky" wherever a translator transliterated or translated it.
 Also handles a few well-known lone-word MT mistakes.
 """
 import json
 import re
+import sys
 from pathlib import Path
 
-CAT = Path(__file__).resolve().parent.parent / "Dinky" / "Localizable.xcstrings"
+# Centralized in `_paths.py` so this script is portable across checkouts.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import XCSTRINGS_PATH as CAT
 
-# Unambiguous transliterations of the literal brand "Dinky" per locale.
-# Only applied to translations of source keys that already contain "Dinky".
+# Unambiguous transliterations of the literal brand "Binky" per locale.
+# Only applied to translations of source keys that already contain "Binky".
+# (Patterns are inherited from the sister-project Dinky's locale-MT failures —
+#  Google Translate tends to make the same "small / cute / mini" mistakes for
+#  both brand names, so the pattern set still applies.)
 BRAND_PATTERNS = {
     "ja": [r"ディンキー", r"ディンキ"],
     "ko": [r"딩키", r"딘키"],
@@ -60,12 +66,12 @@ OVERRIDES = {
 
 
 def fix_brand(text: str, loc: str) -> str:
-    """Replace any locale-specific brand mistranslations with literal 'Dinky'."""
+    """Replace any locale-specific brand mistranslations with literal 'Binky'."""
     if not text:
         return text
     out = text
     for pat in BRAND_PATTERNS.get(loc, []):
-        out = re.sub(pat, "Dinky", out)
+        out = re.sub(pat, "Binky", out)
     # Collapse double spaces from word swaps.
     out = re.sub(r"  +", " ", out).strip()
     return out
@@ -76,7 +82,7 @@ def main():
     fixes = 0
     for key, entry in data.get("strings", {}).items():
         locs = entry.get("localizations", {})
-        key_has_brand = "Dinky" in key
+        key_has_brand = "Binky" in key
         for loc, payload in locs.items():
             su = payload.get("stringUnit")
             if not su:

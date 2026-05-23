@@ -10,8 +10,9 @@ except ImportError:
     print("pip install deep-translator", file=sys.stderr)
     sys.exit(1)
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "Dinky" / "Resources"
-SRC = ROOT / "en.lproj" / "Help.md"
+# Centralized in `_paths.py` so this script is portable across checkouts.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from _paths import RESOURCES_DIR as ROOT, HELP_MD_EN_PATH as SRC
 
 LANGS = {
     "de.lproj": "de",

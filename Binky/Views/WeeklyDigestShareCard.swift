@@ -76,7 +76,7 @@ struct WeeklyDigestShareCard: View {
                 }
             }
             .padding(28)
-            .frame(width: 600, height: 300, alignment: .topLeading)
+            .frame(maxWidth: 600, minHeight: 200, idealHeight: 300, alignment: .topLeading)
 
             Text("Binky — binkyfiles.com")
                 .font(.caption2)

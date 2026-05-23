@@ -8,6 +8,9 @@ struct ReviewFolderTriageSheet: View {
 
     @State private var items: [ReviewTriageItem] = []
     @State private var ruleEditor: RuleEditorSheetState?
+    /// Surfaced when a Review-folder action (move / trash) fails. Previously we only beeped, which
+    /// gave zero feedback to users on muted machines or with VoiceOver expecting an announcement.
+    @State private var errorMessage: String?
 
     private static let moveTargets: [FileSortCategory] = [
         .images, .pdf, .video, .audio, .documents, .archives, .apps, .screenshots, .misc, .folders, .receipts,
@@ -78,6 +81,16 @@ struct ReviewFolderTriageSheet: View {
         .padding(22)
         .frame(minWidth: 480, minHeight: 380)
         .onAppear { reloadItems() }
+        .alert(
+            String(localized: "Couldn’t finish that.", comment: "Review triage error alert title."),
+            isPresented: errorAlertBinding,
+            presenting: errorMessage
+        ) { _ in
+            Button(String(localized: "OK", comment: "Dismiss alert.")) { errorMessage = nil }
+                .keyboardShortcut(.defaultAction)
+        } message: { detail in
+            Text(detail)
+        }
         .sheet(item: $ruleEditor) { state in
             RuleEditorSheet(
                 state: state,
@@ -90,6 +103,15 @@ struct ReviewFolderTriageSheet: View {
             )
             .environmentObject(prefs)
         }
+    }
+
+    /// Bridges an optional `errorMessage` to a `Bool` binding for SwiftUI's `.alert(isPresented:)`.
+    /// Setting it back to `false` clears the message so the alert can re-present after future failures.
+    private var errorAlertBinding: Binding<Bool> {
+        Binding(
+            get: { errorMessage != nil },
+            set: { newValue in if !newValue { errorMessage = nil } }
+        )
     }
 
     private func reviewDirectoryURL() -> URL {
@@ -125,6 +147,13 @@ struct ReviewFolderTriageSheet: View {
             reloadItems()
         } catch {
             NSSound.beep()
+            // Sound alone doesn't help muted Macs or VoiceOver. Show a localized error message
+            // so the user knows *what* failed, not just that *something* did.
+            errorMessage = String.localizedStringWithFormat(
+                String(localized: "Couldn’t move “%1$@”: %2$@", comment: "Review triage move-failure detail (filename, system error)."),
+                item.name,
+                error.localizedDescription
+            )
         }
     }
 
@@ -134,6 +163,11 @@ struct ReviewFolderTriageSheet: View {
             reloadItems()
         } catch {
             NSSound.beep()
+            errorMessage = String.localizedStringWithFormat(
+                String(localized: "Couldn’t move “%1$@” to the Trash: %2$@", comment: "Review triage trash-failure detail (filename, system error)."),
+                item.name,
+                error.localizedDescription
+            )
         }
     }
 

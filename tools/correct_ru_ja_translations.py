@@ -6,11 +6,24 @@ words that Google translated by the wrong sense (Watch->clock, Nice->city, etc.)
 
 Run after `fill_xcstrings_translations.py` and `fix_brand_in_xcstrings.py`.
 Idempotent — every override is a fixed value.
+
+NOTE — Dinky-era references
+---------------------------
+The dictionaries below were originally written for the sister project Dinky.
+They contain a number of keys (e.g. "Visit dinkyfiles.com", "Open Dinky at
+login", "-dinky" suffix) that do not exist in Binky's `Localizable.xcstrings`.
+Those keys are silently skipped at runtime — the script only mutates entries
+whose source key actually matches the catalog. Feel free to prune them when
+you do a thorough sweep of this file; they were left in place to avoid losing
+hand-curated translations the day Dinky-style features make a comeback.
 """
 import json
+import sys
 from pathlib import Path
 
-CAT = Path(__file__).resolve().parent.parent / "Dinky" / "Localizable.xcstrings"
+# Centralized in `_paths.py` so this script is portable across checkouts.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import XCSTRINGS_PATH as CAT
 
 RU = {
     # Format/brand names — keep Latin

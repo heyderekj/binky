@@ -71,13 +71,13 @@ public struct SortBatchOutcome: Identifiable, Equatable, Codable, Sendable {
 extension SortBatchOutcome {
     /// Most likely originating watch root, derived by tallying which routine path is the longest
     /// matching prefix of each entry's source.
-    public func matchedRoutine(in presets: [CompressionPreset]) -> CompressionPreset? {
+    public func matchedRoutine(in presets: [Inbox]) -> Inbox? {
         guard !entries.isEmpty else { return nil }
-        var tally: [UUID: (preset: CompressionPreset, hits: Int, length: Int)] = [:]
+        var tally: [UUID: (preset: Inbox, hits: Int, length: Int)] = [:]
 
         for entry in entries {
             let sourcePath = URL(fileURLWithPath: entry.sourcePath).standardizedFileURL.path
-            var localBest: (preset: CompressionPreset, length: Int)?
+            var localBest: (preset: Inbox, length: Int)?
             for preset in presets {
                 let raw = preset.watchFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !raw.isEmpty else { continue }
@@ -103,7 +103,7 @@ extension SortBatchOutcome {
         }?.preset
     }
 
-    public func sourceRootURL(in presets: [CompressionPreset]) -> URL? {
+    public func sourceRootURL(in presets: [Inbox]) -> URL? {
         if let preset = matchedRoutine(in: presets),
            !preset.watchFolderPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return URL(fileURLWithPath: preset.watchFolderPath).standardizedFileURL

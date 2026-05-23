@@ -165,7 +165,7 @@ final class OrganizerViewModel: ObservableObject {
 
     /// Sweep a single routine's folder. Uses `rootOverride` so per-routine rules route
     /// the same way as multi-folder batches.
-    func runInteractiveSweep(preset: CompressionPreset, prefs: BinkyPreferences) async {
+    func runInteractiveSweep(preset: Inbox, prefs: BinkyPreferences) async {
         transientBannerMessage = nil
         guard !DownloadsSortOrchestrator.shared.isSorting else {
             flashTransientStatus(

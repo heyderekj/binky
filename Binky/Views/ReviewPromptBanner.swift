@@ -35,6 +35,7 @@ struct ReviewPromptBanner: View {
             }
             .buttonStyle(.plain)
             .help(String(localized: "Dismiss", comment: "Tooltip for dismiss review prompt banner."))
+            .accessibilityLabel(String(localized: "Dismiss review prompt", comment: "VoiceOver label for the review prompt banner xmark button."))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)

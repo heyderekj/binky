@@ -129,6 +129,7 @@ struct UpdateBanner: View {
                 }
                 .buttonStyle(.plain)
                 .help(String(localized: "Dismiss", comment: "Tooltip for dismiss update banner."))
+                .accessibilityLabel(String(localized: "Dismiss update banner", comment: "VoiceOver label for the update banner xmark button."))
             }
         }
         .padding(.horizontal, 16)

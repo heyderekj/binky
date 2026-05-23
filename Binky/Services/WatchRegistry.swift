@@ -30,7 +30,7 @@ extension WatchPipelineRegistry {
 
 extension BinkyPreferences {
     /// Inbox layout root and routines contributing rules for files routed through folder watch.
-    func sortContext(for fileURL: URL) -> (inboxRoot: URL, presets: [CompressionPreset]) {
+    func sortContext(for fileURL: URL) -> (inboxRoot: URL, presets: [Inbox]) {
         let reg = WatchPipelineRegistry(prefs: self)
         switch reg.routing(for: fileURL) {
         case .global:

@@ -8,6 +8,7 @@ enum DMGInstallerService: Sendable {
         case noMountPoint
         case noAppFound
         case copyFailed(String)
+        case stagingFailed(String)
     }
 
     static func installApps(fromDmg dmg: URL, applicationsDestination: URL) throws -> [URL] {
@@ -37,17 +38,56 @@ enum DMGInstallerService: Sendable {
         var installed: [URL] = []
         for appURL in appBundles {
             let dest = applicationsDestination.appendingPathComponent(appURL.lastPathComponent, isDirectory: true)
-            if fm.fileExists(atPath: dest.path) {
-                try fm.removeItem(at: dest)
-            }
             do {
-                try fm.copyItem(at: appURL, to: dest)
+                try atomicallyInstall(appURL: appURL, finalDestination: dest)
                 installed.append(dest)
+            } catch let e as InstallError {
+                throw e
             } catch {
                 throw InstallError.copyFailed(error.localizedDescription)
             }
         }
         return installed
+    }
+
+    /// Copies the new app to a sibling staging path, then atomically swaps it into place.
+    /// Until the swap, the existing app is untouched — so a failure mid-copy never leaves the user
+    /// without their installed app.
+    ///
+    /// `internal` (rather than `private`) so the test target can exercise the swap directly with
+    /// arbitrary fixture directories instead of requiring a real DMG round-trip.
+    static func atomicallyInstall(appURL: URL, finalDestination dest: URL) throws {
+        let fm = FileManager.default
+        let parent = dest.deletingLastPathComponent()
+        let staging = parent.appendingPathComponent(".\(dest.lastPathComponent).binky-staged-\(UUID().uuidString)", isDirectory: true)
+
+        // Make sure no leftover staging dir exists from a prior aborted run.
+        if fm.fileExists(atPath: staging.path) {
+            try? fm.removeItem(at: staging)
+        }
+
+        // Copy first. If this fails (disk full, permission denied), the old app at `dest` is untouched.
+        do {
+            try fm.copyItem(at: appURL, to: staging)
+        } catch {
+            try? fm.removeItem(at: staging)
+            throw InstallError.stagingFailed(error.localizedDescription)
+        }
+
+        // Atomic swap: replaceItemAt removes the old item and moves staging into place in one step
+        // (or rolls back if the OS-level move fails). When `dest` doesn't exist yet, fall back to a
+        // plain move.
+        do {
+            if fm.fileExists(atPath: dest.path) {
+                _ = try fm.replaceItemAt(dest, withItemAt: staging)
+            } else {
+                try fm.moveItem(at: staging, to: dest)
+            }
+        } catch {
+            // Replacement failed mid-swap. Best effort: leave the original `dest` alone, drop staging.
+            try? fm.removeItem(at: staging)
+            throw InstallError.copyFailed(error.localizedDescription)
+        }
     }
 
     private static func attachPlist(for dmg: URL) throws -> Data {
@@ -57,11 +97,15 @@ enum DMGInstallerService: Sendable {
         p.executableURL = URL(fileURLWithPath: "/usr/bin/hdiutil")
         p.arguments = ["attach", "-plist", "-nobrowse", "-readonly", dmg.path]
         try p.run()
+        // Read first to drain the pipe — `waitUntilExit()` after a `readDataToEndOfFile()` gives
+        // us "drain then reap". Doing it the other way around can deadlock when hdiutil's plist
+        // output exceeds the pipe buffer (rare but possible for DMGs with many partitions).
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
         p.waitUntilExit()
         guard p.terminationStatus == 0 else {
             throw InstallError.hdiutilFailed(p.terminationStatus)
         }
-        return pipe.fileHandleForReading.readDataToEndOfFile()
+        return data
     }
 
     private static func parseMountPoint(fromPlistData data: Data) -> String? {

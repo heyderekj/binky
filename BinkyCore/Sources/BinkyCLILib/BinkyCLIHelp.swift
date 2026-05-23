@@ -16,6 +16,7 @@ enum BinkyCLIHelp {
           \(exe) routines list [--json] [--quiet]
           \(exe) routines run <name…> [--json] [--quiet]
           \(exe) tag [--json] [--quiet] <paths…|->
+          \(exe) ingest [--inbox-root <dir>] [--json] <paths…>     (v2 dry-run; read-only)
           \(exe) help | \(exe) --help | \(exe) -h
           \(exe) version | \(exe) --version
 

@@ -7,13 +7,13 @@ public enum FinderTagComposer {
     /// Resolves tags in this order:
     /// 1. Category defaults: preset map → global map → built-in ``FileSortCategory/semanticTagHint`` (unless a rule replaces this layer).
     /// 2. Matched rule with ``SortRuleFinderTagPolicy/replaceCategoryDefault`` replaces the category-default layer with ``SortRule/categoryDefaultReplacementTags``.
-    /// 3. Routine ``CompressionPreset/customFinderTags`` (all sorts in that profile context).
+    /// 3. Routine ``Inbox/customFinderTags`` (all sorts in that profile context).
     /// 4. Rule ``SortRule/addedTags``.
     /// 5. Optional literal `"New"` when enabled.
     public static func compose(
         naturalCategory: FileSortCategory,
         globalDefaults: [String: [String]],
-        preset: CompressionPreset?,
+        preset: Inbox?,
         matchedRule: SortRule?,
         appendNewSemanticTag: Bool
     ) -> [String] {
@@ -44,7 +44,7 @@ public enum FinderTagComposer {
     private static func categoryDefaultTags(
         naturalCategory: FileSortCategory,
         globalDefaults: [String: [String]],
-        preset: CompressionPreset?
+        preset: Inbox?
     ) -> [String] {
         let key = naturalCategory.rawValue
         if let preset, let layer = preset.finderTagDefaultsByCategory[key] {

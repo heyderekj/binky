@@ -74,12 +74,15 @@ public enum WhereFromsReader {
     // MARK: - Private
 
     private static func readXattr(path: String, name: String) -> Data? {
-        let sz = getxattr(path, name, nil, 0, 0, 0)
+        // XATTR_NOFOLLOW: read the xattr on the symlink itself, not its target. Without this,
+        // a symlink in Downloads pointing to an unrelated file would leak that file's download
+        // origin metadata into rule matching.
+        let sz = getxattr(path, name, nil, 0, 0, XATTR_NOFOLLOW)
         guard sz > 0 else { return nil }
         var data = Data(count: sz)
         let got: ssize_t = data.withUnsafeMutableBytes { buf in
             guard let base = buf.baseAddress else { return ssize_t(-1) }
-            return getxattr(path, name, base, sz, 0, 0)
+            return getxattr(path, name, base, sz, 0, XATTR_NOFOLLOW)
         }
         guard got == sz else { return nil }
         return data

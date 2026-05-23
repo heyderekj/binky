@@ -46,24 +46,30 @@ extension Notification.Name {
 
 /// Keys for `Notification.userInfo` payloads used across the app.
 enum BinkyNotificationUserInfoKey {
-    /// Value: `UUID` of the ``CompressionPreset`` / routine to sweep.
+    /// Value: `UUID` of the ``Inbox`` / routine to sweep.
     static let sortRoutinePresetID = "presetID"
     /// Value: ``MainWindowMode`` `.rawValue` string.
     static let mainWindowModeRaw = "mainWindowModeRaw"
 }
 
 enum S {
-    // Drop zone — idle taglines cycle with each animation loop (English brand voice)
-    static let dropIdleTaglines: [String] = [
-        "Binky Free keeps your folders tidy.",
-        "Sorted. Tagged. Findable.",
-        "Your folders, quietly handled.",
-        "Trust the trail.",
-        "Folder calm.",
-        "Less clutter, same files.",
-    ]
+    /// Drop zone — idle taglines cycle with each animation loop. Localized via `String(localized:)`.
+    /// We compute the array lazily so the localizer always sees fresh values for whichever language
+    /// is active when the tagline is read (matters when the user switches system language without
+    /// relaunching the app).
+    static var dropIdleTaglines: [String] {
+        [
+            String(localized: "Folder calm.", comment: "Drop zone idle tagline — calm/quiet emphasis."),
+            String(localized: "Sorted. Tagged. Findable.", comment: "Drop zone idle tagline."),
+            String(localized: "Your folders, quietly handled.", comment: "Drop zone idle tagline."),
+            String(localized: "Trust the trail.", comment: "Drop zone idle tagline."),
+            String(localized: "Less clutter, same files.", comment: "Drop zone idle tagline."),
+            String(localized: "Fussy folder. Meet Binky.", comment: "Drop zone idle tagline — pacifier metaphor."),
+        ]
+    }
     static func dropIdle(loop: Int) -> String {
-        dropIdleTaglines[loop % dropIdleTaglines.count]
+        let lines = dropIdleTaglines
+        return lines[loop % lines.count]
     }
 
     /// Organizer main window — empty activity area; cycles with each idle animation loop (or a timer when reduced motion is on).
@@ -82,91 +88,11 @@ enum S {
     /// Organizer watched-folder hint (shown under drop zone).
     static let organizerDropHint = String(localized: "Only files inside your watch folder can be sorted from here.", comment: "Organizer drop zone footnote.")
 
-    static let dropHover     = "Let go."
-
-    // Processing (English brand voice)
-    static let processSingle = "On it."
-    static let processBatch  = "Working through the pile."
-    static let processBig    = "Big batch. Give me a moment."
-
-    // Completion (English brand voice)
-    static let doneGood      = "Done. Look how little they are now."
-    static let doneMixed     = "Done. Some were already pretty lean."
-
-    // Per-file (English brand voice)
-    static let skipped       = "Already tiny. Skipped."
-    static let errored       = "Couldn't crunch this one. Skipped."
-    static let zeroBytes     = "Couldn't make this one any smaller. Keeping the original."
-
     // Buttons
-    static func compressButton(_ n: Int) -> String {
-        if n == 1 {
-            return String(localized: "Compress 1 file", comment: "Main window: primary action when one file is queued.")
-        }
-        return String(localized: "Compress \(n) files", comment: "Main window: primary action when multiple files are queued. Argument is the count.")
-    }
     static var clear: String { String(localized: "Clear", comment: "Toolbar or list: clear completed rows.") }
-
-    // Preferences
-    static var prefsTitle: String { String(localized: "Preferences", comment: "macOS Settings window title.") }
-
-    /// Settings › General › Compression — parallel job cap (three tiers: 1, 3, or 8).
-    static var concurrentCompressionPickerLabel: String {
-        String(localized: "Batch speed", comment: "Settings: label for parallel compression limit picker.")
-    }
-    static var concurrentCompressionFootnote: String {
-        String(localized: "How many files crunch at once — not image, video, or PDF quality. Fast is gentle; Fastest clears the queue sooner if your Mac is up for it.", comment: "Settings: explains batch parallelism tiers.")
-    }
-
-    /// Settings › General › Compression — optional largest-first batch order.
-    static var batchLargestFirstLabel: String {
-        String(localized: "Start with largest files", comment: "Settings: toggle to schedule big files first in a batch.")
-    }
-    static var batchLargestFirstFootnote: String {
-        String(localized: "When enabled, the longest jobs run first so the batch tends to finish sooner. The default is smallest first for faster early feedback.", comment: "Settings: explains batch ordering toggle.")
-    }
-
-    static func concurrentCompressionTierOption(limit: Int) -> String {
-        switch limit {
-        case 1: return "Fast — one at a time, steady pace"
-        case 3: return "Faster — up to three in parallel"
-        case 8: return "Fastest — up to eight, all cores welcome"
-        default: return "Up to \(limit)"
-        }
-    }
-
-    /// Plain label for assistive tech (localized).
-    static func concurrentCompressionAccessibilityLabel(limit: Int) -> String {
-        switch limit {
-        case 1:
-            return String(localized: "Up to one file compressing at a time", comment: "VoiceOver label for batch speed option.")
-        case 3:
-            return String(localized: "Up to three files compressing at a time", comment: "VoiceOver label for batch speed option.")
-        case 8:
-            return String(localized: "Up to eight files compressing at a time", comment: "VoiceOver label for batch speed option.")
-        default:
-            return String(localized: "Up to \(limit) files compressing at a time", comment: "VoiceOver label for batch speed option; argument is numeric limit.")
-        }
-    }
-
-    // Format names (technical; keep recognizable)
-    static let webp = "WebP"
-    static let avif = "AVIF"
-    static let png  = "PNG"
-    static let heic = "HEIC"
 
     /// Shown in About, Settings, and linked with `mailto:`.
     static let supportEmail = "help@binkyfiles.com"
-
-    // Paste from clipboard
-    static var pasteEmptyTitle: String { String(localized: "Nothing to paste", comment: "Alert title when clipboard has no compressible item.") }
-    static var pasteEmptyMessage: String {
-        String(localized: "Copy a supported file in Finder, or copy an image (PNG or TIFF), then try again.", comment: "Alert message for empty clipboard paste.")
-    }
-    static var pasteDuplicateTitle: String { String(localized: "Already in the list", comment: "Alert title when pasted file is already queued.") }
-    static var pasteDuplicateMessage: String {
-        String(localized: "That file is already queued — drop something new or clear the list first.", comment: "Alert message for duplicate paste.")
-    }
 
     // Settings → Shortcuts
     static var shortcutsTabServicesFooter: String {

@@ -11,15 +11,21 @@ enum ContentInspector {
 
     private final class CacheEntry: NSObject {
         let result: ContentInspectionResult
-        init(result: ContentInspectionResult) {
+        let cost: Int
+        init(result: ContentInspectionResult, cost: Int) {
             self.result = result
+            self.cost = cost
         }
     }
 
-    private static let cacheLock = NSLock()
+    /// `NSCache` is already thread-safe — wrapping it in an extra `NSLock` only added contention
+    /// across the (up to 8) concurrent sort workers without any correctness benefit.
+    /// `totalCostLimit` bounds resident text bytes so a few large OCR results don't push the cache
+    /// past a reasonable footprint even when `countLimit` would otherwise allow it.
     private static let cache: NSCache<NSString, CacheEntry> = {
         let c = NSCache<NSString, CacheEntry>()
         c.countLimit = 80
+        c.totalCostLimit = 2 * 1024 * 1024 // 2 MB of OCR text payload
         return c
     }()
 
@@ -151,8 +157,19 @@ enum ContentInspector {
         guard let cg = cgImageThumbnailForVision(fromFile: url, maxPixelSize: 1600) else {
             return emptyInspection
         }
-        let text = await recognizeText(on: cg, accurate: false)
-        let merged = text.isEmpty ? await recognizeText(on: cg, accurate: true) : text
+        // Fast pass first. If Vision detected zero text regions at all, the image is almost
+        // certainly a photo / illustration and re-running in `.accurate` mode just burns CPU+GPU
+        // without producing different output. We only escalate when fast saw text observations
+        // but couldn't read them confidently (`text.isEmpty && fast.observationsFound`).
+        let fast = await recognizeText(on: cg, accurate: false)
+        let merged: String
+        if !fast.text.isEmpty {
+            merged = fast.text
+        } else if fast.observationsFound {
+            merged = await recognizeText(on: cg, accurate: true).text
+        } else {
+            merged = ""
+        }
         let dominant = dominantLine(from: merged)
         let ocrStrong = wordCount(merged) >= 3
         var isReceipt = false
@@ -196,9 +213,9 @@ enum ContentInspector {
             let thumb = page.thumbnail(of: CGSize(width: 512, height: 512), for: .mediaBox)
             var prop = CGRect(origin: .zero, size: thumb.size)
             if let cg = thumb.cgImage(forProposedRect: &prop, context: nil, hints: nil),
-               let ocrText = try? recognizeTextSync(on: cg, accurate: false),
-               ocrText.count > fullText.count {
-                fullText = ocrText
+               let ocrResult = try? recognizeTextSync(on: cg, accurate: false),
+               ocrResult.text.count > fullText.count {
+                fullText = ocrResult.text
             }
         }
 
@@ -222,24 +239,24 @@ enum ContentInspector {
         )
     }
 
-    private static func recognizeTextSync(on cgImage: CGImage, accurate: Bool) throws -> String {
+    private static func recognizeTextSync(on cgImage: CGImage, accurate: Bool) throws -> (text: String, observationsFound: Bool) {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = accurate ? .accurate : .fast
         request.usesLanguageCorrection = true
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         try handler.perform([request])
         let obs = request.results ?? []
-        return obs.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+        let text = obs.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+        return (text, !obs.isEmpty)
     }
 
-    private static func recognizeText(on cgImage: CGImage, accurate: Bool) async -> String {
+    private static func recognizeText(on cgImage: CGImage, accurate: Bool) async -> (text: String, observationsFound: Bool) {
         await withCheckedContinuation { cont in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
-                    let text = try recognizeTextSync(on: cgImage, accurate: accurate)
-                    cont.resume(returning: text)
+                    cont.resume(returning: try recognizeTextSync(on: cgImage, accurate: accurate))
                 } catch {
-                    cont.resume(returning: "")
+                    cont.resume(returning: ("", false))
                 }
             }
         }
@@ -312,14 +329,18 @@ enum ContentInspector {
     }
 
     private static func cachedResult(for key: NSString) -> ContentInspectionResult? {
-        cacheLock.lock()
-        defer { cacheLock.unlock() }
-        return cache.object(forKey: key)?.result
+        cache.object(forKey: key)?.result
     }
 
     private static func cacheResult(_ result: ContentInspectionResult, for key: NSString) {
-        cacheLock.lock()
-        cache.setObject(CacheEntry(result: result), forKey: key)
-        cacheLock.unlock()
+        // Approximate the resident cost: dominant line + vendor + amount strings (UTF-16 bytes).
+        // Per-entry cost is small but matters when many large screenshots are inspected in a row.
+        let textBytes =
+            (result.dominantOCRLine?.utf16.count ?? 0) +
+            (result.vendorSlug?.utf16.count ?? 0) +
+            (result.amountSlug?.utf16.count ?? 0)
+        // Each UTF-16 unit is 2 bytes. Add a ~64-byte overhead for the NSObject + struct itself.
+        let cost = textBytes * 2 + 64
+        cache.setObject(CacheEntry(result: result, cost: cost), forKey: key, cost: cost)
     }
 }

@@ -33,5 +33,19 @@ let package = Package(
             dependencies: ["BinkyCLILib"],
             path: "Sources/BinkyCLI"
         ),
+        // Test target — runs via `swift test` from the BinkyCore directory.
+        // CI invokes this in a separate step from the Xcode app's test bundle so
+        // BinkyCore-level regressions surface even when LaunchServices flakes
+        // out the Xcode test runner. See `.github/workflows/ci.yml`.
+        .testTarget(
+            name: "BinkyCoreSharedTests",
+            dependencies: ["BinkyCoreShared"],
+            path: "Tests/BinkyCoreSharedTests"
+        ),
+        .testTarget(
+            name: "BinkyCoreSortTests",
+            dependencies: ["BinkyCoreSort", "BinkyCoreShared"],
+            path: "Tests/BinkyCoreSortTests"
+        ),
     ]
 )

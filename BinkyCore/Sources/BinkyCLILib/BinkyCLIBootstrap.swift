@@ -83,6 +83,12 @@ public enum BinkyCLIBootstrap {
         case "tag":
             return BinkyCLITagCommand.execute(rawArgs: rest, prefs: prefs)
 
+        case "ingest":
+            // v2 dry-run: classify + origin + hash + heuristic suggestion.
+            // Read-only; never moves files. Has no preference dependency, so
+            // we don't pass `prefs` here.
+            return BinkyCLIIngestCommand.execute(rawArgs: rest)
+
         case "version":
             print("\(BinkyCLIPackageMeta.toolName) \(BinkyCLIPackageMeta.version)")
             return 0

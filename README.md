@@ -8,8 +8,8 @@ Unknown or sketchy extensions do not disappear silently: they land in **Review**
 
 ## System requirements
 
-- **Apple Silicon** (M-series Mac). Current **1.x** DMG and Homebrew cask builds are not for Intel-based Macs (Finder may show the app icon with a slash through it on the wrong architecture).
 - **macOS 14** (Sonoma) or later (Liquid Glass UI on macOS 26 Tahoe).
+- **Universal Binary** — runs natively on both Apple Silicon (M-series) and Intel Macs.
 
 <table>
   <tr>

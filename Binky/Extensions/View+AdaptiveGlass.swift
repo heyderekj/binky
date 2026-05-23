@@ -50,12 +50,19 @@ extension View {
 }
 
 /// Spin for Sonoma: `TimelineView` + `rotationEffect` (no `SymbolEffect.rotate`).
+///
+/// The timeline drives a 30 fps redraw loop. We pause it when the modified view is off-screen so
+/// hidden / occluded spinners don't burn cycles in the background.
 private struct LegacySymbolRotationModifier: ViewModifier {
+    @State private var isVisible: Bool = false
+
     func body(content: Content) -> some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { context in
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: !isVisible)) { context in
             let t = context.date.timeIntervalSinceReferenceDate
             let degrees = (t * 400).truncatingRemainder(dividingBy: 360)
             content.rotationEffect(.degrees(degrees))
         }
+        .onAppear { isVisible = true }
+        .onDisappear { isVisible = false }
     }
 }

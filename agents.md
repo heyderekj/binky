@@ -31,7 +31,7 @@ Tests live in `BinkyTests/` (Xcode test target) and import `@testable import Bin
 - **`BinkyTests/`** — XCTest unit tests (classification, tag composition, routines, WhereFroms). No UI tests.
 - **`site/`** — marketing site deployed via Netlify (`netlify.toml` publishes `site/`). Compare pages, screenshots, `llms.txt`, `openapi.yaml`.
 - **`Casks/`** — Homebrew cask definition. Updated automatically by `release.sh`.
-- **`tools/`** — Python helper scripts for localization. All four currently hardcode Dinky's path — adjust before running on Binky.
+- **`tools/`** — Python helper scripts for localization. Paths centralized in `tools/_paths.py`; scripts run from any clone of the repo without further setup.
 - **`docs/local-cli.md`** — how to build and use the `binky` CLI from `BinkyCore/`.
 
 ## Key patterns
@@ -67,9 +67,9 @@ Use `--bump-only` for steps 1–2 only (version strings + site, no build/git/gh)
 
 - User-facing strings use `String(localized:comment:)` with `Localizable.xcstrings` (12 locales). `InfoPlist.xcstrings` covers Info.plist strings.
 - `Binky/Resources/` has per-locale `.lproj` directories for Help markdown.
-- Python tools in `tools/` — all hardcode **Dinky's** path; adjust `PATH`/`ROOT` before running on Binky:
+- Python tools in `tools/` — all paths centralized in `tools/_paths.py` so the scripts run from any clone of the repo:
   - `fill_xcstrings_translations.py` — batch MT fill for missing xcstrings keys (Google Translate)
-  - `fix_brand_in_xcstrings.py` — fix brand-name MT leaks (e.g. 丁基→Dinky)
+  - `fix_brand_in_xcstrings.py` — fix brand-name MT leaks (e.g. 丁基/Mignon→Binky)
   - `correct_zh_translations.py` — hand-curated zh-Hans/zh-Hant corrections (run after the above two)
-  - `correct_ru_ja_translations.py` — hand-curated Russian/Japanese corrections
+  - `correct_ru_ja_translations.py` — hand-curated Russian/Japanese corrections; still contains some Dinky-era reference keys that no-op against Binky's catalog
   - `translate_help_md.py` — translate Help.md to all locales via Google Translate

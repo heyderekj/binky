@@ -1,0 +1,77 @@
+# SwiftLint configuration for Binky.
+#
+# Goals:
+# - Catch runaway file / type / function size as we move toward the v2 redesign.
+# - Surface obvious correctness footguns (force_try, force_unwrap on Optional!).
+# - Stay quiet on the few stylistic rules that fight Apple's own SwiftUI idioms.
+#
+# Thresholds were picked so the three known mega-files (PreferencesView 3349 LoC,
+# OrganizerMainView 1562 LoC, SortPipeline 1500 LoC) trigger a *warning* but
+# don't block CI today. Each refactor pass should ratchet the numbers down.
+
+excluded:
+  - build
+  - BinkyCore/.build
+  - BinkyCore/.swiftpm
+  - tools
+  - site
+  - Casks
+  - docs
+
+# Disabled because they conflict with conventions used throughout the codebase.
+disabled_rules:
+  - line_length          # SwiftUI builders + localized strings frequently exceed reasonable widths.
+  - todo                 # We track TODOs in roadmap.md, not lint output.
+  - identifier_name      # Triggers on `db`, `fm`, `sql`, `p` (Process) which are intentional.
+  - trailing_whitespace  # Already enforced by Xcode editor; lint noise on diff lines.
+  - opening_brace        # Many SwiftUI ViewBuilders prefer same-line braces; rule is stricter than house style.
+  - nesting              # SwiftUI views naturally nest deeply.
+
+# Opt-ins worth the noise.
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - empty_collection_literal
+  - explicit_init
+  - first_where
+  - last_where
+  - sorted_first_last
+  - contains_over_first_not_nil
+  - contains_over_filter_count
+  - redundant_nil_coalescing
+  - unused_import
+
+# ── Size budgets ────────────────────────────────────────────────────────────
+# Warning thresholds catch runaway growth on new code; error thresholds are set
+# above the largest existing offender so the build doesn't fail on first run.
+
+file_length:
+  warning: 800
+  error: 4000          # PreferencesView.swift currently ~3349 lines.
+  ignore_comment_only_lines: true
+
+type_body_length:
+  warning: 400
+  error: 1700          # OrganizerMainView (single struct) ~1500 lines.
+
+function_body_length:
+  warning: 60
+  error: 200
+
+cyclomatic_complexity:
+  warning: 15
+  error: 30
+
+# Force-* rules — catch crash hazards. Allow inline `// swiftlint:disable:next`
+# escape hatches at the call site when intentional.
+force_cast: warning
+force_try: warning
+force_unwrapping:
+  severity: warning
+
+# Trailing-comma rule prefers a comma after the last element in multi-line
+# literals; matches Xcode's auto-format behavior.
+trailing_comma:
+  mandatory_comma: true
+
+reporter: "xcode"

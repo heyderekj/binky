@@ -45,7 +45,11 @@ public final class EnergyConditions: @unchecked Sendable {
     private let lock = NSLock()
     private var thermalState: ProcessInfo.ThermalState
     private var lowPowerMode: Bool
-    private var waiters: [CheckedContinuation<Void, Never>] = []
+    /// Each waiter is identified by a UUID so the cancellation handler can pop a specific
+    /// continuation rather than draining everyone. Without this, `withCheckedContinuation`
+    /// suspended inside `waitUntilOK` could leak forever when the surrounding sort Task is
+    /// cancelled — the continuation would never resume and the task became a zombie.
+    private var waiters: [(id: UUID, cont: CheckedContinuation<Void, Never>)] = []
 
     private init() {
         let pi = ProcessInfo.processInfo
@@ -151,17 +155,43 @@ public final class EnergyConditions: @unchecked Sendable {
 
     public func waitUntilOK() async {
         while shouldPauseFully {
-            await withCheckedContinuation { continuation in
-                lock.lock()
-                if !isFullPauseUnlocked {
-                    lock.unlock()
-                    continuation.resume()
-                } else {
-                    waiters.append(continuation)
-                    lock.unlock()
+            if Task.isCancelled { return }
+            let waiterID = UUID()
+            await withTaskCancellationHandler(
+                operation: {
+                    await withCheckedContinuation { continuation in
+                        lock.lock()
+                        if !isFullPauseUnlocked {
+                            // State already cleared between the loop check and now — resume right away.
+                            lock.unlock()
+                            continuation.resume()
+                        } else if Task.isCancelled {
+                            // Cancellation raced with our enqueue; don't suspend.
+                            lock.unlock()
+                            continuation.resume()
+                        } else {
+                            waiters.append((id: waiterID, cont: continuation))
+                            lock.unlock()
+                        }
+                    }
+                },
+                onCancel: { [weak self] in
+                    self?.cancelWaiter(id: waiterID)
                 }
-            }
+            )
         }
+    }
+
+    private func cancelWaiter(id waiterID: UUID) {
+        lock.lock()
+        let cont: CheckedContinuation<Void, Never>?
+        if let idx = waiters.firstIndex(where: { $0.id == waiterID }) {
+            cont = waiters.remove(at: idx).cont
+        } else {
+            cont = nil
+        }
+        lock.unlock()
+        cont?.resume()
     }
 
     private var isFullPauseUnlocked: Bool {
@@ -181,7 +211,7 @@ public final class EnergyConditions: @unchecked Sendable {
         lowPowerMode = newLowPower
         let isFullPause = isFullPauseUnlocked
 
-        let waitersCopy: [CheckedContinuation<Void, Never>]
+        let waitersCopy: [(id: UUID, cont: CheckedContinuation<Void, Never>)]
         if !isFullPause {
             waitersCopy = waiters
             waiters.removeAll()
@@ -190,8 +220,8 @@ public final class EnergyConditions: @unchecked Sendable {
         }
         lock.unlock()
 
-        for c in waitersCopy {
-            c.resume()
+        for entry in waitersCopy {
+            entry.cont.resume()
         }
 
         if wasFullPause && !isFullPause {

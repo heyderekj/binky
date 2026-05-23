@@ -1,5 +1,10 @@
 # PDF regression fixtures (manual)
 
+> **Archived workflow (Dinky-era).** Binky does not ship PDF compression; these
+> fixtures and the companion `benchmark_pdf_optimizers.sh` are inherited from
+> the sister project [Dinky](https://dinkyfiles.com). Retained because future
+> Binky-era work on PDF handoff to Dinky may want them.
+
 Dinky has no bundled XCTest target; use these **document types** with a **Debug** build and Console.app (`pdf_metrics` filter) to verify shrink.
 
 ## What to collect
@@ -28,9 +33,9 @@ To compare bundled **qpdf** behavior with **pdfcpu** on your own files (nothing 
 ./tools/benchmark_pdf_optimizers.sh /path/to/your/pdfs
 ```
 
-See `docs/PDF_COMPRESSION.md` for how this relates to shipping features.
+See `docs/archive/PDF_COMPRESSION.md` for how this relates to shipping features.
 
 ## Baseline interpretation
 
-- **Flatten** with `savedPct` ≤ 0 on type (1) or (4) → investigate tiers / Smart Quality (see `docs/PDF_COMPRESSION.md`).
+- **Flatten** with `savedPct` ≤ 0 on type (1) or (4) → investigate tiers / Smart Quality (see `docs/archive/PDF_COMPRESSION.md`).
 - **Preserve** with no gain on types (2) or (3) → expected; confirm UI explains best-effort behavior.

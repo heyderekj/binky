@@ -6,14 +6,28 @@ import BinkyCoreShared
 
 // MARK: - Transient filenames
 
+/// File-name fragments that indicate a download or app temp file is still being written.
+///
+/// Coverage by tool:
+/// - `.crdownload`, `.crswap` — Chrome / Chromium / Edge / Brave (newer builds use `.crswap` for atomic replacement of an in-progress file)
+/// - `.download` — Safari, older WebKit downloaders
+/// - `.part`, `.partial` — Firefox, plain HTTP downloaders
+/// - `.opdownload` — Opera
+/// - `.aria2` — aria2 download manager
+/// - `.!ut` — µTorrent / qBittorrent in-progress chunks
+/// - `~`, `.tmp`, `.temp` — generic editor/installer temp files
 private let suspiciousSuffixes: [String] = [
-    ".crdownload", ".download", ".part", ".partial",
+    ".crdownload", ".crswap", ".download", ".part", ".partial",
+    ".opdownload", ".aria2", ".!ut",
     "~", ".tmp", ".temp",
 ]
 
 func looksTransientIncomplete(_ url: URL) -> Bool {
     let n = url.lastPathComponent.lowercased()
     if n == ".ds_store" { return false }
+    // Microsoft Office writes hidden lock files like `~$Document.docx` while the file is open.
+    // Treat the `~$` prefix the same way we treat dotfiles — never sortable.
+    if n.hasPrefix("~$") { return true }
     if n.hasPrefix(".") { return true }
     return suspiciousSuffixes.contains(where: { n.hasSuffix($0) })
 }
@@ -299,17 +313,23 @@ private enum PostSortShortcutRunner {
     static func run(shortcutName: String, fileURL: URL) {
         let trimmed = shortcutName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        var allowed = CharacterSet.urlQueryAllowed
-        allowed.remove(charactersIn: "&+=")
-        let encName = trimmed.addingPercentEncoding(withAllowedCharacters: allowed) ?? trimmed
-        let text = fileURL.absoluteString
-        let encText = text.addingPercentEncoding(withAllowedCharacters: allowed) ?? text
-        guard let url = URL(string: "shortcuts://run-shortcut?name=\(encName)&input=text&text=\(encText)") else { return }
+        // Use URLComponents to properly encode query parameters. The previous manual
+        // percent-encoding with `CharacterSet.urlQueryAllowed` minus `&+=` still allowed `#`
+        // through, which fragments the URL and truncates the shortcut name or input.
+        var components = URLComponents()
+        components.scheme = "shortcuts"
+        components.host = "run-shortcut"
+        components.queryItems = [
+            URLQueryItem(name: "name", value: trimmed),
+            URLQueryItem(name: "input", value: "text"),
+            URLQueryItem(name: "text", value: fileURL.absoluteString),
+        ]
+        guard let url = components.url else { return }
         NSWorkspace.shared.open(url)
     }
 }
 
-public func sortInboxContext(for fileURL: URL, snapshot: SortPreferencesSnapshot) -> (inboxRoot: URL, presets: [CompressionPreset]) {
+public func sortInboxContext(for fileURL: URL, snapshot: SortPreferencesSnapshot) -> (inboxRoot: URL, presets: [Inbox]) {
     let reg = snapshot.watchRegistry
     switch reg.routing(for: fileURL) {
     case .global:
@@ -340,7 +360,7 @@ func isURLExcludedForSort(url: URL, snapshot: SortPreferencesSnapshot) -> Bool {
     return false
 }
 
-func activeSortRulesForSnapshot(snapshot: SortPreferencesSnapshot, presets: [CompressionPreset]) -> [SortRule] {
+func activeSortRulesForSnapshot(snapshot: SortPreferencesSnapshot, presets: [Inbox]) -> [SortRule] {
     let combined = presets.flatMap(\.sortRules)
     if !combined.isEmpty {
         return combined
@@ -351,7 +371,7 @@ func activeSortRulesForSnapshot(snapshot: SortPreferencesSnapshot, presets: [Com
 func composedFinderTagsForSort(
     snapshot: SortPreferencesSnapshot,
     naturalCategory: FileSortCategory,
-    presets: [CompressionPreset],
+    presets: [Inbox],
     matchedRule: SortRule?
 ) -> [String] {
     FinderTagComposer.compose(
@@ -369,7 +389,7 @@ func fileURLMatchesGlobalSkipTags(_ url: URL, snapshot: SortPreferencesSnapshot)
     return tags.contains { snapshot.globalSkipTagSet.contains($0.lowercased()) }
 }
 
-func combinedTagFanoutPriority(presets: [CompressionPreset]) -> [String] {
+func combinedTagFanoutPriority(presets: [Inbox]) -> [String] {
     var seen = Set<String>()
     var out: [String] = []
     for p in presets {
@@ -385,11 +405,11 @@ func combinedTagFanoutPriority(presets: [CompressionPreset]) -> [String] {
     return out
 }
 
-func newTagExpiryDays(from presets: [CompressionPreset]) -> Int {
+func newTagExpiryDays(from presets: [Inbox]) -> Int {
         presets.first(where: { $0.newTagExpiryDays > 0 })?.newTagExpiryDays ?? 0
 }
 
-func postSortShortcutName(from presets: [CompressionPreset]) -> String {
+func postSortShortcutName(from presets: [Inbox]) -> String {
     for p in presets {
         let t = p.postSortShortcutName.trimmingCharacters(in: .whitespacesAndNewlines)
         if !t.isEmpty { return t }
@@ -525,8 +545,18 @@ public final class PerDestinationUniquifyGate: @unchecked Sendable {
     }
 }
 
-private enum SortZipViaDitto {
-    /// Creates a zip at `zipDestinationURL` from `sourceFile`, then removes the source file on success.
+/// Wraps `/usr/bin/ditto` zip creation with a post-write integrity check. `internal` rather than
+/// `private` so the test target (`@testable import BinkyCoreSort`) can verify both the
+/// happy-path zip-then-delete behavior and the failure path where a corrupted archive must not
+/// trigger a source delete.
+enum SortZipViaDitto {
+    /// Creates a zip at `zipDestinationURL` from `sourceFile`, verifies the produced archive is
+    /// readable, then removes the source on success.
+    ///
+    /// `ditto` returning exit 0 is necessary but not sufficient — a disk that fills mid-write or
+    /// a half-flushed APFS snapshot can leave a truncated archive that ditto still considers a
+    /// "successful" partial extract. We re-validate via `unzip -tq` before deleting the source so
+    /// a corrupt archive never silently destroys the original.
     static func zipReplacingSource(file sourceFile: URL, zipDestinationURL: URL) throws {
         let fm = FileManager.default
         if fm.fileExists(atPath: zipDestinationURL.path) {
@@ -544,7 +574,62 @@ private enum SortZipViaDitto {
                 userInfo: [NSLocalizedDescriptionKey: "Couldn’t create zip archive."]
             )
         }
+
+        try verifyZipIntegrity(at: zipDestinationURL)
+
         try fm.removeItem(at: sourceFile)
+    }
+
+    /// Throws if the zip is missing, empty, or fails `unzip -tq` (CRC mismatch, truncation, etc).
+    /// Cleans up the bad archive on failure so the caller can retry without colliding with itself.
+    /// `internal` for direct testing — production code reaches it via `zipReplacingSource`.
+    static func verifyZipIntegrity(at zipURL: URL) throws {
+        let fm = FileManager.default
+
+        // (1) Cheap size sanity check — a 0-byte file is never a valid zip and almost always means
+        // the disk filled before ditto could write the central directory.
+        let attrs = try fm.attributesOfItem(atPath: zipURL.path)
+        let size = (attrs[.size] as? NSNumber)?.int64Value ?? 0
+        guard size > 0 else {
+            try? fm.removeItem(at: zipURL)
+            throw NSError(
+                domain: "BinkySortZip",
+                code: -2,
+                userInfo: [NSLocalizedDescriptionKey: "Zip archive is empty after creation."]
+            )
+        }
+
+        // (2) Structural check via `unzip -tq` (system tool, available on every macOS).
+        let test = Process()
+        test.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
+        test.arguments = ["-tq", zipURL.path]
+        // Discard test output — `unzip -tq` prints "OK" on success, error detail on failure.
+        let devNull = FileHandle(forWritingAtPath: "/dev/null")
+        if let devNull {
+            test.standardOutput = devNull
+            test.standardError = devNull
+        }
+        do {
+            try test.run()
+        } catch {
+            // Should be impossible (unzip ships with macOS), but if the launch itself fails,
+            // err on the side of keeping the source file by treating the archive as bad.
+            try? fm.removeItem(at: zipURL)
+            throw NSError(
+                domain: "BinkySortZip",
+                code: -3,
+                userInfo: [NSLocalizedDescriptionKey: "Couldn’t verify zip archive: \(error.localizedDescription)"]
+            )
+        }
+        test.waitUntilExit()
+        guard test.terminationStatus == 0 else {
+            try? fm.removeItem(at: zipURL)
+            throw NSError(
+                domain: "BinkySortZip",
+                code: Int(test.terminationStatus),
+                userInfo: [NSLocalizedDescriptionKey: "Zip archive failed integrity check; original file kept."]
+            )
+        }
     }
 }
 

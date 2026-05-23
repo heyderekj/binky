@@ -266,9 +266,9 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         )
     }
 
-    private static func enabledRoutinesFromDefaults() -> [CompressionPreset] {
+    private static func enabledRoutinesFromDefaults() -> [Inbox] {
         guard let data = UserDefaults.standard.data(forKey: "savedPresetsData"),
-              let presets = try? JSONDecoder().decode([CompressionPreset].self, from: data) else {
+              let presets = try? JSONDecoder().decode([Inbox].self, from: data) else {
             return []
         }
         return presets.filter {
@@ -276,7 +276,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         }
     }
 
-    private static func menuBarRoutineDisplayTitle(_ preset: CompressionPreset) -> String {
+    private static func menuBarRoutineDisplayTitle(_ preset: Inbox) -> String {
         let trimmedName = preset.name.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmedName.isEmpty { return trimmedName }
         let path = preset.watchFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)

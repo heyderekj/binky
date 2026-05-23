@@ -8,9 +8,12 @@ Run after fill_xcstrings_translations.py and fix_brand_in_xcstrings.py.
 Idempotent — every override is a fixed value.
 """
 import json
+import sys
 from pathlib import Path
 
-CAT = Path("/Users/gyk/GitHubProjects/binky/Binky/Localizable.xcstrings")
+# Centralized in `_paths.py` so this script is portable across checkouts.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _paths import XCSTRINGS_PATH as CAT
 
 # ── Per-key zh-Hans overrides ────────────────────────────────────────────────
 
