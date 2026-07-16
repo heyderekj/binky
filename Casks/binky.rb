@@ -10,7 +10,7 @@ cask "binky" do
   desc "Downloads inbox organizer — sort, route, tag, and review files"
   homepage "https://binkyfiles.com/"
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "Binky.app"
 end
