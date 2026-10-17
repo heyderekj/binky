@@ -1,0 +1,90 @@
+/* The working hero menu bar (family-menubar.js), shared by Dinky, Binky and Slinky. Tahoe menus: frosted,
+   rounded, accent-colored highlight. Each site sets --fmb-accent to its brand color. */
+.menubar.fmb-live [data-mb] { cursor: default; }
+.menubar.fmb-live [data-mb]:hover, .menubar .fmb-on { background: rgb(0 0 0 / 0.1); border-radius: 6px; }
+@media (prefers-color-scheme: dark) { .menubar.fmb-live [data-mb]:hover, .menubar .fmb-on { background: rgb(255 255 255 / 0.16); } }
+.menubar .fmb-dim { opacity: 0.35; }
+.menubar .fmb-drop { background: var(--fmb-accent, #0b7f8f) !important; color: #fff; border-radius: 6px; }
+
+.fmb-menu, .fmb-panel {
+  --fmb-bg: rgb(246 246 248 / 0.78); --fmb-ink: rgb(0 0 0 / 0.86); --fmb-dim: rgb(0 0 0 / 0.42); --fmb-line: rgb(0 0 0 / 0.1);
+  position: absolute; z-index: 40; color: var(--fmb-ink); text-align: left;
+  font: 500 13px/1.2 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; letter-spacing: -0.005em;
+  background: var(--fmb-bg); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.16), inset 0 0.5px 0 rgb(255 255 255 / 0.7), 0 14px 38px -10px rgb(0 0 0 / 0.32);
+  animation: fmb-in 0.14s ease-out;
+}
+@media (prefers-color-scheme: dark) {
+  .fmb-menu, .fmb-panel { --fmb-bg: rgb(40 40 44 / 0.74); --fmb-ink: rgb(255 255 255 / 0.9); --fmb-dim: rgb(255 255 255 / 0.4); --fmb-line: rgb(255 255 255 / 0.12);
+    box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.16), inset 0 0.5px 0 rgb(255 255 255 / 0.12), 0 14px 38px -10px rgb(0 0 0 / 0.6); }
+}
+@keyframes fmb-in { from { opacity: 0; } }
+.fmb-menu { min-width: 200px; padding: 5px; border-radius: 12px; }
+.fmb-item { display: flex; align-items: center; gap: 24px; height: 24px; padding: 0 10px; border-radius: 7px; white-space: pre; }
+.fmb-item kbd { margin-left: auto; font: inherit; color: var(--fmb-dim); }
+.fmb-item:not(.is-off):hover { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+.fmb-item:not(.is-off):hover kbd { color: rgb(255 255 255 / 0.8); }
+.fmb-item.is-off { color: var(--fmb-dim); }
+.fmb-sep { border: 0; height: 1px; margin: 5px 10px; background: var(--fmb-line); }
+
+.fmb-panel { border-radius: 18px; }
+.fmb-btn { margin-top: 6px; height: 26px; padding: 0 18px; border-radius: 999px; font: inherit; color: var(--fmb-ink); background: rgb(127 127 127 / 0.18); cursor: pointer; }
+.fmb-about { left: 50%; top: 50%; translate: -50% -50%; width: 270px; padding: 22px 20px 18px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.fmb-about img { border-radius: 16px; margin-bottom: 8px; }
+.fmb-about svg { color: var(--fmb-ink); margin-bottom: 6px; }
+.fmb-about b { font-size: 17px; font-weight: 700; }
+.fmb-about span, .fmb-about small { color: var(--fmb-dim); font-size: 12px; }
+.fmb-about dl { display: grid; grid-template-columns: auto auto; gap: 3px 10px; margin: 10px 0 4px; font-size: 12px; }
+.fmb-about dt { text-align: right; font-weight: 600; }
+.fmb-about dd { margin: 0; color: var(--fmb-dim); text-align: left; }
+
+.fmb-spot { width: min(520px, calc(100% - 32px)); padding: 0; border-radius: 26px; overflow: hidden; }
+.fmb-search { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 18px; color: var(--fmb-dim); }
+.fmb-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 400 19px/1 inherit; font-family: inherit; color: var(--fmb-ink); }
+.fmb-search input::placeholder { color: var(--fmb-dim); }
+.fmb-results { display: grid; padding: 0 8px; }
+.fmb-spot.has-results .fmb-results { padding: 4px 8px 8px; border-top: 1px solid var(--fmb-line); }
+.fmb-result { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 9px; cursor: default; }
+.fmb-result img { border-radius: 5px; }
+.fmb-result.is-on, .fmb-result:hover { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+
+.fmb-ccp { width: 300px; padding: 12px; }
+.fmb-cc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fmb-tile { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: 16px; text-align: left; font: inherit; color: var(--fmb-ink); background: rgb(127 127 127 / 0.14); cursor: default; }
+.fmb-tile i { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: rgb(127 127 127 / 0.25); color: var(--fmb-ink); }
+.fmb-tile i svg { width: 15px; height: auto; }
+.fmb-tile.is-on i { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+.fmb-tile b { display: block; font-size: 12.5px; font-weight: 600; }
+.fmb-tile small { display: block; font-size: 11px; color: var(--fmb-dim); }
+.fmb-slider { grid-column: 1 / -1; display: grid; gap: 8px; padding: 10px 12px 12px; border-radius: 16px; background: rgb(127 127 127 / 0.14); }
+.fmb-slider b { font-size: 12.5px; font-weight: 600; }
+.fmb-slider input { width: 100%; accent-color: #fff; }
+
+.fmb-toast { position: absolute; z-index: 45; top: 34px; right: 10px; width: min(330px, calc(100% - 20px)); display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; border-radius: 18px;
+  color: rgb(0 0 0 / 0.86); font: 13px/1.3 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  background: rgb(246 246 248 / 0.8); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.3);
+  opacity: 0; translate: 24px 0; transition: opacity 0.3s ease, translate 0.45s cubic-bezier(.22,1,.36,1); }
+.fmb-toast.is-on { opacity: 1; translate: 0 0; }
+.fmb-toast img { border-radius: 8px; flex: none; }
+.fmb-toast b { display: block; font-weight: 700; }
+.fmb-toast small { display: block; font-size: 12.5px; color: rgb(0 0 0 / 0.6); }
+@media (prefers-color-scheme: dark) {
+  .fmb-toast { color: rgb(255 255 255 / 0.9); background: rgb(40 40 44 / 0.78); box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.6); }
+  .fmb-toast small { color: rgb(255 255 255 / 0.6); }
+}
+
+.fmb-sleep { position: absolute; inset: 0; z-index: 50; background: #000; opacity: 0; transition: opacity 0.6s ease; cursor: pointer; }
+.fmb-sleep.is-on { opacity: 0.92; }
+
+.desktop:fullscreen { border-radius: 0; display: flex; flex-direction: column; }
+.desktop:fullscreen .desktop__stage { flex: 1; }
+
+/* Binky: loose files on the desktop's right edge, and the folders they sort into. */
+.fmb-files { position: absolute; inset: 40px 14px auto auto; z-index: 2; display: grid; gap: 10px; justify-items: center; pointer-events: none;
+  font: 500 10.5px/1.2 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px rgb(0 0 0 / 0.45); }
+.fmb-file, .fmb-folder { display: grid; justify-items: center; gap: 3px; width: 84px; text-align: center; }
+.fmb-file span, .fmb-folder span { max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fmb-folder { display: none; }
+.fmb-files.is-sorting .fmb-folder { display: grid; animation: fmb-in 0.3s ease-out; }
+@media (max-width: 1100px) { .fmb-files { display: none; } }
