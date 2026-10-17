@@ -39,8 +39,13 @@
 .fmb-about dd { margin: 0; color: var(--fmb-dim); text-align: left; }
 
 .fmb-spot { width: min(520px, calc(100% - 32px)); padding: 0; border-radius: 26px; overflow: hidden; }
-.fmb-search { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 18px; color: var(--fmb-dim); }
-.fmb-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 400 19px/1 inherit; font-family: inherit; color: var(--fmb-ink); }
+.fmb-search { display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 10px 0 18px; color: var(--fmb-dim); }
+.fmb-glass { flex: none; color: var(--fmb-ink); opacity: 0.55; }
+.fmb-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif; font-size: 22px; font-weight: 400; letter-spacing: -0.01em; color: var(--fmb-ink); }
+.fmb-modes { flex: none; display: flex; gap: 2px; }
+.fmb-mode { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: var(--fmb-ink); opacity: 0.55; }
+.fmb-mode:hover { opacity: 0.85; background: rgb(127 127 127 / 0.14); }
+@media (max-width: 700px) { .fmb-modes { display: none; } }
 .fmb-search input::placeholder { color: var(--fmb-dim); }
 .fmb-results { display: grid; padding: 0 8px; }
 .fmb-spot.has-results .fmb-results { padding: 4px 8px 8px; border-top: 1px solid var(--fmb-line); }
