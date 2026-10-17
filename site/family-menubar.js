@@ -196,7 +196,48 @@
     });
   };
   const isDark = () => (forced === null ? sysDark() : forced);
-  let wifiOn = true; let routinesOn = true;
+  let wifiOn = true; let routinesOn = true; let network = 'Home';
+  const WIFI = (w = 15) => `<svg viewBox="0 0 680 520" width="${w}" height="${Math.round(w * 0.76)}" aria-hidden="true">${bar.querySelector('[data-mb="wifi"] svg')?.innerHTML || ''}</svg>`;
+  const LOCK = '<svg viewBox="0 0 20 20" width="11" height="11" aria-hidden="true"><path d="M10 2.5a3.6 3.6 0 0 1 3.6 3.6V8h.4A1.5 1.5 0 0 1 15.5 9.5v6A1.5 1.5 0 0 1 14 17H6a1.5 1.5 0 0 1-1.5-1.5v-6A1.5 1.5 0 0 1 6 8h.4V6.1A3.6 3.6 0 0 1 10 2.5Zm0 1.7a1.9 1.9 0 0 0-1.9 1.9V8h3.8V6.1A1.9 1.9 0 0 0 10 4.2Z" fill="currentColor"/></svg>';
+  const setWifi = (on) => { wifiOn = on; bar.querySelector('[data-mb="wifi"]')?.classList.toggle('fmb-dim', !on); };
+  // The Wi-Fi menu, as on Tahoe: a switch, the network you're on, and others nearby.
+  const wifiMenu = (anchor) => {
+    const others = ['Testament Made', `${app} Guest`, 'Coffee Shop'].filter((n) => n !== network);
+    const p = showPanel(`
+      <div class="fmb-row fmb-row--head"><b>Wi-Fi</b><button type="button" class="fmb-switch" role="switch" aria-label="Wi-Fi"></button></div>
+      <div class="fmb-wifi-body">
+        <hr class="fmb-sep" /><p class="fmb-label">Known Network</p>
+        <button type="button" class="fmb-net is-joined" data-net="${network}"><i>${WIFI()}</i><span>${network}</span>${LOCK}</button>
+        <p class="fmb-label">Other Networks</p>
+        ${others.map((n) => `<button type="button" class="fmb-net" data-net="${n}"><i>${WIFI()}</i><span>${n}</span>${n.includes('Guest') || n === 'Coffee Shop' ? '' : LOCK}</button>`).join('')}
+      </div>
+      <hr class="fmb-sep" /><div class="fmb-item fmb-item--plain"><span>Wi-Fi Settings…</span></div>`, 'fmb-menu fmb-wifi', anchor);
+    const sw = p.querySelector('.fmb-switch');
+    const sync = () => { sw.setAttribute('aria-checked', String(wifiOn)); sw.classList.toggle('is-on', wifiOn); p.classList.toggle('is-off', !wifiOn); };
+    sw.addEventListener('click', () => { setWifi(!wifiOn); sync(); });
+    p.querySelectorAll('.fmb-net:not(.is-joined)').forEach((b) => b.addEventListener('click', () => {
+      network = b.dataset.net; setWifi(true); closePanel();
+      toast(`Joined “${network}”.`);
+    }));
+    sync();
+  };
+  const batteryMenu = (anchor) => {
+    showPanel(`
+      <div class="fmb-row fmb-row--head"><b>Battery</b><span class="fmb-dimtext">100%</span></div>
+      <div class="fmb-item fmb-item--plain is-off"><span>Power Source: Power Adapter</span></div>
+      <hr class="fmb-sep" /><p class="fmb-label">Using Significant Energy</p>
+      <div class="fmb-item fmb-item--plain is-off"><span>No Apps Using Significant Energy</span></div>
+      <hr class="fmb-sep" /><div class="fmb-item fmb-item--plain"><span>Battery Settings…</span></div>`, 'fmb-menu fmb-batt', anchor);
+  };
+  // The clock opens Notification Center: what this page has told you, newest first.
+  const notifications = (anchor) => {
+    const ago = (d) => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'now' : `${m}m ago`; };
+    const p = showPanel(history.length
+      ? history.slice(0, 5).map((h) => `<div class="fmb-note"><img src="${icon()}" alt="" width="30" height="30" /><span><b>${app}<time>${ago(h.at)}</time></b><small></small></span></div>`).join('')
+      : `<p class="fmb-empty">No Notifications</p>`, 'fmb-nc', anchor);
+    p.querySelectorAll('.fmb-note small').forEach((el, i) => { el.textContent = history[i].text; });
+    p.style.left = 'auto'; p.style.right = '8px';
+  };
   // Each app's own Control Center tile: [title, icon, subtitle(), press()].
   const appTile = {
     Slinky: () => {
@@ -227,12 +268,12 @@
       </div>`, 'fmb-ccp', anchor);
     p.style.left = 'auto'; p.style.right = '8px';
     const sync = () => {
-      const w = p.querySelector('[data-t="wifi"]'); w.classList.toggle('is-on', wifiOn); w.querySelector('small').textContent = wifiOn ? 'Home' : 'Off';
+      const w = p.querySelector('[data-t="wifi"]'); w.classList.toggle('is-on', wifiOn); w.querySelector('small').textContent = wifiOn ? network : 'Off';
       const d = p.querySelector('[data-t="dark"]'); d.classList.toggle('is-on', isDark()); d.querySelector('small').textContent = isDark() ? 'On' : 'Off';
       const t = p.querySelector('[data-t="app"]'); t.classList.toggle('is-on', !!tOn()); t.querySelector('small').textContent = tSub();
       const m = p.querySelector('[data-t="still"]'); m.classList.toggle('is-on', still()); m.querySelector('small').textContent = still() ? 'On' : 'Off';
     };
-    p.querySelector('[data-t="wifi"]').addEventListener('click', () => { wifiOn = !wifiOn; bar.querySelector('[data-mb="wifi"]')?.classList.toggle('fmb-dim', !wifiOn); sync(); });
+    p.querySelector('[data-t="wifi"]').addEventListener('click', () => { setWifi(!wifiOn); sync(); });
     p.querySelector('[data-t="dark"]').addEventListener('click', () => { flip(!isDark()); sync(); });
     p.querySelector('[data-t="app"]').addEventListener('click', () => { tPress(); if (panel === p) setTimeout(sync, 60); });
     p.querySelector('[data-t="still"]').addEventListener('click', () => {
@@ -278,7 +319,9 @@
     const wake = () => { veil.classList.remove('is-on'); setTimeout(() => veil.remove(), 500); };
     veil.addEventListener('click', wake);
   };
+  const history = [];
   const toast = (text) => {
+    history.unshift({ text, at: new Date() });
     const t = document.createElement('div');
     t.className = 'fmb-toast';
     t.innerHTML = `<img src="${icon()}" alt="" width="34" height="34" /><span><b>${app}<time>now</time></b><small></small></span>`;
@@ -316,7 +359,9 @@
     closePanel();
     if (key === 'spotlight') return spotlight(item);
     if (key === 'cc') return control(item);
-    if (key === 'clock' || key === 'battery' || key === 'wifi') return control(bar.querySelector('[data-mb="cc"]') || item);
+    if (key === 'wifi') return wifiMenu(item);
+    if (key === 'battery') return batteryMenu(item);
+    if (key === 'clock') return notifications(item);
     openMenu(key, item);
   });
   // Like the Mac: once a menu is open, moving across the bar opens the others.
