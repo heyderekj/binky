@@ -50,7 +50,7 @@
 ## Links
 
 - Website: https://binkyfiles.com
-- Support: help@binkyfiles.com
+- Support: derek@testamentmade.com
 - GitHub: https://github.com/heyderekj/binky
 - Latest release: https://github.com/heyderekj/binky/releases/latest
 - Download v1.5.1: https://github.com/heyderekj/binky/releases/download/v1.5.1/Binky-1.5.1.dmg

@@ -156,7 +156,7 @@ enum S {
     static let heic = "HEIC"
 
     /// Shown in About, Settings, and linked with `mailto:`.
-    static let supportEmail = "help@binkyfiles.com"
+    static let supportEmail = "derek@testamentmade.com"
 
     // Paste from clipboard
     static var pasteEmptyTitle: String { String(localized: "Nothing to paste", comment: "Alert title when clipboard has no compressible item.") }

@@ -6,7 +6,7 @@ A native macOS sorter that follows your rules — no cloud, no guessing. **Quick
 
 - **Site:** [binkyfiles.com](https://binkyfiles.com)
 - **Repo:** [GitHub — heyderekj/binky](https://github.com/heyderekj/binky)
-- **Support:** [help@binkyfiles.com](mailto:help@binkyfiles.com)
+- **Support:** [derek@testamentmade.com](mailto:derek@testamentmade.com)
 - **Version line:** Apple Silicon · macOS 14 Sonoma or later · 1.x free · Open source (MIT) · 2.0 adds one-time license for official builds (see site FAQ)
 - **Sister app:** [Dinky](https://dinkyfiles.com) (compression) — current releases need Apple Silicon and **macOS 15**; see dinkyfiles.com
 
