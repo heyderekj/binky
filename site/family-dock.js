@@ -4,6 +4,14 @@
   const dock = document.querySelector('.dock');
   if (!dock) return;
   const apps = Array.from(dock.querySelectorAll('.dock__app'));
+  // On this Mac the Dock opens the other sites' local servers, so switching can be tried before they're live.
+  if (location.hostname === 'localhost') {
+    const ports = { dinky: 4343, binky: 4342, slinky: 4329 };
+    apps.forEach((a) => {
+      const m = a.hostname.match(/^(dinky|binky|slinky)files\.com$/);
+      if (m) a.href = 'http://localhost:' + ports[m[1]] + '/';
+    });
+  }
   const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const set = (a, m) => a.style.setProperty('--mag', m.toFixed(3));
   let centers = [];
