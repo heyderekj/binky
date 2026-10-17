@@ -39,13 +39,9 @@
 .fmb-about dd { margin: 0; color: var(--fmb-dim); text-align: left; }
 
 .fmb-spot { width: min(520px, calc(100% - 32px)); padding: 0; border-radius: 26px; overflow: hidden; }
-.fmb-search { display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 10px 0 18px; color: var(--fmb-dim); }
+.fmb-search { display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 18px; color: var(--fmb-dim); }
 .fmb-glass { flex: none; color: var(--fmb-ink); opacity: 0.55; }
 .fmb-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif; font-size: 22px; font-weight: 400; letter-spacing: -0.01em; color: var(--fmb-ink); }
-.fmb-modes { flex: none; display: flex; gap: 2px; }
-.fmb-mode { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: var(--fmb-ink); opacity: 0.55; }
-.fmb-mode:hover { opacity: 0.85; background: rgb(127 127 127 / 0.14); }
-@media (max-width: 700px) { .fmb-modes { display: none; } }
 .fmb-search input::placeholder { color: var(--fmb-dim); }
 .fmb-results { display: grid; padding: 0 8px; }
 .fmb-spot.has-results .fmb-results { padding: 4px 8px 8px; border-top: 1px solid var(--fmb-line); }
@@ -149,6 +145,7 @@
 .fmb-orb { flex: none; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.55), 0 0 10px rgb(167 123 255 / 0.45); animation: fmb-spin 3s linear infinite; }
 .fmb-result--ask span:last-child { font-weight: 600; }
 .fmb-result--ask.is-on .fmb-orb, .fmb-result--ask:hover .fmb-orb { box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.9); }
+.fmb-answer[hidden] { display: none; }
 .fmb-answer { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px 16px; border-top: 1px solid var(--fmb-line); text-align: left; }
 .fmb-answer .fmb-orb { width: 24px; height: 24px; margin-top: 1px; }
 .fmb-answer__text { margin: 0; font-size: 15px; line-height: 1.45; color: var(--fmb-ink); white-space: pre-wrap; min-height: 22px; }

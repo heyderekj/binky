@@ -129,14 +129,8 @@
       }),
       ...$$('main summary, main .faq-q').filter((q) => !q.closest('.desktop')).map((q) => ({ el: q.closest('details, .faq-item') || q, text: clean(q.textContent), find: clean(q.textContent) })),
     ];
-    // Tahoe's Spotlight: a large glass, large placeholder, and the four modes (Applications, Files, Actions, Clipboard) on the right.
-    const modes = [
-      '<rect x="2.5" y="2.5" width="5" height="5" rx="1.4"/><rect x="10.5" y="2.5" width="5" height="5" rx="1.4"/><rect x="2.5" y="10.5" width="5" height="5" rx="1.4"/><rect x="10.5" y="10.5" width="5" height="5" rx="1.4"/>',
-      '<path d="M4 2.5h6.2L14 6.3v9.2H4z"/><path d="M10 2.6V6.5h3.9"/>',
-      '<rect x="2.5" y="2.5" width="13" height="13" rx="3.5"/><path d="M9.5 5 6.8 9.4h3.4L8.6 13"/>',
-      '<rect x="3.5" y="3.5" width="11" height="12" rx="2"/><path d="M6.5 2.5h5v2.4h-5z"/>',
-    ].map((d) => `<span class="fmb-mode"><svg viewBox="0 0 18 18" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">${d}</svg></span>`).join('');
-    const p = showPanel(`<label class="fmb-search"><svg class="fmb-glass" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.2" cy="10.2" r="7" fill="none" stroke="currentColor" stroke-width="2.1"/><path d="m15.4 15.4 5.6 5.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg><input type="text" placeholder="Spotlight Search" aria-label="Search this page" autocomplete="off" spellcheck="false" /><span class="fmb-modes" aria-hidden="true">${modes}</span></label><div class="fmb-results"></div>`, 'fmb-spot');
+    // Tahoe's Spotlight: a large glass and a large placeholder.
+    const p = showPanel(`<label class="fmb-search"><svg class="fmb-glass" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.2" cy="10.2" r="7" fill="none" stroke="currentColor" stroke-width="2.1"/><path d="m15.4 15.4 5.6 5.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg><input type="text" placeholder="Spotlight Search" aria-label="Search this page" autocomplete="off" spellcheck="false" /></label><div class="fmb-results"></div>`, 'fmb-spot');
     p.style.left = '50%'; p.style.top = '44px'; p.style.translate = '-50% 0';
     const input = p.querySelector('input');
     const list = p.querySelector('.fmb-results');
