@@ -1,0 +1,40 @@
+# Cloudflare Pages headers, translated from netlify.toml (which stays until the move is verified).
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby", </openapi.yaml>; rel="service-desc", </homepage.md>; rel="alternate"; type="text/markdown"
+  Cache-Control: public, max-age=120, stale-while-revalidate=86400
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8
+
+/.well-known/agent-skills/index.json
+  Content-Type: application/json; charset=utf-8
+
+/openapi.yaml
+  Content-Type: application/yaml; charset=utf-8
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=600, stale-while-revalidate=86400
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/compare/*
+  Cache-Control: public, max-age=120, stale-while-revalidate=86400
+
+/*.css
+  Cache-Control: public, max-age=604800, stale-while-revalidate=864000
+
+/screenshots/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=864000
+
+/*.webp
+  Cache-Control: public, max-age=604800, stale-while-revalidate=864000
+
+/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=864000
+
+/*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=864000

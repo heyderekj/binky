@@ -1,86 +1,36 @@
-/* Top Dinky / Binky tab strip — uses --bg, --divider, etc. from each page */
-
-.site-tabs {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  align-self: stretch;
-  box-sizing: border-box;
-  width: calc(100% + 2 * var(--site-tabs-pull-x, 0px));
-  max-width: none;
-  margin-left: calc(-1 * var(--site-tabs-pull-x, 0px));
-  margin-right: calc(-1 * var(--site-tabs-pull-x, 0px));
-  margin-top: calc(-1 * var(--site-tabs-pull-y, 0px));
-  margin-bottom: 28px;
-  padding-top: 12px;
-  padding-bottom: 0;
-  background: color-mix(in srgb, var(--text) 4%, var(--bg));
+/* The family Dock: the same app switcher on every Testament Made app site (Dinky, Binky, Slinky),
+   along the bottom edge like the macOS Dock. Big app icons on a glass shelf, a dot under the current app,
+   magnification toward the pointer and a name label above. File name kept from the old tab strip so every
+   page picks it up. */
+.dock {
+  position: fixed; z-index: 45; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); translate: -50% 0;
+  display: flex; align-items: flex-end; gap: 10px; padding: 9px 12px 11px; border-radius: 26px;
+  background: rgb(250 252 255 / 0.62);
+  -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.9), inset 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 12px 34px -12px rgb(20 30 60 / 0.35);
 }
-
-.site-tabs-inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 2px 4px;
-  padding: 8px var(--site-tabs-pull-x, 24px) 0;
+body { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+.dock__app { position: relative; display: grid; justify-items: center; text-decoration: none; color: inherit; }
+.dock__app img { width: 54px; height: 54px; border-radius: 23%; transform-origin: 50% 100%; transition: scale 0.25s cubic-bezier(0.22, 1, 0.36, 1), translate 0.25s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 6px 14px -6px rgb(10 20 50 / 0.4); }
+.dock__app.is-current::after { content: ''; position: absolute; bottom: -8px; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+@media (hover: hover) {
+  .dock__app:hover img { scale: 1.45; translate: 0 -8px; }
+  .dock__app:hover + .dock__app img, .dock__app:has(+ .dock__app:hover) img { scale: 1.18; translate: 0 -3px; }
 }
-
-.site-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  color: var(--text-secondary);
-  text-decoration: none;
-  border-radius: 14px 14px 0 0;
-  background: transparent;
-  border: 0;
-  transition: background 0.15s ease, color 0.15s ease;
+.dock__name {
+  position: absolute; bottom: calc(100% + 30px); left: 50%; translate: -50% 4px; opacity: 0; pointer-events: none;
+  display: grid; justify-items: center; gap: 1px; padding: 6px 12px; border-radius: 10px; white-space: nowrap;
+  font: 12px/1.35 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #55555a; background: #fff;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.06), 0 18px 40px -18px rgb(0 0 0 / 0.3);
+  transition: opacity 0.18s ease, translate 0.18s ease;
 }
-
-.site-tab:hover {
-  color: var(--text);
-  background: color-mix(in srgb, var(--text) 6%, transparent);
+.dock__name b { font-size: 13.5px; color: #1d1d1f; }
+.dock__app:hover .dock__name, .dock__app:focus-visible .dock__name { opacity: 1; translate: -50% 0; }
+.dock__app:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 12px; }
+@media (max-width: 640px) { .dock__app img { width: 46px; height: 46px; } }
+@media (prefers-color-scheme: dark) {
+  .dock { background: rgb(28 30 36 / 0.62); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.18), 0 12px 34px -12px rgb(0 0 0 / 0.6); }
+  .dock__name { background: #2c2c2e; color: #aeaeb2; }
+  .dock__name b { color: #f5f5f7; }
 }
-
-.site-tab:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
-.site-tab.is-active {
-  position: relative;
-  z-index: 1;
-  color: var(--text);
-  background: var(--bg);
-}
-
-.site-tab.is-active:hover {
-  background: var(--bg);
-}
-
-/* Flared "shoulders" at bottom-outer corners — bar curves smoothly into tab */
-.site-tab.is-active::before,
-.site-tab.is-active::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-}
-
-.site-tab.is-active::before {
-  left: -14px;
-  background: radial-gradient(circle at 0 0, transparent 14px, var(--bg) 14px);
-}
-
-.site-tab.is-active::after {
-  right: -14px;
-  background: radial-gradient(circle at 100% 0, transparent 14px, var(--bg) 14px);
-}
+@media (prefers-reduced-motion: reduce) { .dock__app img, .dock__name { transition: none; } }
