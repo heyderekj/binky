@@ -148,7 +148,9 @@
    glow around the desktop's edge while it thinks. */
 @property --fmb-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
 @keyframes fmb-spin { to { --fmb-a: 360deg; } }
-.fmb-orb { flex: none; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.55), 0 0 10px rgb(167 123 255 / 0.45); animation: fmb-spin 3s linear infinite; }
+.fmb-orb { flex: none; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.55), 0 0 10px rgb(167 123 255 / 0.45); }
+/* Orbs and the edge glow only move while an answer is being written; idle animation repainted under the Dock's blur and flickered. */
+.fmb-thinking .fmb-orb, .is-thinking .fmb-orb, .fask.is-thinking ~ .fask__answer .fmb-orb { animation: fmb-spin 3s linear infinite; }
 .fmb-result--ask span:last-child { font-weight: 600; }
 .fmb-result--ask.is-on .fmb-orb, .fmb-result--ask:hover .fmb-orb { box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.9); }
 .fmb-answer[hidden] { display: none; }
@@ -164,7 +166,8 @@
 .fmb-glow i { position: absolute; inset: 0; border-radius: inherit; padding: 3px;
   background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
-  animation: fmb-spin 2.2s linear infinite; }
+}
+.fmb-thinking .fmb-glow i { animation: fmb-spin 2.2s linear infinite; }
 .fmb-glow i + i { padding: 16px; filter: blur(16px); opacity: 0.7; }
 @media (prefers-reduced-motion: reduce) { .fmb-orb, .fmb-glow i { animation: none; } }
 
