@@ -343,12 +343,51 @@
 @keyframes bk-pulse { from { opacity: 0.17; } to { opacity: 0.42; } }
 .bk-sheet__foot { font-size: 10px; color: var(--bk-2); }
 
+/* ---------- Watch status in the organizer: pause and resume ---------- */
+.bk-watch.is-watching .bk-dot { background: var(--bk-green); box-shadow: 0 0 4px color-mix(in srgb, var(--bk-green) 55%, transparent); }
+.bk-card:has(.bk-watch.is-watching) .bk-rrow .bk-dot { background: var(--bk-green); }
+.bk-watch__btn { display: grid; place-items: center; border-radius: 50% !important; }
+.bk-watch.is-watching .bk-watch__btn .bk-i { color: var(--bk-accent); }
+
+/* ---------- Rule editor sheet (grouped form, Cancel / title / Save) ---------- */
+.bk-editor.bk-scale { --bk-w: 640px; }
+.bk-editor {
+  position: relative; height: 620px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; background: var(--bk-form);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12), 0 24px 60px -18px rgb(70 0 25 / 0.45), 0 6px 16px -6px rgb(70 0 25 / 0.2);
+}
+@media (prefers-color-scheme: dark) { .bk-editor { box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 24px 60px -18px rgb(0 0 0 / 0.8); } }
+.bk-editor::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 48px; background: linear-gradient(transparent, var(--bk-form)); pointer-events: none; }
+.bk-editor__bar { flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 54px; padding: 0 14px; }
+.bk-editor__bar b { font-size: 13px; font-weight: 700; }
+.bk-editor__bar .bk-btn:last-child { justify-self: end; }
+.bk-editor__bar .bk-btn:first-child { justify-self: start; }
+.bk-editor .bk-form { padding-top: 0; }
+.bk-editor .bk-form__h:first-child { padding-top: 4px; }
+.bk-btn--cap { height: 28px; padding: 0 14px; border-radius: 999px; font-size: 13px; }
+.bk-form__foot { padding: 6px 10px 0; font-size: 10.5px; line-height: 1.35; color: var(--bk-2); }
+.bk-pop { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.bk-pop .bk-i { font-size: 10px; color: var(--bk-2); }
+.bk-field--block { flex: 1 1 auto; margin-left: 0; justify-content: flex-start; }
+.bk-field--mono { height: auto; min-height: 52px; align-items: flex-start; padding: 6px 8px; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; line-height: 1.45; white-space: normal; }
+.bk-frow--stack { flex-direction: column; align-items: stretch; gap: 6px; }
+.bk-frow--stack .bk-field { flex: none; width: 100%; }
+.bk-capline { font-size: 10px; line-height: 1.35; color: var(--bk-2); }
+.bk-disc { gap: 8px; }
+.bk-disc .bk-i { font-size: 10px; color: var(--bk-2); }
+.bk-switch.is-on { background: var(--bk-accent); }
+.bk-switch.is-on::before { translate: 12px 0; }
+
 /* ---------- Narrow desktops: drop the sidebars, as Slinky does ---------- */
 @container (max-width: 560px) {
   .bk-side { display: none; }
   .bk-scale.bk-org { --bk-w: 500px; }
   .bk-scale.bk-prefs { --bk-w: 520px; }
   .bk-scale.bk-scene { --bk-w: 520px; }
+  .bk-scale.bk-editor { --bk-w: 480px; }
+  /* The watch scene is about the sidebar, so a narrow desktop keeps the sidebar and drops the main pane. */
+  .bk-scale.bk-org.bk-org--side { --bk-w: 340px; }
+  .bk-org--side .bk-side { display: flex; flex: 1; width: auto; margin: 8px; }
+  .bk-org--side .bk-main { display: none; }
   .bk-org .bk-tb, .bk-behind .bk-tb { padding-left: 16px; }
   .bk-tb .bk-lights--narrow { display: flex; }
 }

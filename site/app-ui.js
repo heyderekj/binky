@@ -1,7 +1,8 @@
 /*
  * The recreated Binky windows on the homepage (app-ui.css): the organizer counts through a Quick Sort
- * when it scrolls into view, the Routines pane picks and switches routines, and the Currently sorting
- * sheet counts up and pauses. Every file name is made up. Everything honors Reduced Motion.
+ * when it scrolls into view, the watch status pauses and resumes, the Routines pane picks and switches
+ * routines, and the Currently sorting sheet counts up and pauses. Guided feature rows open a scene per
+ * step. Every file name is made up. Everything honors Reduced Motion.
  */
 (function () {
   'use strict';
@@ -174,7 +175,88 @@
     }
     rows.forEach(function (row, i) { row.addEventListener('click', function () { sel = i; render(); }); });
     if (toggle) toggle.addEventListener('click', function () { routines[sel].on = !routines[sel].on; render(); });
+    // Opening its step starts the pane fresh.
+    var scene = win.closest('[data-scene]');
+    if (scene) scene.addEventListener('scene:show', function () {
+      sel = 0;
+      routines.forEach(function (r) { r.on = true; });
+      if (list && top) list.scrollTop = top.offsetTop - 6;
+      render();
+    });
     render();
+  }
+
+  /* ---------- The organizer's watch status: pause and resume, keep the routines ---------- */
+  function watchDemo(win) {
+    var row = $('[data-watch]', win);
+    var label = $('[data-watch-label]', win);
+    var btn = $('[data-watch-toggle]', win);
+    if (!row || !btn) return;
+    var use = btn.querySelector('use');
+    function set(watching) {
+      row.classList.toggle('is-watching', watching);
+      if (label) label.textContent = watching ? 'Watching 2 folders' : 'Paused';
+      btn.setAttribute('aria-label', watching ? 'Pause watching' : 'Resume watching');
+      if (use) use.setAttribute('href', watching ? '#sf-pause-circle' : '#sf-play-circle');
+    }
+    btn.addEventListener('click', function () { set(!row.classList.contains('is-watching')); });
+    var scene = win.closest('[data-scene]');
+    if (scene) scene.addEventListener('scene:show', function () { set(true); });
+  }
+
+  /* ---------- Guided feature rows: each step opens its scene on the desktop ----------
+   * While the row is at least 45% on screen the steps advance every 6.5 seconds; hovering holds the
+   * current step, a click or the arrow keys take over, and Reduce Motion turns advancing off.
+   * Opening a scene sends it "scene:show" so a demo inside can start again. */
+  function guided(row) {
+    var DUR = 6500;
+    var steps = $$('[data-step]', row);
+    var scenes = $$('[data-scene]', row);
+    var at = 0, timer = 0, inView = false, hover = false;
+    row.style.setProperty('--g-dur', DUR + 'ms');
+    function schedule() {
+      clearTimeout(timer);
+      var playing = inView && !hover && !still();
+      row.classList.toggle('is-playing', playing);
+      if (playing) timer = setTimeout(function () { open((at + 1) % steps.length); }, DUR);
+    }
+    function open(n, focus) {
+      at = n;
+      steps.forEach(function (s, k) {
+        var on = k === n;
+        s.classList.toggle('is-on', on);
+        s.setAttribute('aria-selected', String(on));
+        s.tabIndex = on ? 0 : -1;
+        // Restart the progress line.
+        var bar = s.querySelector('.g-step__bar');
+        if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+      });
+      scenes.forEach(function (sc, k) {
+        var on = k === n;
+        sc.classList.toggle('is-on', on);
+        sc.hidden = !on;
+        if (on) sc.dispatchEvent(new CustomEvent('scene:show'));
+      });
+      if (focus) steps[n].focus();
+      schedule();
+    }
+    steps.forEach(function (s, k) {
+      s.addEventListener('click', function () { open(k); });
+      s.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        open((at + d + steps.length) % steps.length, true);
+      });
+    });
+    row.addEventListener('pointerenter', function () { hover = true; schedule(); });
+    row.addEventListener('pointerleave', function () { hover = false; schedule(); });
+    if (mq && mq.addEventListener) mq.addEventListener('change', schedule);
+    if (!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      inView = entries[0].isIntersecting;
+      schedule();
+    }, { threshold: 0.45 }).observe(row);
   }
 
   /* ---------- Currently sorting: the count climbs, Pause holds it ---------- */
@@ -237,6 +319,8 @@
     $$('[data-bk-sort]').forEach(sortDemo);
     $$('[data-bk-routines]').forEach(routinesDemo);
     $$('[data-bk-sheet]').forEach(sheetDemo);
+    $$('[data-bk-watch]').forEach(watchDemo);
+    $$('[data-guided]').forEach(guided);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
