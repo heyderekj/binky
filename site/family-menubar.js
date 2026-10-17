@@ -244,7 +244,7 @@
   const toast = (text) => {
     const t = document.createElement('div');
     t.className = 'fmb-toast';
-    t.innerHTML = `<img src="${icon()}" alt="" width="34" height="34" /><span><b>${app}</b><small></small></span>`;
+    t.innerHTML = `<img src="${icon()}" alt="" width="34" height="34" /><span><b>${app}<time>now</time></b><small></small></span>`;
     t.querySelector('small').textContent = text;
     desk.append(t);
     requestAnimationFrame(() => t.classList.add('is-on'));
