@@ -1,36 +1,43 @@
-/* The family Dock: the same app switcher on every Testament Made app site (Dinky, Binky, Slinky),
-   along the bottom edge like the macOS Dock. Big app icons on a glass shelf, a dot under the current app,
-   magnification toward the pointer and a name label above. File name kept from the old tab strip so every
-   page picks it up. */
+/* The family Dock, shared by every Testament Made app site. File name kept from the old tab strip. */
+/* ---------- The family Dock (bottom) ----------
+   Every Testament Made app site ends with the same Dock along the bottom edge: Dinky, Binky, Slinky.
+   Big app icons on a glass shelf, a dot under the app you're on, magnification toward the pointer and a
+   name label above, like the macOS Dock. */
 .dock {
-  position: fixed; z-index: 45; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); translate: -50% 0;
-  display: flex; align-items: flex-end; gap: 10px; padding: 9px 12px 11px; border-radius: 26px;
   background: rgb(250 252 255 / 0.62);
   -webkit-backdrop-filter: blur(22px) saturate(180%); backdrop-filter: blur(22px) saturate(180%);
   box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.9), inset 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 12px 34px -12px rgb(20 30 60 / 0.35);
+  position: fixed; z-index: 45; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); translate: -50% 0;
+  display: flex; align-items: flex-end; gap: 10px; padding: 9px 12px 11px; border-radius: 26px;
 }
-body { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
-.dock__app { position: relative; display: grid; justify-items: center; text-decoration: none; color: inherit; }
-.dock__app img { width: 54px; height: 54px; border-radius: 23%; transform-origin: 50% 100%; transition: scale 0.25s cubic-bezier(0.22, 1, 0.36, 1), translate 0.25s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 6px 14px -6px rgb(10 20 50 / 0.4); }
-.dock__app.is-current::after { content: ''; position: absolute; bottom: -8px; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.6; }
-@media (hover: hover) {
-  .dock__app:hover img { scale: 1.45; translate: 0 -8px; }
-  .dock__app:hover + .dock__app img, .dock__app:has(+ .dock__app:hover) img { scale: 1.18; translate: 0 -3px; }
+.dock__app { position: relative; display: grid; justify-items: center; text-decoration: none; margin-inline: calc((var(--mag, 1) - 1) * 24px); transition: margin 0.12s linear; }
+.dock.is-tracking .dock__app { transition: none; }
+.dock__app img {
+  width: 54px; height: 54px; border-radius: 23%; transform-origin: 50% 100%;
+  box-shadow: 0 6px 14px -6px rgb(10 40 80 / 0.4);
+  scale: var(--mag, 1); translate: 0 calc((var(--mag, 1) - 1) * -10px);
+  transition: scale 0.12s linear, translate 0.12s linear;
 }
+.dock.is-tracking .dock__app img { transition: none; }
+.dock__app.is-current::after { content: ''; position: absolute; bottom: -8px; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.dock__app.is-launching img { animation: dock-bounce 0.9s cubic-bezier(.3, .7, .4, 1) both; }
+@keyframes dock-bounce { 0%, 100% { translate: 0 0; } 25% { translate: 0 -22px; } 50% { translate: 0 0; } 70% { translate: 0 -12px; } }
+/* The name, like the Dock's: one word in a small rounded label, above the icon. */
 .dock__name {
-  position: absolute; bottom: calc(100% + 30px); left: 50%; translate: -50% 4px; opacity: 0; pointer-events: none;
-  display: grid; justify-items: center; gap: 1px; padding: 6px 12px; border-radius: 10px; white-space: nowrap;
-  font: 12px/1.35 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #55555a; background: #fff;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 0.06), 0 18px 40px -18px rgb(0 0 0 / 0.3);
-  transition: opacity 0.18s ease, translate 0.18s ease;
+  position: absolute; bottom: calc(100% + 18px + (var(--mag, 1) - 1) * 64px); left: 50%; translate: -50% 0; opacity: 0; pointer-events: none;
+  padding: 3px 10px 4px; border-radius: 7px; white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #1d1d1f;
+  background: rgb(246 248 250 / 0.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12), 0 4px 12px -4px rgb(0 0 0 / 0.25);
+  transition: opacity 0.12s ease;
 }
-.dock__name b { font-size: 13.5px; color: #1d1d1f; }
-.dock__app:hover .dock__name, .dock__app:focus-visible .dock__name { opacity: 1; translate: -50% 0; }
-.dock__app:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 12px; }
+.dock__app:hover .dock__name, .dock__app:focus-visible .dock__name { opacity: 1; }
+@media (prefers-color-scheme: dark) { .dock__name { background: rgb(40 42 48 / 0.82); box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.12), 0 4px 12px -4px rgb(0 0 0 / 0.5); } }
 @media (max-width: 640px) { .dock__app img { width: 46px; height: 46px; } }
+body { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+
 @media (prefers-color-scheme: dark) {
   .dock { background: rgb(28 30 36 / 0.62); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.18), 0 12px 34px -12px rgb(0 0 0 / 0.6); }
-  .dock__name { background: #2c2c2e; color: #aeaeb2; }
-  .dock__name b { color: #f5f5f7; }
+  .dock__name { color: #f5f5f7; }
 }
-@media (prefers-reduced-motion: reduce) { .dock__app img, .dock__name { transition: none; } }
+.dock__app.is-current::after { opacity: 0.6; }
