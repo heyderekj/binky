@@ -169,6 +169,7 @@
 .fask__field input::placeholder { color: color-mix(in oklch, currentColor 45%, transparent); }
 .fask.is-thinking .fask__field::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: inherit; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); filter: blur(4px); opacity: 0.85; animation: fmb-spin 2.2s linear infinite; }
 .fask__field:focus-within { box-shadow: 0 0 0 2px var(--fmb-accent, #0b7f8f), 0 10px 30px -18px rgb(0 0 0 / 0.35); }
+.fask__answer[hidden] { display: none; }
 .fask__answer { max-width: 640px; margin: 14px auto 0; padding: 16px 20px; border-radius: 22px; display: flex; gap: 12px; align-items: flex-start; text-align: left; background: color-mix(in oklch, currentColor 5%, transparent); }
 .fask__answer .fmb-orb { width: 22px; height: 22px; margin-top: 2px; }
 .fask__answer [data-ask-text] { margin: 0; font-size: 16px; line-height: 1.5; white-space: pre-wrap; }

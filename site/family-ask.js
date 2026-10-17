@@ -113,6 +113,11 @@
     const text = box?.querySelector('[data-ask-text]');
     const src = box?.querySelector('[data-ask-src]');
     let stop = () => {};
+    // Clearing the field puts the answer away.
+    input.addEventListener('input', () => {
+      if (input.value.trim() || !box) return;
+      stop(); box.hidden = true; form.classList.remove('is-thinking'); box.classList.remove('is-thinking');
+    });
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const q = input.value.trim();
