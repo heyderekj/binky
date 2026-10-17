@@ -140,4 +140,4 @@
 @media (prefers-color-scheme: dark) { .fmb-note, .fmb-empty { background: rgb(40 40 44 / 0.78); box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.6); } }
 
 .fmb-hog { gap: 9px !important; }
-.fmb-hog i { width: 18px; height: 18px; border-radius: 5px; display: grid; place-items: center; flex: none; font-style: normal; font-size: 10px; font-weight: 700; color: #fff; background: var(--c); }
+.fmb-hog img { width: 18px; height: 18px; flex: none; }

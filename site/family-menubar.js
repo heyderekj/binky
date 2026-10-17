@@ -223,8 +223,8 @@
   };
   // The battery menu. "Using Significant Energy" names a few apps everyone in design and dev jokes about
   // (a different three each time), never ours: they're small and native.
-  const HOGS = [['Google Chrome', '#4285f4'], ['Figma', '#a259ff'], ['Slack', '#4a154b'], ['Docker Desktop', '#1d63ed'], ['Xcode', '#1c7cf4'],
-    ['Adobe Creative Cloud', '#da1f26'], ['Microsoft Teams', '#5059c9'], ['Zoom', '#0b5cff'], ['Discord', '#5865f2'], ['Notion', '#2f3437'], ['Spotify', '#1db954']];
+  const HOGS = [['Google Chrome', 'chrome'], ['Figma', 'figma'], ['Slack', 'slack'], ['Xcode', 'xcode'], ['Zoom', 'zoom'], ['Discord', 'discord'], ['Notion', 'notion'],
+    ['Arc', 'arc'], ['Cursor', 'cursor'], ['Visual Studio Code', 'vscode'], ['Microsoft Edge', 'edge'], ['Steam', 'steam'], ['OBS', 'obs'], ['Firefox', 'firefox']];
   const battery = 60 + Math.floor(Math.random() * 35);
   const batteryMenu = (anchor) => {
     const hogs = HOGS.slice().sort(() => Math.random() - 0.5).slice(0, 3);
@@ -232,7 +232,7 @@
       <div class="fmb-row fmb-row--head"><b>Battery</b><span class="fmb-dimtext">${battery}%</span></div>
       <div class="fmb-item fmb-item--plain is-off"><span>Power Source: Battery</span></div>
       <hr class="fmb-sep" /><p class="fmb-label">Using Significant Energy</p>
-      ${hogs.map(([n, c]) => `<div class="fmb-item fmb-item--plain fmb-hog"><i style="--c:${c}">${n[0]}</i><span>${n}</span></div>`).join('')}
+      ${hogs.map(([n, slug]) => `<div class="fmb-item fmb-item--plain fmb-hog"><img src="/menubar-apps/${slug}.webp" alt="" width="18" height="18" /><span>${n}</span></div>`).join('')}
       <hr class="fmb-sep" /><div class="fmb-item fmb-item--plain"><span>Battery Settings…</span></div>`, 'fmb-menu fmb-batt', anchor);
   };
   // The clock opens Notification Center: what this page has told you, newest first.
