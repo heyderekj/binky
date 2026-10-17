@@ -12,6 +12,13 @@
       if (m) a.href = 'http://localhost:' + ports[m[1]] + '/';
     });
   }
+  // On the preview copies (dinky-preview.pages.dev and friends), the Dock moves between the previews.
+  if (/^(dinky|binky|slinky)-preview\.pages\.dev$/.test(location.hostname)) {
+    apps.forEach((a) => {
+      const m = a.hostname.match(/^(dinky|binky|slinky)files\.com$/);
+      if (m) a.href = 'https://' + m[1] + '-preview.pages.dev/';
+    });
+  }
   const still = () => document.documentElement.classList.contains('fmb-still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const set = (a, m) => a.style.setProperty('--mag', m.toFixed(3));
   let centers = [];
