@@ -11,7 +11,7 @@
   if (!bar) return;
   const app = bar.dataset.menubar;
   const desk = bar.closest('.desktop') || bar.parentElement;
-  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const still = () => document.documentElement.classList.contains('fmb-still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const emit = (action) => document.dispatchEvent(new CustomEvent('menubar:action', { detail: { app, action } }));
@@ -196,8 +196,7 @@
     });
   };
   const isDark = () => (forced === null ? sysDark() : forced);
-  let wifiOn = true; let bright = 100; let routinesOn = true;
-  const SUN = '<svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="currentColor"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/></g></svg>';
+  let wifiOn = true; let routinesOn = true;
   // Each app's own Control Center tile: [title, icon, subtitle(), press()].
   const appTile = {
     Slinky: () => {
@@ -212,13 +211,15 @@
   };
   const control = (anchor) => {
     const [tTitle, tIcon, tSub, tOn, tPress] = (appTile[app] || appTile.Slinky)();
+    const dmg = $('a[href$=".dmg"]')?.getAttribute('href') || $('a[data-download]')?.getAttribute('href') || '#';
     const family = $$('.dock__app').map((a) => ({ href: a.getAttribute('href'), img: a.querySelector('img')?.getAttribute('src'), name: a.querySelector('.dock__name')?.textContent || '', on: a.classList.contains('is-current') }));
     const p = showPanel(`
       <div class="fmb-cc">
         <button type="button" class="fmb-tile" data-t="wifi"><i>${bar.querySelector('[data-mb="wifi"] svg')?.outerHTML || ''}</i><span><b>Wi-Fi</b><small></small></span></button>
         <button type="button" class="fmb-tile" data-t="dark"><i><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"/></svg></i><span><b>Dark Mode</b><small></small></span></button>
         <button type="button" class="fmb-tile fmb-tile--wide" data-t="app"><i>${tIcon}</i><span><b>${tTitle}</b><small></small></span></button>
-        <label class="fmb-slider"><b>Display</b><span class="fmb-track">${SUN}<input type="range" min="35" max="100" value="${bright}" aria-label="Display brightness" /></span></label>
+        <button type="button" class="fmb-tile fmb-tile--sq" data-t="still"><i><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7v6M12 7v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i><span><b>Reduce Motion</b><small></small></span></button>
+        <a class="fmb-tile fmb-tile--sq" data-t="get" href="${dmg}"><i><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M10 3v9.5m-4-4 4 4 4-4M4 15.5h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span><b>Download</b><small>${app}${version() ? ' ' + version() : ''}</small></span></a>
         <div class="fmb-family">
           <a class="fmb-family__head" href="https://testamentmade.com" target="_blank" rel="noopener">Testament Made</a>
           <div class="fmb-family__apps">${family.map((f) => `<a href="${f.href}"${f.on ? ' class="is-on" aria-current="page"' : ''}><img src="${f.img}" alt="" width="36" height="36" /><span>${f.name}</span></a>`).join('')}</div>
@@ -229,17 +230,18 @@
       const w = p.querySelector('[data-t="wifi"]'); w.classList.toggle('is-on', wifiOn); w.querySelector('small').textContent = wifiOn ? 'Home' : 'Off';
       const d = p.querySelector('[data-t="dark"]'); d.classList.toggle('is-on', isDark()); d.querySelector('small').textContent = isDark() ? 'On' : 'Off';
       const t = p.querySelector('[data-t="app"]'); t.classList.toggle('is-on', !!tOn()); t.querySelector('small').textContent = tSub();
+      const m = p.querySelector('[data-t="still"]'); m.classList.toggle('is-on', still()); m.querySelector('small').textContent = still() ? 'On' : 'Off';
     };
     p.querySelector('[data-t="wifi"]').addEventListener('click', () => { wifiOn = !wifiOn; bar.querySelector('[data-mb="wifi"]')?.classList.toggle('fmb-dim', !wifiOn); sync(); });
     p.querySelector('[data-t="dark"]').addEventListener('click', () => { flip(!isDark()); sync(); });
     p.querySelector('[data-t="app"]').addEventListener('click', () => { tPress(); if (panel === p) setTimeout(sync, 60); });
-    const track = p.querySelector('.fmb-track');
-    p.querySelector('input').addEventListener('input', (e) => {
-      bright = +e.target.value;
-      track.style.setProperty('--v', String((bright - 35) / 65));
-      desk.style.filter = bright < 100 ? `brightness(${bright / 100})` : '';
+    p.querySelector('[data-t="still"]').addEventListener('click', () => {
+      // Turns off the page's animations and the demos' auto-advance (it can't turn off the system setting).
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.documentElement.classList.toggle('fmb-still');
+      document.dispatchEvent(new CustomEvent('menubar:motion'));
+      sync();
     });
-    track.style.setProperty('--v', String((bright - 35) / 65));
     sync();
   };
 

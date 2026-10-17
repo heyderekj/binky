@@ -7,7 +7,7 @@
 (function () {
   'use strict';
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
-  function still() { return !!(mq && mq.matches); }
+  function still() { return document.documentElement.classList.contains('fmb-still') || !!(mq && mq.matches); }
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }

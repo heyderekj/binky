@@ -65,27 +65,18 @@
 .fmb-tile.is-on i { background: var(--fmb-accent, #0b7f8f); color: #fff; }
 .fmb-tile b { display: block; font-size: 12.5px; font-weight: 600; }
 .fmb-tile small { display: block; font-size: 11px; color: var(--fmb-dim); }
-.fmb-slider { grid-column: 1 / -1; display: grid; gap: 9px; padding: 11px 12px 12px; border-radius: 20px; background: rgb(127 127 127 / 0.13); }
-.fmb-slider b { font-size: 12.5px; font-weight: 600; }
-/* Tahoe's thick capsule slider: the white fill is the value, with a sun at the start. No knob, no outline. */
-.fmb-track { --v: 1; position: relative; display: block; height: 28px; border-radius: 999px; overflow: hidden;
-  background: linear-gradient(to right, #fff 0 calc(14px + (100% - 14px) * var(--v)), rgb(127 127 127 / 0.28) 0); }
-.fmb-track svg { position: absolute; left: 8px; top: 7px; color: rgb(0 0 0 / 0.55); pointer-events: none; }
-.fmb-track input { -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background: transparent; border: 0; outline: 0; cursor: default; }
-.fmb-track input::-webkit-slider-runnable-track { height: 100%; background: transparent; border: 0; }
-.fmb-track input::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border: 0; background: transparent; box-shadow: none; }
-.fmb-track input::-moz-range-track { height: 100%; background: transparent; border: 0; }
-.fmb-track input::-moz-range-thumb { width: 28px; height: 28px; border: 0; background: transparent; }
-.fmb-track input:focus-visible { box-shadow: inset 0 0 0 2px var(--fmb-accent, #0b7f8f); border-radius: 999px; }
+.fmb-tile--sq { border-radius: 20px; flex-direction: column; align-items: flex-start; gap: 10px; padding: 11px 12px 12px; text-decoration: none; }
+/* Reduce Motion from Control Center: the page's animations stop, like the system setting. */
+.fmb-still *, .fmb-still *::before, .fmb-still *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 /* The family module: Testament Made and its three apps. */
 .fmb-family { grid-column: 1 / -1; padding: 11px 12px 12px; border-radius: 20px; background: rgb(127 127 127 / 0.13); }
 .fmb-family__head { font-size: 12.5px; font-weight: 600; color: var(--fmb-ink); text-decoration: none; }
-.fmb-family__head::after { content: ' ›'; color: var(--fmb-dim); }
+.fmb-family__head::after { content: ' \203A'; color: var(--fmb-dim); }
 .fmb-family__apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 9px; }
 .fmb-family__apps a { display: grid; justify-items: center; gap: 5px; padding: 8px 4px 6px; border-radius: 14px; font-size: 11.5px; color: var(--fmb-ink); text-decoration: none; transition: background 0.15s; }
 .fmb-family__apps a:hover { background: rgb(127 127 127 / 0.16); }
 .fmb-family__apps a.is-on { background: rgb(127 127 127 / 0.2); font-weight: 600; }
-.fmb-family__apps img { width: 36px; height: 36px; }
+.fmb-family__apps img { width: 36px; height: 36px; border-radius: 22.5%; }
 
 .fmb-toast { position: absolute; z-index: 45; top: 34px; right: 10px; width: min(340px, calc(100% - 20px)); display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px 12px 11px; border-radius: 20px; text-align: left;
   color: rgb(0 0 0 / 0.86); font: 13px/1.3 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;

@@ -12,7 +12,7 @@
       if (m) a.href = 'http://localhost:' + ports[m[1]] + '/';
     });
   }
-  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const still = () => document.documentElement.classList.contains('fmb-still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const set = (a, m) => a.style.setProperty('--mag', m.toFixed(3));
   let centers = [];
   if (matchMedia('(hover: hover)').matches) {
