@@ -88,14 +88,19 @@
 
   // ---------- Panels (About, Spotlight, Control Center) ----------
   let panel = null;
-  const closePanel = () => { panel?.remove(); panel = null; clearOn(); desk.classList.remove('fmb-thinking'); };
-  const showPanel = (html, cls, anchor) => {
+  let scrim = null;
+  const closePanel = () => {
+    panel?.remove(); panel = null; clearOn(); desk.classList.remove('fmb-thinking');
+    if (scrim) { scrim.remove(); scrim = null; document.documentElement.classList.remove('fmb-sheet-open'); }
+  };
+  // Panels open on the hero desktop; the phone Spotlight sheet opens over the whole page (host = body).
+  const showPanel = (html, cls, anchor, host = desk) => {
     close(); closePanel();
     panel = document.createElement('div');
     panel.className = `fmb-panel ${cls}`;
     panel.innerHTML = html;
     panel.addEventListener('click', (e) => e.stopPropagation());
-    desk.append(panel);
+    host.append(panel);
     if (anchor) { place(panel, anchor); anchor.classList.add('fmb-on'); }
     return panel;
   };
@@ -117,7 +122,8 @@
       <button type="button" class="fmb-btn">More Info…</button>`, 'fmb-about');
     p.querySelector('button').addEventListener('click', closePanel);
   };
-  const spotlight = (anchor) => {
+  // sheet: true opens it as a full-width sheet over the page (from the Dock's Search button on a phone).
+  const spotlight = (anchor, sheet = false) => {
     // Headlines (with their small label above, like "Recovery") and FAQ questions on this page.
     const clean = (t) => t.replace(/\s+/g, ' ').trim();
     const words = (el) => clean(el.innerText || el.textContent);
@@ -130,8 +136,19 @@
       ...$$('main summary, main .faq-q').filter((q) => !q.closest('.desktop')).map((q) => ({ el: q.closest('details, .faq-item') || q, text: clean(q.textContent), find: clean(q.textContent) })),
     ];
     // Tahoe's Spotlight: a large glass and a large placeholder.
-    const p = showPanel(`<label class="fmb-search"><svg class="fmb-glass" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.2" cy="10.2" r="7" fill="none" stroke="currentColor" stroke-width="2.1"/><path d="m15.4 15.4 5.6 5.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg><input type="text" placeholder="Spotlight Search" aria-label="Search this page" autocomplete="off" spellcheck="false" /></label><div class="fmb-results"></div>`, 'fmb-spot');
-    p.style.left = '50%'; p.style.top = '44px'; p.style.translate = '-50% 0';
+    const p = showPanel(`<label class="fmb-search"><svg class="fmb-glass" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.2" cy="10.2" r="7" fill="none" stroke="currentColor" stroke-width="2.1"/><path d="m15.4 15.4 5.6 5.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg><input type="search" enterkeyhint="search" placeholder="${sheet ? 'Search or ask' : 'Spotlight Search'}" aria-label="Search this page" autocomplete="off" spellcheck="false" />${sheet ? '<button type="button" class="fmb-cancel">Cancel</button>' : ''}</label><div class="fmb-results"></div>`, sheet ? 'fmb-spot fmb-sheet' : 'fmb-spot', null, sheet ? document.body : desk);
+    if (sheet) {
+      scrim = document.createElement('div');
+      scrim.className = 'fmb-scrim';
+      scrim.addEventListener('click', closePanel);
+      p.before(scrim);
+      document.documentElement.classList.add('fmb-sheet-open');
+      p.querySelector('.fmb-cancel').addEventListener('click', closePanel);
+      p.append(Object.assign(document.createElement('div'), { className: 'fmb-glow', innerHTML: '<i></i><i></i>' }));
+    } else {
+      p.style.left = '50%'; p.style.top = '44px'; p.style.translate = '-50% 0';
+    }
+    const glowHost = sheet ? p : desk;
     const input = p.querySelector('input');
     const list = p.querySelector('.fmb-results');
     let sel = 0; let shown = [];
@@ -149,17 +166,17 @@
       answer.hidden = false; p.classList.add('is-answering');
       const text = answer.querySelector('.fmb-answer__text'); const src = answer.querySelector('.fmb-answer__src');
       text.textContent = ''; src.hidden = true;
-      desk.classList.add('fmb-thinking');
+      glowHost.classList.add('fmb-thinking');
       stopAsk = window.familyAsk(q, {
         onSources: (list2) => window.familyAskSources?.(src, list2),
         onText: (t) => { text.textContent += t; },
-        onDone: () => desk.classList.remove('fmb-thinking'),
+        onDone: () => glowHost.classList.remove('fmb-thinking'),
       });
     };
     const render = () => {
       const raw = input.value.trim();
       const q = raw.toLowerCase();
-      answer.hidden = true; p.classList.remove('is-answering'); desk.classList.remove('fmb-thinking'); stopAsk();
+      answer.hidden = true; p.classList.remove('is-answering'); glowHost.classList.remove('fmb-thinking'); stopAsk();
       const hits = q ? sections.filter((s) => s.find.toLowerCase().includes(q)).slice(0, 5) : [];
       const askRow = canAsk && raw.length >= 2 ? [{ ask: true, text: raw }] : [];
       shown = looksLikeQuestion(raw) || !hits.length ? [...askRow, ...hits] : [...hits, ...askRow];
@@ -398,6 +415,24 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { close(); closePanel(); } });
   addEventListener('resize', close);
   bar.classList.add('fmb-live');
+  // A Search button at the end of the Dock, after a divider like the one before the Trash. On a phone it opens
+  // Spotlight as a full-width sheet; on a larger screen it opens the hero's own Spotlight.
+  const dockEl = document.querySelector('.dock');
+  if (dockEl && !dockEl.querySelector('.dock__find')) {
+    const find = document.createElement('button');
+    find.type = 'button';
+    find.className = 'dock__find';
+    find.setAttribute('aria-label', `Search or ask about ${app}`);
+    find.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="10.2" cy="10.2" r="6.6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.2 15.2 5.2 5.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+    find.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const phone = matchMedia('(max-width: 760px)').matches || !desk.getClientRects().length;
+      if (phone) return spotlight(null, true);
+      desk.scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'center' });
+      setTimeout(() => spotlight(bar.querySelector('[data-mb="spotlight"]')), still() ? 0 : 350);
+    });
+    dockEl.append(Object.assign(document.createElement('span'), { className: 'dock__divider' }), find);
+  }
   // The thinking glow around the desktop's edge (shown while Spotlight answers).
   desk.append(Object.assign(document.createElement('div'), { className: 'fmb-glow', innerHTML: '<i></i><i></i>' }));
 

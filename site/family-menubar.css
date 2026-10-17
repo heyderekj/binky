@@ -1,8 +1,10 @@
 /* The working hero menu bar (family-menubar.js), shared by Dinky, Binky and Slinky. Tahoe menus: frosted,
    rounded, accent-colored highlight. Each site sets --fmb-accent to its brand color. */
 .menubar.fmb-live [data-mb] { cursor: default; }
-.menubar.fmb-live [data-mb]:hover, .menubar .fmb-on { background: rgb(0 0 0 / 0.1); border-radius: 6px; }
-@media (prefers-color-scheme: dark) { .menubar.fmb-live [data-mb]:hover, .menubar .fmb-on { background: rgb(255 255 255 / 0.16); } }
+.menubar .fmb-on { background: rgb(0 0 0 / 0.1); border-radius: 6px; }
+@media (hover: hover) { .menubar.fmb-live [data-mb]:hover { background: rgb(0 0 0 / 0.1); border-radius: 6px; } }
+@media (prefers-color-scheme: dark) { .menubar .fmb-on { background: rgb(255 255 255 / 0.16); } }
+@media (prefers-color-scheme: dark) and (hover: hover) { .menubar.fmb-live [data-mb]:hover { background: rgb(255 255 255 / 0.16); } }
 .menubar .fmb-dim { opacity: 0.35; }
 .menubar .fmb-drop { background: var(--fmb-accent, #0b7f8f) !important; color: #fff; border-radius: 6px; }
 
@@ -22,8 +24,11 @@
 .fmb-menu { min-width: 200px; padding: 5px; border-radius: 12px; }
 .fmb-item { display: flex; align-items: center; gap: 24px; height: 24px; padding: 0 10px; border-radius: 7px; white-space: pre; }
 .fmb-item kbd { margin-left: auto; font: inherit; color: var(--fmb-dim); }
-.fmb-item:not(.is-off):hover { background: var(--fmb-accent, #0b7f8f); color: #fff; }
-.fmb-item:not(.is-off):hover kbd { color: rgb(255 255 255 / 0.8); }
+@media (hover: hover) {
+  .fmb-item:not(.is-off):hover { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+  .fmb-item:not(.is-off):hover kbd { color: rgb(255 255 255 / 0.8); }
+}
+.fmb-item:not(.is-off):active { background: var(--fmb-accent, #0b7f8f); color: #fff; }
 .fmb-item.is-off { color: var(--fmb-dim); }
 .fmb-sep { border: 0; height: 1px; margin: 5px 10px; background: var(--fmb-line); }
 
@@ -47,13 +52,14 @@
 .fmb-spot.has-results .fmb-results { padding: 4px 8px 8px; border-top: 1px solid var(--fmb-line); }
 .fmb-result { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 9px; cursor: default; }
 .fmb-result img { border-radius: 5px; }
-.fmb-result.is-on, .fmb-result:hover { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+.fmb-result.is-on { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+@media (hover: hover) { .fmb-result:hover { background: var(--fmb-accent, #0b7f8f); color: #fff; } }
 
 .fmb-ccp { width: 316px; padding: 12px; border-radius: 26px; }
 .fmb-cc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 /* Tahoe modules: soft glass blocks, no outlines. */
 .fmb-tile { appearance: none; border: 0; outline: 0; display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 9px; border-radius: 999px; text-align: left; font: inherit; color: var(--fmb-ink); background: rgb(127 127 127 / 0.13); cursor: default; transition: background 0.15s; }
-.fmb-tile:hover { background: rgb(127 127 127 / 0.2); }
+@media (hover: hover) { .fmb-tile:hover { background: rgb(127 127 127 / 0.2); } }
 .fmb-tile:focus-visible { box-shadow: 0 0 0 2px var(--fmb-accent, #0b7f8f); }
 .fmb-tile--wide { grid-column: 1 / -1; }
 .fmb-tile i { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: rgb(127 127 127 / 0.22); color: var(--fmb-ink); transition: background 0.15s, color 0.15s; }
@@ -182,5 +188,38 @@
 /* The FAQ's few core questions, and "Show all questions" for the rest (family-ask.js). */
 [data-faq-collapsed] .faq-more { display: none !important; }
 .faq-all { display: block; margin: 18px auto 0; height: 38px; padding: 0 18px; border-radius: 999px; border: 0; font: inherit; font-size: 14.5px; font-weight: 600; color: inherit; background: color-mix(in oklch, currentColor 7%, transparent); cursor: pointer; }
-.faq-all:hover { background: color-mix(in oklch, currentColor 12%, transparent); }
+@media (hover: hover) { .faq-all:hover { background: color-mix(in oklch, currentColor 12%, transparent); } }
 .faq-all:focus-visible { outline: 2px solid var(--fmb-accent, #0b7f8f); outline-offset: 2px; }
+
+/* The Dock's Search button, after a divider (family-menubar.js adds both). */
+.dock__divider { align-self: stretch; width: 1px; margin: 8px 4px; background: color-mix(in oklch, currentColor 18%, transparent); }
+.dock__find { flex: none; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 14px; border: 0; padding: 0; cursor: pointer;
+  color: rgb(0 0 0 / 0.72); background: rgb(255 255 255 / 0.72); box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.12), 0 4px 10px -4px rgb(0 0 0 / 0.25);
+  transition: transform 0.2s cubic-bezier(.22,1,.36,1); align-self: flex-end; }
+@media (hover: hover) { .dock__find:hover { transform: translateY(-4px) scale(1.08); } }
+.dock__find:active { transform: scale(0.94); }
+.dock__find:focus-visible { outline: 2px solid var(--fmb-accent, #0b7f8f); outline-offset: 3px; }
+@media (prefers-color-scheme: dark) { .dock__find { color: rgb(255 255 255 / 0.85); background: rgb(60 60 66 / 0.8); box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 4px 10px -4px rgb(0 0 0 / 0.5); } }
+@media (max-width: 560px) { .dock__find { width: 46px; height: 46px; border-radius: 12px; } }
+
+/* Spotlight as a sheet over the page, on phones: big field, Cancel, thumb-sized rows. */
+.fmb-scrim { position: fixed; inset: 0; z-index: 999; background: rgb(0 0 0 / 0.22); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: fmb-in 0.2s ease-out; }
+.fmb-panel.fmb-sheet { position: fixed; z-index: 1000; top: max(12px, env(safe-area-inset-top)); left: 50%; translate: -50% 0; width: min(640px, calc(100% - 24px)); border-radius: 24px; }
+.fmb-sheet .fmb-search { height: 56px; padding: 0 8px 0 16px; }
+.fmb-sheet .fmb-search input { font-size: 19px; }
+.fmb-sheet .fmb-search input::-webkit-search-cancel-button { display: none; }
+.fmb-cancel { flex: none; height: 40px; padding: 0 12px; border: 0; background: none; font: inherit; font-size: 16px; font-weight: 500; color: var(--fmb-accent, #0b7f8f); cursor: pointer; }
+.fmb-sheet .fmb-result { height: 46px; font-size: 15px; }
+.fmb-sheet .fmb-answer__text { font-size: 16px; }
+.fmb-sheet .fmb-glow { border-radius: inherit; }
+.fmb-sheet.fmb-thinking .fmb-glow { opacity: 1; }
+html.fmb-sheet-open { overflow: hidden; }
+
+/* Touch: finger-sized targets in the menu bar, its menus and panels, and the FAQ button. */
+@media (pointer: coarse) {
+  .menubar.fmb-live [data-mb] { min-height: 26px; }
+  .fmb-item { height: 36px; }
+  .fmb-net { height: 42px; }
+  .fmb-result { height: 44px; }
+  .faq-all { height: 44px; }
+}
