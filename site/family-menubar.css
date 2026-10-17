@@ -215,3 +215,14 @@ html.fmb-sheet-open { overflow: hidden; }
   .fmb-result { height: 44px; }
   .faq-all { height: 44px; }
 }
+
+/* The ask field's search button, and email addresses in answers (a mail link plus Copy). */
+.fask__field { padding-right: 8px; }
+.fask__go { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 999px; background: var(--fmb-accent, #0b7f8f); color: #fff; cursor: pointer; transition: transform .15s ease, filter .15s ease; }
+@media (hover: hover) { .fask__go:hover { filter: brightness(1.08); } }
+.fask__go:active { transform: scale(.94); }
+.fask__go:focus-visible { outline: 2px solid var(--fmb-accent, #0b7f8f); outline-offset: 2px; }
+.fask-mail { color: var(--fmb-accent, #0b7f8f); font-weight: 500; text-decoration: none; white-space: nowrap; }
+@media (hover: hover) { .fask-mail:hover { text-decoration: underline; } }
+.fask-copy { display: inline-block; vertical-align: 1px; margin-left: 2px; padding: 2px 9px; border: 0; border-radius: 999px; font: 500 12px/1.5 inherit; font-family: inherit; background: color-mix(in oklch, var(--fmb-accent, #0b7f8f) 14%, transparent); color: var(--fmb-accent, #0b7f8f); cursor: pointer; white-space: nowrap; }
+@media (hover: hover) { .fask-copy:hover { background: color-mix(in oklch, var(--fmb-accent, #0b7f8f) 22%, transparent); } }

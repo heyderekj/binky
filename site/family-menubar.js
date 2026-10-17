@@ -170,7 +170,7 @@
       stopAsk = window.familyAsk(q, {
         onSources: (list2) => window.familyAskSources?.(src, list2),
         onText: (t) => { text.textContent += t; },
-        onDone: () => glowHost.classList.remove('fmb-thinking'),
+        onDone: () => { glowHost.classList.remove('fmb-thinking'); window.familyLinkify?.(text); },
       });
     };
     const render = () => {

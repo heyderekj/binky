@@ -1,13 +1,15 @@
 // POST /api/ask: answers a question about this app, from this site's own words only.
 // One file, copied to all three Testament Made app sites (Dinky, Binky, Slinky). Needs a Workers AI binding
 // named AI on the Pages project. Knowledge is the site's /ask.json (FAQ with anchors, app name, voice),
-// /homepage.md and /llms.txt. Sources are picked here, by plain word overlap, so the links under an answer
+// /homepage.md and /llms.txt, plus the site's comparisons with other apps (ask.json's `compare`). Sources are picked here, by plain word overlap, so the links under an answer
 // always point at real FAQ entries; the model only writes the short answer.
 //
 // Streams Server-Sent Events: `sources` (JSON list), then `t` events with text, then `done`.
 
 const MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 const MAX_Q = 280;
+// Bump when the prompt or what answers are grounded in changes, so cached answers start over.
+const ANSWERS = 2;
 
 // Anything that looks like a key, token or private key. Never sent to the model, never cached.
 const SECRET = /(sk[-_](?:live|test|proj|ant)[-_A-Za-z0-9]{12,}|\bgh[pousr]_[A-Za-z0-9]{20,}|\bxox[abprs]-[A-Za-z0-9-]{10,}|\bAKIA[0-9A-Z]{16}\b|\bAIza[0-9A-Za-z_-]{30,}|\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?=[A-Za-z0-9_\-+/=]*\d)(?=[A-Za-z0-9_\-+/=]*[A-Za-z])[A-Za-z0-9_\-+/=]{32,}\b)/;
@@ -75,7 +77,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const sources = pickSources(q, site.faq || [], app);
 
   // Repeat questions come from the cache.
-  const key = new Request(`https://ask.cache/${encodeURIComponent(app)}/${site.version || ''}/${encodeURIComponent(q.toLowerCase())}`);
+  const key = new Request(`https://ask.cache/${encodeURIComponent(app)}/${site.version || ''}/a${ANSWERS}/${encodeURIComponent(q.toLowerCase())}`);
   const cache = caches.default;
   const hit = await cache.match(key);
   if (hit) {
@@ -86,14 +88,16 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.AI) return stream([sse('sources', sources), sse('t', { t: 'Answers are switched off right now. The FAQ below should help.' }), sse('done', {})]);
 
   const faqText = (site.faq || []).map((f) => `Q: ${f.q}\nA: ${f.a}`).join('\n\n');
+  const compareText = (site.compare || []).map((c) => `${c.name}:\n${c.text}`).join('\n\n');
   const system = [
     `You answer questions in the Spotlight search bar on the ${app} website (${site.line || ''}). ${app} is a free Mac app by Testament Made, LLC.`,
     `Answer ONLY from the CONTEXT below. If the context doesn't cover it, say you don't know and suggest emailing ${site.email || 'derek@testamentmade.com'}.`,
+    `For "how does it compare" questions, use COMPARISONS. With no app named, sum up what sets ${app} apart (from the context) and name a couple of the apps compared. For an app that isn't in COMPARISONS, say what ${app} does differently from the context, without guessing about the other app. Be fair to other apps.`,
     'Keep answers to one to three short sentences of plain text. No markdown, no lists, no headings. Never invent features, prices, versions or promises.',
     `Voice: ${site.voice || 'plain and friendly'}`,
     `If the question has nothing to do with ${app}, reply with one short, playful line (a light joke is welcome) that steers back to what ${app} does.`,
     'Never ask for, repeat or store keys, passwords or recovery codes.',
-    `\nCONTEXT\n\nFAQ:\n${faqText}\n\nHOMEPAGE:\n${home}\n\nMORE:\n${llms}${site.more ? `\n\nHELP:\n${site.more}` : ''}`,
+    `\nCONTEXT\n\nFAQ:\n${faqText}\n\nHOMEPAGE:\n${home}${compareText ? `\n\nCOMPARISONS:\n${compareText}` : ''}\n\nMORE:\n${llms}${site.more ? `\n\nHELP:\n${site.more}` : ''}`,
   ].join('\n');
 
   let ai;

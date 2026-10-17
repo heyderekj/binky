@@ -421,3 +421,8 @@
   .bk-pulse::before { animation: none; opacity: 0.3; }
   .bk-bar__fill, .bk-banner, .bk-empty, .bk-activity, .bk-switch::before { transition: none !important; }
 }
+
+/* Controls read a touch heavier (macOS draws small controls bolder than the web does) and never wrap. */
+.bk-btn { font-weight: 500; white-space: nowrap; }
+.bk-btn--prominent { font-weight: 600; }
+.bk-chip { white-space: nowrap; }

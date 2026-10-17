@@ -106,9 +106,46 @@
   };
   window.familyAskSources = sourceLinks;
 
+  // Email addresses in an answer become a mail link with a Copy button next to it. Runs once the answer is done.
+  const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+  const linkify = (el) => {
+    const text = el?.textContent || '';
+    if (!EMAIL.test(text)) return;
+    EMAIL.lastIndex = 0;
+    el.textContent = '';
+    let last = 0;
+    for (const m of text.matchAll(EMAIL)) {
+      const addr = m[0].replace(/\.$/, '');
+      el.append(text.slice(last, m.index));
+      const a = document.createElement('a');
+      a.href = `mailto:${addr}`; a.textContent = addr; a.className = 'fask-mail';
+      const copy = document.createElement('button');
+      copy.type = 'button'; copy.className = 'fask-copy'; copy.textContent = 'Copy';
+      copy.setAttribute('aria-label', `Copy ${addr}`);
+      copy.addEventListener('click', async (e) => {
+        e.preventDefault(); e.stopPropagation();
+        try { await navigator.clipboard.writeText(addr); copy.textContent = 'Copied'; }
+        catch { copy.textContent = 'Press ⌘C'; getSelection()?.selectAllChildren(a); }
+        setTimeout(() => { copy.textContent = 'Copy'; }, 1600);
+      });
+      el.append(a, '\u00a0', copy);
+      last = m.index + addr.length;
+    }
+    el.append(text.slice(last));
+  };
+  window.familyLinkify = linkify;
+
   // The FAQ field: <form data-ask> with an input[name=q], an [data-ask-answer] with [data-ask-text] and [data-ask-src].
   for (const form of document.querySelectorAll('[data-ask]')) {
     const input = form.querySelector('input[name="q"]');
+    // A search button at the right end of the field, for asking with the pointer.
+    const field = input.closest('.fask__field');
+    if (field && !field.querySelector('.fask__go')) {
+      const go = document.createElement('button');
+      go.type = 'submit'; go.className = 'fask__go'; go.setAttribute('aria-label', 'Ask');
+      go.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>';
+      field.append(go);
+    }
     const box = form.parentElement.querySelector('[data-ask-answer]');
     const text = box?.querySelector('[data-ask-text]');
     const src = box?.querySelector('[data-ask-src]');
@@ -128,7 +165,7 @@
       stop = ask(q, {
         onSources: (s) => sourceLinks(src, s),
         onText: (t) => { text.textContent += t; },
-        onDone: () => { form.classList.remove('is-thinking'); box.classList.remove('is-thinking'); },
+        onDone: () => { form.classList.remove('is-thinking'); box.classList.remove('is-thinking'); linkify(text); },
       });
     });
   }

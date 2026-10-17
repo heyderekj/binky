@@ -49,11 +49,27 @@ def tag(m: re.Match) -> str:
 page = re.sub(r'(<div (?:id="[^"]*" )?class="faq-item[^"]*"[^>]*>)(.*?</p>\s*)(?=</div>)', tag, page, flags=re.S)
 page_path.write_text(page)
 
+# The compare pages (site/compare/<tool>/), so "how does it compare?" has real answers. Title, summary and
+# the main text up to "More comparisons", trimmed.
+compare = []
+for cpage in sorted((ROOT / 'site' / 'compare').glob('*/index.html')):
+    src = cpage.read_text()
+    h1 = re.search(r'<h1[^>]*>(.*?)</h1>', src, re.S)
+    if not h1:
+        continue
+    body = re.sub(r'<(script|style|nav|header|footer)\b.*?</\1>', ' ', src, flags=re.S)
+    body = text(body)
+    title = text(h1.group(1))
+    start = body.find(title)
+    main = body[start + len(title):] if start >= 0 else body
+    main = main.split('More comparisons')[0].strip()
+    compare.append({'name': title, 'url': f'/compare/{cpage.parent.name}/', 'text': main[:700]})
+
 version = (re.search(r'\bv(\d+\.\d+\.\d+)\b', page) or [None, ''])[1]
 help_md = (ROOT / cfg['help']).read_text() if (ROOT / cfg['help']).exists() else ''
 data = {
     'app': cfg['app'], 'line': cfg['line'], 'version': version, 'email': 'derek@testamentmade.com',
-    'voice': cfg['voice'], 'faq': faq, 'more': help_md,
+    'voice': cfg['voice'], 'faq': faq, 'compare': compare, 'more': help_md,
 }
 (ROOT / 'site' / 'ask.json').write_text(json.dumps(data, ensure_ascii=False, indent=1) + '\n')
-print(f"{cfg['app']}: {len(faq)} FAQ items, help {len(help_md)} chars, v{version}", file=sys.stderr)
+print(f"{cfg['app']}: {len(faq)} FAQ items, {len(compare)} comparisons, help {len(help_md)} chars, v{version}", file=sys.stderr)
