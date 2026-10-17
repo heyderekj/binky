@@ -408,6 +408,7 @@
   });
   // Like the Mac: once a menu is open, moving across the bar opens the others.
   bar.addEventListener('pointerover', (e) => {
+    if (e.pointerType !== 'mouse') return; // a finger taps titles; it shouldn't switch menus on the way
     const item = e.target.closest('[data-mb]');
     if (open && item && menuFor[item.dataset.mb] && open.key !== item.dataset.mb) openMenu(item.dataset.mb, item);
   });
