@@ -189,22 +189,50 @@
     });
   };
   const isDark = () => (forced === null ? sysDark() : forced);
-  let wifiOn = true; let bright = 100;
+  let wifiOn = true; let bright = 100; let routinesOn = true;
+  const SUN = '<svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="currentColor"/><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/></g></svg>';
+  // Each app's own Control Center tile: [title, icon, subtitle(), press()].
+  const appTile = {
+    Slinky: () => {
+      const locked = () => !!$('[data-mb-window].is-locked');
+      return ['Lock Slinky', '<svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M10 2a4.2 4.2 0 0 1 4.2 4.2V8h.6A1.7 1.7 0 0 1 16.5 9.7v6.6a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7V9.7A1.7 1.7 0 0 1 5.2 8h.6V6.2A4.2 4.2 0 0 1 10 2Zm0 1.8a2.4 2.4 0 0 0-2.4 2.4V8h4.8V6.2A2.4 2.4 0 0 0 10 3.8Z" fill="currentColor"/></svg>',
+        () => (locked() ? 'Locked' : 'Unlocked'), locked, () => { if (!locked()) emit('lock'); }];
+    },
+    Dinky: () => ['Clipboard Compress', '<svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><rect x="4" y="3.5" width="12" height="14" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7" y="2" width="6" height="3.4" rx="1.2" fill="currentColor"/><path d="M10 8v6m-2.6-2.6L10 14l2.6-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      () => '⇧⌘V', () => false, () => { closePanel(); toast('Compressed the clipboard image: 1.4 MB → 212 KB.'); }],
+    Binky: () => ['Routines', '<svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M3 6.5a1.5 1.5 0 0 1 1.5-1.5h3.6l1.5 1.6h5.9A1.5 1.5 0 0 1 17 8.1v6.4a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 14.5z" fill="currentColor"/></svg>',
+      () => (routinesOn ? 'Watching 2 folders' : 'Paused'), () => routinesOn, () => { routinesOn = !routinesOn; }],
+  };
   const control = (anchor) => {
+    const [tTitle, tIcon, tSub, tOn, tPress] = (appTile[app] || appTile.Slinky)();
+    const family = $$('.dock__app').map((a) => ({ href: a.getAttribute('href'), img: a.querySelector('img')?.getAttribute('src'), name: a.querySelector('.dock__name')?.textContent || '', on: a.classList.contains('is-current') }));
     const p = showPanel(`
       <div class="fmb-cc">
         <button type="button" class="fmb-tile" data-t="wifi"><i>${bar.querySelector('[data-mb="wifi"] svg')?.outerHTML || ''}</i><span><b>Wi-Fi</b><small></small></span></button>
-        <button type="button" class="fmb-tile" data-t="dark"><i><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.5a7.5 7.5 0 0 1 0 15z" fill="currentColor"/></svg></i><span><b>Dark Mode</b><small></small></span></button>
-        <label class="fmb-slider"><b>Display</b><input type="range" min="35" max="100" value="${bright}" aria-label="Display brightness" /></label>
+        <button type="button" class="fmb-tile" data-t="dark"><i><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"/></svg></i><span><b>Dark Mode</b><small></small></span></button>
+        <button type="button" class="fmb-tile fmb-tile--wide" data-t="app"><i>${tIcon}</i><span><b>${tTitle}</b><small></small></span></button>
+        <label class="fmb-slider"><b>Display</b><span class="fmb-track">${SUN}<input type="range" min="35" max="100" value="${bright}" aria-label="Display brightness" /></span></label>
+        <div class="fmb-family">
+          <a class="fmb-family__head" href="https://testamentmade.com" target="_blank" rel="noopener">Testament Made</a>
+          <div class="fmb-family__apps">${family.map((f) => `<a href="${f.href}"${f.on ? ' class="is-on" aria-current="page"' : ''}><img src="${f.img}" alt="" width="36" height="36" /><span>${f.name}</span></a>`).join('')}</div>
+        </div>
       </div>`, 'fmb-ccp', anchor);
     p.style.left = 'auto'; p.style.right = '8px';
     const sync = () => {
       const w = p.querySelector('[data-t="wifi"]'); w.classList.toggle('is-on', wifiOn); w.querySelector('small').textContent = wifiOn ? 'Home' : 'Off';
       const d = p.querySelector('[data-t="dark"]'); d.classList.toggle('is-on', isDark()); d.querySelector('small').textContent = isDark() ? 'On' : 'Off';
+      const t = p.querySelector('[data-t="app"]'); t.classList.toggle('is-on', !!tOn()); t.querySelector('small').textContent = tSub();
     };
     p.querySelector('[data-t="wifi"]').addEventListener('click', () => { wifiOn = !wifiOn; bar.querySelector('[data-mb="wifi"]')?.classList.toggle('fmb-dim', !wifiOn); sync(); });
     p.querySelector('[data-t="dark"]').addEventListener('click', () => { flip(!isDark()); sync(); });
-    p.querySelector('input').addEventListener('input', (e) => { bright = +e.target.value; desk.style.filter = bright < 100 ? `brightness(${bright / 100})` : ''; });
+    p.querySelector('[data-t="app"]').addEventListener('click', () => { tPress(); if (panel === p) setTimeout(sync, 60); });
+    const track = p.querySelector('.fmb-track');
+    p.querySelector('input').addEventListener('input', (e) => {
+      bright = +e.target.value;
+      track.style.setProperty('--v', String((bright - 35) / 65));
+      desk.style.filter = bright < 100 ? `brightness(${bright / 100})` : '';
+    });
+    track.style.setProperty('--v', String((bright - 35) / 65));
     sync();
   };
 
