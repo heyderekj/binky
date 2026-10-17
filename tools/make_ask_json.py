@@ -37,13 +37,16 @@ def tag(m: re.Match) -> str:
     open_tag, body = m.group(1), m.group(2)
     q = text(re.search(r'<h3 class="faq-q"[^>]*>(.*?)</h3>', body, re.S).group(1))
     a = text(re.search(r'<p class="faq-a"[^>]*>(.*?)</p>', body, re.S).group(1))
-    fid = slug(q)
+    # Keep an id the page already uses (other links point at it); otherwise make one from the question.
+    existing = re.search(r'\sid="([^"]+)"', open_tag)
+    fid = existing.group(1) if existing else slug(q)
     faq.append({'id': fid, 'q': q, 'a': a})
-    open_tag = re.sub(r'\s+id="faq-[^"]*"', '', open_tag)
-    return open_tag.replace('class="faq-item"', f'class="faq-item" id="{fid}"', 1) + body
+    if not existing:
+        open_tag = open_tag.replace('class="faq-item', f'id="{fid}" class="faq-item', 1)
+    return open_tag + body
 
 
-page = re.sub(r'(<div class="faq-item"[^>]*>)(.*?</p>\s*)(?=</div>)', tag, page, flags=re.S)
+page = re.sub(r'(<div (?:id="[^"]*" )?class="faq-item[^"]*"[^>]*>)(.*?</p>\s*)(?=</div>)', tag, page, flags=re.S)
 page_path.write_text(page)
 
 version = (re.search(r'\bv(\d+\.\d+\.\d+)\b', page) or [None, ''])[1]

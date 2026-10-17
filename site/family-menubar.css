@@ -180,3 +180,9 @@
 .fask__answer [data-ask-src] a { color: var(--fmb-accent, #0b7f8f); }
 .fask__field { position: relative; isolation: isolate; }
 @media (prefers-reduced-motion: reduce) { .fask.is-thinking .fask__field::before { animation: none; } }
+
+/* The FAQ's few core questions, and "Show all questions" for the rest (family-ask.js). */
+[data-faq-collapsed] .faq-more { display: none !important; }
+.faq-all { display: block; margin: 18px auto 0; height: 38px; padding: 0 18px; border-radius: 999px; border: 0; font: inherit; font-size: 14.5px; font-weight: 600; color: inherit; background: color-mix(in oklch, currentColor 7%, transparent); cursor: pointer; }
+.faq-all:hover { background: color-mix(in oklch, currentColor 12%, transparent); }
+.faq-all:focus-visible { outline: 2px solid var(--fmb-accent, #0b7f8f); outline-offset: 2px; }

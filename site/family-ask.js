@@ -56,10 +56,38 @@
   }
   window.familyAsk = ask;
 
+  // The FAQ shows a few core questions; the rest wait behind "Show all questions" (data-faq-collapsed on the
+  // list, .faq-more on the extra items, [data-faq-all] on the button). Anything that jumps to a hidden one opens the list.
+  const expand = (list) => {
+    if (!list) return;
+    list.removeAttribute('data-faq-collapsed');
+    const btn = list.parentElement.querySelector('[data-faq-all]');
+    if (btn) btn.hidden = true;
+  };
+  window.familyReveal = (el) => { if (el?.closest?.('.faq-more')) expand(el.closest('[data-faq-collapsed]')); };
+  for (const btn of document.querySelectorAll('[data-faq-all]')) {
+    btn.addEventListener('click', () => {
+      const list = btn.parentElement.querySelector('[data-faq-collapsed]');
+      const first = list?.querySelector('.faq-more');
+      expand(list);
+      first?.querySelector('summary, .faq-q, h3')?.setAttribute('tabindex', '-1');
+      first?.querySelector('summary, .faq-q, h3')?.focus({ preventScroll: true });
+    });
+  }
+
+  // Plain links to a hidden question (#faq-…), and arriving with one in the address, open the list too.
+  const revealHash = (hash) => { try { window.familyReveal(document.querySelector(hash)); } catch { /* not an id */ } };
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest?.('a[href^="#"]');
+    if (a && a.getAttribute('href').length > 1) revealHash(a.getAttribute('href'));
+  });
+  if (location.hash.length > 1) revealHash(location.hash);
+
   /** Opens and scrolls to an FAQ entry by its id. */
   window.familyAskOpen = (id) => {
     const d = document.getElementById(id);
     if (!d) return;
+    window.familyReveal(d);
     if (d.tagName === 'DETAILS') d.open = true;
     d.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
   };

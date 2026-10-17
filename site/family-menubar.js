@@ -181,7 +181,7 @@
       });
       p.classList.toggle('has-results', shown.length > 0);
     };
-    const go = (el) => { closePanel(); if (el.tagName === 'DETAILS') el.open = true; el.scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'center' }); };
+    const go = (el) => { closePanel(); window.familyReveal?.(el); if (el.tagName === 'DETAILS') el.open = true; el.scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'center' }); };
     input.addEventListener('input', () => { sel = 0; render(); });
     input.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, shown.length - 1); render(); e.preventDefault(); }
