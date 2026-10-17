@@ -141,3 +141,42 @@
 
 .fmb-hog { gap: 9px !important; }
 .fmb-hog img { width: 18px; height: 18px; flex: none; }
+
+/* Spotlight answers: the "Ask" row's orb, the answer under the search field, and the Apple Intelligence-style
+   glow around the desktop's edge while it thinks. */
+@property --fmb-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes fmb-spin { to { --fmb-a: 360deg; } }
+.fmb-orb { flex: none; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.55), 0 0 10px rgb(167 123 255 / 0.45); animation: fmb-spin 3s linear infinite; }
+.fmb-result--ask span:last-child { font-weight: 600; }
+.fmb-result--ask.is-on .fmb-orb, .fmb-result--ask:hover .fmb-orb { box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.9); }
+.fmb-answer { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px 16px; border-top: 1px solid var(--fmb-line); text-align: left; }
+.fmb-answer .fmb-orb { width: 24px; height: 24px; margin-top: 1px; }
+.fmb-answer__text { margin: 0; font-size: 15px; line-height: 1.45; color: var(--fmb-ink); white-space: pre-wrap; min-height: 22px; }
+.fmb-answer__text:empty::before { content: 'Thinking…'; color: var(--fmb-dim); }
+.fmb-answer__src { margin: 8px 0 0; font-size: 12.5px; color: var(--fmb-dim); }
+.fmb-answer__src a { color: var(--fmb-accent, #0b7f8f); text-decoration: none; }
+.fmb-answer__src a:hover { text-decoration: underline; }
+.fmb-glow { position: absolute; inset: 0; z-index: 39; pointer-events: none; border-radius: inherit; opacity: 0; transition: opacity 0.4s ease; }
+.desktop.fmb-thinking .fmb-glow { opacity: 1; }
+.fmb-glow i { position: absolute; inset: 0; border-radius: inherit; padding: 3px;
+  background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: fmb-spin 2.2s linear infinite; }
+.fmb-glow i + i { padding: 16px; filter: blur(16px); opacity: 0.7; }
+@media (prefers-reduced-motion: reduce) { .fmb-orb, .fmb-glow i { animation: none; } }
+
+/* The FAQ's ask field (family-ask.js). */
+.fask { position: relative; max-width: 640px; margin: 28px auto 0; }
+.fask__field { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 20px; border-radius: 999px; background: var(--card, #fff); box-shadow: 0 0 0 1px color-mix(in oklch, currentColor 12%, transparent), 0 10px 30px -18px rgb(0 0 0 / 0.35); }
+.fask__field input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 17px; color: inherit; }
+.fask__field input::placeholder { color: color-mix(in oklch, currentColor 45%, transparent); }
+.fask.is-thinking .fask__field::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: inherit; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); filter: blur(4px); opacity: 0.85; animation: fmb-spin 2.2s linear infinite; }
+.fask__field:focus-within { box-shadow: 0 0 0 2px var(--fmb-accent, #0b7f8f), 0 10px 30px -18px rgb(0 0 0 / 0.35); }
+.fask__answer { max-width: 640px; margin: 14px auto 0; padding: 16px 20px; border-radius: 22px; display: flex; gap: 12px; align-items: flex-start; text-align: left; background: color-mix(in oklch, currentColor 5%, transparent); }
+.fask__answer .fmb-orb { width: 22px; height: 22px; margin-top: 2px; }
+.fask__answer [data-ask-text] { margin: 0; font-size: 16px; line-height: 1.5; white-space: pre-wrap; }
+.fask__answer [data-ask-text]:empty::before { content: 'Thinking…'; opacity: 0.55; }
+.fask__answer [data-ask-src] { margin: 8px 0 0; font-size: 13px; opacity: 0.75; }
+.fask__answer [data-ask-src] a { color: var(--fmb-accent, #0b7f8f); }
+.fask__field { position: relative; isolation: isolate; }
+@media (prefers-reduced-motion: reduce) { .fask.is-thinking .fask__field::before { animation: none; } }

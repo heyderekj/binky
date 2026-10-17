@@ -88,7 +88,7 @@
 
   // ---------- Panels (About, Spotlight, Control Center) ----------
   let panel = null;
-  const closePanel = () => { panel?.remove(); panel = null; clearOn(); };
+  const closePanel = () => { panel?.remove(); panel = null; clearOn(); desk.classList.remove('fmb-thinking'); };
   const showPanel = (html, cls, anchor) => {
     close(); closePanel();
     panel = document.createElement('div');
@@ -127,7 +127,7 @@
         const label = h.previousElementSibling?.matches('.eyebrow, [class*="eyebrow"], [class*="label"]') ? clean(h.previousElementSibling.textContent) : '';
         return { el: host, text: words(h), find: `${label} ${words(h)}` };
       }),
-      ...$$('main summary').filter((q) => !q.closest('.desktop')).map((q) => ({ el: q.closest('details') || q, text: clean(q.textContent), find: clean(q.textContent) })),
+      ...$$('main summary, main .faq-q').filter((q) => !q.closest('.desktop')).map((q) => ({ el: q.closest('details, .faq-item') || q, text: clean(q.textContent), find: clean(q.textContent) })),
     ];
     // Tahoe's Spotlight: a large glass, large placeholder, and the four modes (Applications, Files, Actions, Clipboard) on the right.
     const modes = [
@@ -141,17 +141,42 @@
     const input = p.querySelector('input');
     const list = p.querySelector('.fmb-results');
     let sel = 0; let shown = [];
+    // Questions get an "Ask" row that answers from the site's own words (family-ask.js → /api/ask).
+    const canAsk = typeof window.familyAsk === 'function';
+    const looksLikeQuestion = (q) => /\?$/.test(q) || /^(how|what|why|can|does|do|is|are|will|should|where|when|who|which)\b/i.test(q);
+    const answer = document.createElement('div');
+    answer.className = 'fmb-answer'; answer.hidden = true;
+    answer.innerHTML = '<span class="fmb-orb" aria-hidden="true"></span><div><p class="fmb-answer__text" aria-live="polite"></p><p class="fmb-answer__src" hidden></p></div>';
+    p.append(answer);
+    let stopAsk = () => {};
+    const askNow = (q) => {
+      stopAsk();
+      list.innerHTML = ''; p.classList.remove('has-results');
+      answer.hidden = false; p.classList.add('is-answering');
+      const text = answer.querySelector('.fmb-answer__text'); const src = answer.querySelector('.fmb-answer__src');
+      text.textContent = ''; src.hidden = true;
+      desk.classList.add('fmb-thinking');
+      stopAsk = window.familyAsk(q, {
+        onSources: (list2) => window.familyAskSources?.(src, list2),
+        onText: (t) => { text.textContent += t; },
+        onDone: () => desk.classList.remove('fmb-thinking'),
+      });
+    };
     const render = () => {
-      const q = input.value.trim().toLowerCase();
-      shown = q ? sections.filter((s) => s.find.toLowerCase().includes(q)).slice(0, 6) : [];
+      const raw = input.value.trim();
+      const q = raw.toLowerCase();
+      answer.hidden = true; p.classList.remove('is-answering'); desk.classList.remove('fmb-thinking'); stopAsk();
+      const hits = q ? sections.filter((s) => s.find.toLowerCase().includes(q)).slice(0, 5) : [];
+      const askRow = canAsk && raw.length >= 2 ? [{ ask: true, text: raw }] : [];
+      shown = looksLikeQuestion(raw) || !hits.length ? [...askRow, ...hits] : [...hits, ...askRow];
       sel = Math.min(sel, Math.max(0, shown.length - 1));
       list.innerHTML = '';
       shown.forEach((s, i) => {
         const r = document.createElement('div');
-        r.className = 'fmb-result' + (i === sel ? ' is-on' : '');
-        r.innerHTML = `<img src="${icon()}" alt="" width="20" height="20" /><span></span>`;
-        r.lastChild.textContent = s.text;
-        r.addEventListener('click', () => go(s.el));
+        r.className = 'fmb-result' + (i === sel ? ' is-on' : '') + (s.ask ? ' fmb-result--ask' : '');
+        r.innerHTML = s.ask ? '<span class="fmb-orb" aria-hidden="true"></span><span></span>' : `<img src="${icon()}" alt="" width="20" height="20" /><span></span>`;
+        r.lastChild.textContent = s.ask ? `Ask “${s.text}”` : s.text;
+        r.addEventListener('click', () => (s.ask ? askNow(s.text) : go(s.el)));
         list.append(r);
       });
       p.classList.toggle('has-results', shown.length > 0);
@@ -161,7 +186,7 @@
     input.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, shown.length - 1); render(); e.preventDefault(); }
       if (e.key === 'ArrowUp') { sel = Math.max(sel - 1, 0); render(); e.preventDefault(); }
-      if (e.key === 'Enter' && shown[sel]) go(shown[sel].el);
+      if (e.key === 'Enter' && shown[sel]) (shown[sel].ask ? askNow(shown[sel].text) : go(shown[sel].el));
     });
     if (anchor) anchor.classList.add('fmb-on');
     input.focus({ preventScroll: true });
@@ -379,6 +404,8 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { close(); closePanel(); } });
   addEventListener('resize', close);
   bar.classList.add('fmb-live');
+  // The thinking glow around the desktop's edge (shown while Spotlight answers).
+  desk.append(Object.assign(document.createElement('div'), { className: 'fmb-glow', innerHTML: '<i></i><i></i>' }));
 
   // ---------- Each app's own surprise ----------
   if (app === 'Dinky') {

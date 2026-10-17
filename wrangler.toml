@@ -1,0 +1,7 @@
+# Cloudflare Pages: the site folder and the Workers AI binding that /api/ask uses (functions/api/ask.js).
+name = "binky"
+pages_build_output_dir = "site"
+compatibility_date = "2026-10-01"
+
+[ai]
+binding = "AI"
