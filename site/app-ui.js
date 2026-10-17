@@ -205,20 +205,40 @@
   }
 
   /* ---------- Guided feature rows: each step opens its scene on the desktop ----------
-   * While the row is at least 45% on screen the steps advance every 6.5 seconds; hovering holds the
-   * current step, a click or the arrow keys take over, and Reduce Motion turns advancing off.
+   * While the row is at least 45% on screen the steps advance every 6.5 seconds; a mouse over the row
+   * holds the current step, a click or the arrow keys take over, and Reduce Motion turns advancing off.
+   * On touch, tapping a step stops advancing for good (there is no hover to hold it). When the steps
+   * stack above the desktop (phones, tablets), scrolling holds advancing too, and the steps keep the
+   * height of their tallest step so the desktop below never jumps while someone is reading or scrolling.
    * Opening a scene sends it "scene:show" so a demo inside can start again. */
   function guided(row) {
     var DUR = 6500;
     var steps = $$('[data-step]', row);
     var scenes = $$('[data-scene]', row);
-    var at = 0, timer = 0, inView = false, hover = false;
+    var list = $('.g-steps', row);
+    var stacked = window.matchMedia ? window.matchMedia('(max-width: 900px)') : null;
+    var at = 0, timer = 0, inView = false, hover = false, manual = false, scrolling = false, idle = 0;
     row.style.setProperty('--g-dur', DUR + 'ms');
     function schedule() {
       clearTimeout(timer);
-      var playing = inView && !hover && !still();
+      var playing = inView && !hover && !manual && !scrolling && !still();
       row.classList.toggle('is-playing', playing);
       if (playing) timer = setTimeout(function () { open((at + 1) % steps.length); }, DUR);
+    }
+    // Reserve the tallest open step's height, so opening a shorter one doesn't pull the desktop up.
+    function holdHeight() {
+      if (!list) return;
+      list.style.minHeight = '';
+      if (!stacked || !stacked.matches) return;
+      var gap = parseFloat(getComputedStyle(list).rowGap) || 0, total = gap * (steps.length - 1), tallest = 0;
+      steps.forEach(function (s) {
+        var text = s.querySelector('.g-step__text');
+        var h = s.getBoundingClientRect().height;
+        if (!text) { total += h; return; }
+        total += h - text.getBoundingClientRect().height;
+        tallest = Math.max(tallest, text.scrollHeight - (parseFloat(getComputedStyle(text).paddingTop) || 0));
+      });
+      list.style.minHeight = Math.ceil(total + tallest + 6) + 1 + 'px';
     }
     function open(n, focus) {
       at = n;
@@ -241,7 +261,13 @@
       schedule();
     }
     steps.forEach(function (s, k) {
-      s.addEventListener('click', function () { open(k); });
+      var touched = false;
+      s.addEventListener('pointerdown', function (e) { touched = e.pointerType !== 'mouse'; });
+      s.addEventListener('click', function () {
+        if (touched) manual = true;
+        touched = false;
+        open(k);
+      });
       s.addEventListener('keydown', function (e) {
         var d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
         if (!d) return;
@@ -249,8 +275,18 @@
         open((at + d + steps.length) % steps.length, true);
       });
     });
-    row.addEventListener('pointerenter', function () { hover = true; schedule(); });
-    row.addEventListener('pointerleave', function () { hover = false; schedule(); });
+    row.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { hover = true; schedule(); } });
+    row.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { hover = false; schedule(); } });
+    window.addEventListener('scroll', function () {
+      if (!inView || !stacked || !stacked.matches) return;
+      if (!scrolling) { scrolling = true; schedule(); }
+      clearTimeout(idle);
+      idle = setTimeout(function () { scrolling = false; schedule(); }, 900);
+    }, { passive: true });
+    var resizeTimer = 0;
+    window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(holdHeight, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(holdHeight);
+    holdHeight();
     if (mq && mq.addEventListener) mq.addEventListener('change', schedule);
     if (!('IntersectionObserver' in window)) return;
     new IntersectionObserver(function (entries) {

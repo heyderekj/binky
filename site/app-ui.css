@@ -394,6 +394,28 @@
 }
 .bk-lights--narrow { display: none; margin-right: 6px; }
 
+/* ---------- Phones: draw the windows narrower so they zoom less and stay readable ---------- */
+@container (max-width: 420px) {
+  .bk-scale.bk-org { --bk-w: 390px; }
+  .bk-scale.bk-prefs, .bk-scale.bk-scene, .bk-scale.bk-editor { --bk-w: 400px; }
+  .bk-sheet { width: calc(100% - 28px); }
+  .bk-empty { padding-inline: 15px; }
+  .bk-calm .bk-plainlink { display: none; }
+}
+
+/* ---------- Touch: the few live controls get a finger-sized hit area (nothing changes visually) ---------- */
+@media (pointer: coarse) {
+  .bk-switch::after, .bk-watch__btn::after, .bk-sheet__btns button::after { content: ''; position: absolute; inset: -14px -10px; }
+  .bk-watch__btn, .bk-sheet__btns button { position: relative; }
+  .bk-replay { height: 40px; padding: 0 16px; }
+}
+@media (hover: none) {
+  .bk-replay:hover { background: rgb(255 255 255 / 0.55); }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  .bk-replay:hover { background: rgb(40 36 40 / 0.6); }
+}
+
 /* ---------- Reduced motion: hold still ---------- */
 @media (prefers-reduced-motion: reduce) {
   .bk-pulse::before { animation: none; opacity: 0.3; }

@@ -331,7 +331,7 @@
     .g-row .desktop { width: 100%; }
     .g-row .desktop__stage { min-height: 480px; }
     .g-title { font-size: clamp(28px, 3.2vw, 38px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 700; margin-top: 8px; }
-    .g-steps { margin-top: 26px; display: grid; gap: 4px; }
+    .g-steps { margin-top: 26px; display: grid; gap: 4px; align-content: start; }
     .g-step {
       position: relative; display: grid; width: 100%; text-align: left; padding: 15px 18px; border: 0; border-radius: 16px; background: transparent;
       color: inherit; overflow: hidden; cursor: pointer; -webkit-appearance: none; appearance: none;
@@ -542,7 +542,7 @@
     .modal-overlay.open { display: flex; }
     html.modal-scroll-locked { overflow: hidden; overscroll-behavior: none; }
     .modal {
-      position: relative; width: 100%; max-width: 540px; max-height: min(90vh, 760px); overflow-y: auto;
+      position: relative; width: 100%; max-width: 540px; max-height: min(90vh, 760px); max-height: min(90dvh, 760px); overflow-y: auto; overscroll-behavior: contain;
       background: var(--card); border-radius: 26px; padding: 30px; box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift);
       animation: modal-in 0.35s var(--ease) both;
     }
@@ -590,7 +590,7 @@
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
       padding: 12px 12px 12px 16px; border-radius: 14px; background: var(--code-bg);
     }
-    .code-block code { font-size: 12.5px; color: var(--code-text); word-break: break-all; }
+    .code-block code { flex: 1 1 auto; min-width: 0; font-size: 12.5px; color: var(--code-text); word-break: break-all; }
     .copy-btn {
       flex-shrink: 0; white-space: nowrap; cursor: pointer; border: none; border-radius: 999px; padding: 6px 12px;
       background: rgb(255 255 255 / 0.12); color: var(--code-muted); font-family: var(--font); font-size: 12.5px; font-weight: 600;
@@ -611,6 +611,31 @@
       .hero { padding-top: 92px; }
       .app-icon { width: 104px; height: 104px; }
       .modal { padding: 24px 20px; border-radius: 22px; }
+    }
+
+    /* ---------- Touch: finger-sized targets, and no hover states that stick after a tap ---------- */
+    /* The family Dock (site-tabs.css) is centred with left: 50%, so it shrink-wraps to half the screen; with the
+       Search button added it no longer fits on a phone and the icons squash. Size it to its content here. */
+    .dock { width: max-content; }
+    .dock img { max-width: none; }
+    @media (pointer: coarse) {
+      .nav__home, .nav .btn--small { height: 40px; }
+      .nav__home { min-width: 44px; justify-content: center; }
+      .modal-close { top: 14px; right: 14px; width: 40px; height: 40px; }
+      .cmp-tab { height: 40px; }
+      .copy-btn { min-height: 36px; padding: 6px 14px; }
+      .version-install-link { padding: 12px 4px !important; margin: -12px -4px !important; }
+      .th-cycle-btn { position: relative; }
+      .th-cycle-btn::after { content: ''; position: absolute; inset: -11px -6px; }
+      footer { line-height: 2.2; }
+      footer a { padding-block: 8px; }
+    }
+    @media (hover: none) {
+      .g-step:hover { background: transparent; }
+      .g-step.is-on:hover { background: var(--card); }
+      .comparison-table tbody tr:hover td:not(.cmp-binky) { background: none; }
+      .comparison-table tbody tr:hover .cmp-label { color: var(--ink); }
+      .comparison-table tbody tr:hover .cmp-icon { color: var(--muted); }
     }
 
     /* The family's global reduced-motion switch */
