@@ -416,24 +416,6 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { close(); closePanel(); } });
   addEventListener('resize', close);
   bar.classList.add('fmb-live');
-  // A Search button at the end of the Dock, after a divider like the one before the Trash. On a phone it opens
-  // Spotlight as a full-width sheet; on a larger screen it opens the hero's own Spotlight.
-  const dockEl = document.querySelector('.dock');
-  if (dockEl && !dockEl.querySelector('.dock__find')) {
-    const find = document.createElement('button');
-    find.type = 'button';
-    find.className = 'dock__find';
-    find.setAttribute('aria-label', `Search or ask about ${app}`);
-    find.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="10.2" cy="10.2" r="6.6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.2 15.2 5.2 5.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
-    find.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const phone = matchMedia('(max-width: 760px)').matches || !desk.getClientRects().length;
-      if (phone) return spotlight(null, true);
-      desk.scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'center' });
-      setTimeout(() => spotlight(bar.querySelector('[data-mb="spotlight"]')), still() ? 0 : 350);
-    });
-    dockEl.append(Object.assign(document.createElement('span'), { className: 'dock__divider' }), find);
-  }
   // The thinking glow around the desktop's edge (shown while Spotlight answers).
   desk.append(Object.assign(document.createElement('div'), { className: 'fmb-glow', innerHTML: '<i></i><i></i>' }));
 
