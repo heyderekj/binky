@@ -7,8 +7,11 @@
   <meta name="description" content="Binky sorts your files. Quick Sort for one-shot sweeps; Routines watch folders. Route by source, describe rules in plain English, review the unknowns. Free and open source (MIT)." />
 
   <link rel="canonical" href="https://binkyfiles.com" />
-  <link rel="icon" type="image/png" href="Binky%20App%20Icon.png" />
-  <link rel="apple-touch-icon" href="Binky%20App%20Icon.png" />
+  <link rel="icon" type="image/webp" href="/app-icon.webp" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="/site-tabs.css" />
   <!-- Faster hop to sibling product site (dns + connection + idle document prefetch). -->
   <link rel="dns-prefetch" href="https://dinkyfiles.com/" />
@@ -65,183 +68,160 @@
   <!-- / Fathom -->
 
   <style>
-    /*
-      Color system: OKLCH with identical sRGB fallbacks (second declaration wins when
-      `oklch()` is supported). Easier to tune L/C/H consistently; neutrals share ~286° hue.
-    */
+    /* ============================================================
+       binkyfiles.com in the Testament Made family language (as on slinkyfiles.com):
+       Figtree, paper/ink/hair, one curve, family cards, little Mac desktops with a
+       drifting mesh wallpaper. Binky's colour stays Binky's: the brand pink.
+       ============================================================ */
     :root {
-      /* sRGB fallbacks for browsers without `oklch()` */
-      --bg: #fff;
-      --text: #1c1c1e;
-      --text-secondary: #6b6b70;
+      --paper: #faf9f7;
+      --card: #fdfcfa;
+      --ink: #161513;
+      --ink-soft: #3d3a35;
+      --muted: #6c6760;
+      --hair: #e3e0da;
+      --shadow: 0 1px 2px rgb(22 21 19 / 0.05), 0 10px 28px -14px rgb(22 21 19 / 0.22);
+      --shadow-lift: 0 2px 4px rgb(22 21 19 / 0.06), 0 18px 40px -18px rgb(22 21 19 / 0.3);
+      --font: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --app-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+      --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --t-ui: 180ms;
+      --gutter: max(20px, env(safe-area-inset-left, 0px));
+
+      /* Binky's brand pink (same in light and dark, as before) */
       --brand: #e3366e;
       --brand-hover: #c92e8f;
-      --divider: #eaeaea;
-      --button-secondary-hover: #f1f1f3;
-      --modal-bg: #fff;
-      --surface: #f1f1f3;
-      --surface-hover: #e4e4e6;
-      --shadow-xs: rgba(0, 0, 0, 0.08);
-      --shadow-md: rgba(0, 0, 0, 0.18);
-      --shadow-overlay: rgba(0, 0, 0, 0.4);
-      --code-bg: #1c1c1e;
-      --faq-row-even: rgba(0, 0, 0, 0.03);
-      --row-hover: rgba(227, 54, 110, 0.05);
-      --cmp-cross: #d1d1d6;
-      --cmp-dim: #aeaeb2;
+      /* Pink for small text (eyebrows, links): a step deeper on paper, a step lighter on dark paper */
+      --brand-ink: #c4245c;
       --text-on-brand: #fff;
-      --code-text: #e5e5ea;
+      --glow: rgb(200 10 70 / 0.45);
+
+      /* Binky's mesh (the desktop wallpaper), from the testamentmade.com app card */
+      --c1: #ff5c94;
+      --c2: #ffc0a0;
+      --c3: #ff8fb8;
+      --c4: #ff9e7a;
+      --c5: #ffb3cc;
+
+      /* Small UI bits */
+      --fill: color-mix(in oklch, var(--ink) 7%, transparent);
+      --fill-strong: color-mix(in oklch, var(--ink) 12%, transparent);
+      --code-bg: #1c1b19;
+      --code-text: #ece9e3;
+      --code-muted: #a9a49b;
       --success: #30d158;
-      /* Muted label on code blocks (same hex in light & dark for contrast on --code-bg) */
-      --code-muted: #aeaeb2;
-      /* OKLCH */
-      --bg: oklch(1 0 0);
-      --text: oklch(0.2273 0.0038 286.09);
-      --text-secondary: oklch(0.5295 0.0077 286.13);
-      --brand: oklch(0.6129 0.2098 7.08);
-      --brand-hover: oklch(0.5747 0.2094 347.54);
-      --divider: oklch(0.937 0 0);
-      --button-secondary-hover: oklch(0.9587 0.0027 286.35);
-      --modal-bg: oklch(1 0 0);
-      --surface: oklch(0.9587 0.0027 286.35);
-      --surface-hover: oklch(0.9194 0.0027 286.35);
-      --shadow-xs: oklch(0 0 0 / 0.08);
-      --shadow-md: oklch(0 0 0 / 0.18);
-      --shadow-overlay: oklch(0 0 0 / 0.4);
-      --code-bg: oklch(0.2273 0.0038 286.09);
-      --faq-row-even: oklch(0 0 0 / 0.03);
-      --row-hover: oklch(0.6129 0.2098 7.08 / 0.05);
-      /* Install modal segmented tabs — raised pill on gray track */
-      --segmented-tab-active: #fff;
-      --segmented-tab-active: oklch(1 0 0);
-      --segmented-tab-shadow: rgba(0, 0, 0, 0.06);
-      --segmented-tab-shadow: oklch(0 0 0 / 0.06);
-      --cmp-cross: oklch(0.8622 0.0068 286.26);
-      --cmp-dim: oklch(0.752 0.0057 286.26);
-      --text-on-brand: oklch(1 0 0);
-      --code-text: oklch(0.9233 0.0067 286.27);
-      --success: oklch(0.7556 0.2082 146.98);
-      --code-muted: oklch(0.752 0.0057 286.26);
-      /* Match comparison row gutter and write-ups block offset above */
-      --cmp-row-gap: 16px;
-      /* Full-bleed site tab strip (matches body padding) */
-      --site-tabs-pull-x: 24px;
-      --site-tabs-pull-y: 40px;
+      --cmp-cross: #c9c5be;
+      --cmp-dim: #8b857c;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        /* Same core tint as light mode — reads stronger on dark than pastel pink */
-        --bg: #0e0e0f;
-        --text: #f5f5f7;
-        --text-secondary: #98989d;
+        --paper: #191816; --card: #23211e; --ink: #f6f4f0; --ink-soft: #d9d4cc; --muted: #a29c93; --hair: #34312c;
+        --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 28px -14px rgb(0 0 0 / 0.6);
+        --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 40px -18px rgb(0 0 0 / 0.7);
+        color-scheme: dark;
+
         --brand: #e3366e;
         --brand-hover: #c92e8f;
-        --divider: #38383a;
-        --button-secondary-hover: #2c2c2e;
-        --modal-bg: #2c2c2e;
-        --surface: #3a3a3c;
-        --surface-hover: #48484a;
-        --shadow-xs: rgba(0, 0, 0, 0.4);
-        --shadow-md: rgba(0, 0, 0, 0.5);
-        --shadow-overlay: rgba(0, 0, 0, 0.6);
-        --code-bg: #2c2c2e;
-        --faq-row-even: rgba(255, 255, 255, 0.04);
-        --row-hover: rgba(227, 54, 110, 0.09);
-        --cmp-cross: #48484a;
-        --cmp-dim: #636366;
-        /* OKLCH */
-        --bg: oklch(0.1137 0.0019 286.09);
-        --text: oklch(0.9707 0.0027 286.35);
-        --text-secondary: oklch(0.6812 0.0073 286.21);
-        --brand: oklch(0.6129 0.2098 7.08);
-        --brand-hover: oklch(0.5747 0.2094 347.54);
-        --divider: oklch(0.3414 0.0034 286.22);
-        --button-secondary-hover: oklch(0.2939 0.0036 286.18);
-        --modal-bg: oklch(0.2939 0.0036 286.18);
-        --surface: oklch(0.3492 0.0034 286.22);
-        --surface-hover: oklch(0.4024 0.0033 286.25);
-        --shadow-xs: oklch(0 0 0 / 0.4);
-        --shadow-md: oklch(0 0 0 / 0.5);
-        --shadow-overlay: oklch(0 0 0 / 0.6);
-        --code-bg: oklch(0.2939 0.0036 286.18);
-        --faq-row-even: oklch(1 0 0 / 0.04);
-        --row-hover: oklch(0.6129 0.2098 7.08 / 0.09);
-        --cmp-cross: oklch(0.4024 0.0033 286.25);
-        --cmp-dim: oklch(0.5007 0.0047 286.23);
-        /* Segmented control “pill” on dark gray track — distinct from page bg */
-        --segmented-tab-active: #5a5a5c;
-        --segmented-tab-active: oklch(0.4683 0.0032 286.28);
-        --segmented-tab-shadow: rgba(0, 0, 0, 0.35);
-        --segmented-tab-shadow: oklch(0 0 0 / 0.35);
+        --brand-ink: #ff7aa3;
+
+        --c1: #a0204e;
+        --c2: #8a4030;
+        --c3: #7a1840;
+        --c4: #9a3a2a;
+        --c5: #6e1838;
+
+        --code-bg: #2c2a27;
+        --cmp-cross: #55514a;
+        --cmp-dim: #8f897f;
       }
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
+    /* ---------- Base ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 40px 24px 40px;
+      margin: 0; font-family: var(--font); font-size: 17px; line-height: 1.55; color: var(--ink);
+      background: var(--paper);
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, p, ul, ol { margin: 0; }
+    h1, h2, h3 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    img { max-width: 100%; }
+    a { color: inherit; }
+    button { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 10px; }
+    code, kbd { font-family: var(--mono); }
+    section { scroll-margin-top: 84px; }
+
+    .wrap { width: min(1140px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+    /* Family card: everything that isn't on a desktop */
+    .card-plain, .ss-card, .feature, .cmp-text-card, .comparison-card, .review-card, .data-blurb, .faq-item {
+      background: var(--card);
+      box-shadow: 0 0 0 1px var(--hair), var(--shadow);
     }
 
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      max-width: 560px;
-      width: 100%;
-      overflow: visible;
+    /* Glass that floats over the page (the nav) */
+    .float-glass {
+      background: rgb(253 252 250 / 0.66);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.9), inset 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 10px 30px -12px rgb(60 20 35 / 0.32);
+    }
+    @media (prefers-color-scheme: dark) {
+      .float-glass { background: rgb(35 33 30 / 0.66); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.16), inset 0 0 0 0.5px rgb(255 255 255 / 0.08), 0 10px 30px -12px rgb(0 0 0 / 0.6); }
     }
 
-    /* Outer wrap: room for shadow + rotation. Inner stage: filter + wiggle on one element so
-       iOS Safari does not promote separate layers (filtered img vs transformed parent), which
-       showed as one or two opaque rectangles behind the icon. */
-    .app-icon-wrap {
-      margin-bottom: 12px;
-      padding: 20px 22px;
+    /* ---------- Buttons: 44px pills ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px;
+      border: 0; border-radius: 999px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1;
+      text-decoration: none; white-space: nowrap; cursor: pointer;
+      transition: transform var(--t-ui) var(--ease), background var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease), color var(--t-ui) var(--ease);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn svg { width: 17px; height: 17px; flex: none; }
+    .btn-primary { background: var(--brand); color: var(--text-on-brand); box-shadow: 0 8px 22px -10px var(--glow), inset 0 1px 0 rgb(255 255 255 / 0.22); }
+    .btn-primary:hover { background: color-mix(in oklch, var(--brand) 88%, #000); }
+    .btn-secondary { background: var(--fill); color: var(--ink); }
+    .btn-secondary:hover { background: var(--fill-strong); }
+    .btn--small { height: 36px; padding: 0 14px; font-size: 15px; gap: 7px; }
+    .btn--small svg { width: 16px; height: 16px; }
+
+    /* ---------- Top nav: a glass capsule ---------- */
+    .nav {
+      position: fixed; z-index: 40; top: 14px; left: 50%; translate: -50% 0;
+      display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: 999px;
+      width: max-content; max-width: calc(100vw - 24px);
+    }
+    .nav__home { display: flex; align-items: center; gap: 8px; padding: 0 12px 0 6px; height: 36px; border-radius: 999px; text-decoration: none; font-weight: 600; letter-spacing: -0.01em; }
+    .nav__home img { width: 26px; height: 26px; border-radius: 24%; }
+    .nav__link { display: grid; place-items: center; height: 36px; padding: 0 12px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 500; color: var(--ink-soft); transition: background var(--t-ui) var(--ease); }
+    .nav__link:hover, .nav__home:hover { background: var(--fill); color: var(--ink); }
+    .nav .btn-secondary { margin-left: 4px; }
+    .nav .btn-primary { margin-left: 4px; }
+    @media (max-width: 640px) {
+      .nav__link, .nav__home-name, .nav__gh-label { display: none; }
+      .nav__home { padding: 0 6px; }
     }
 
+    /* ---------- Hero ---------- */
+    .hero { padding: 104px 0 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    /* Outer wrap: room for the glow and the wiggle. Inner stage: filter + wiggle on one element so
+       iOS Safari does not promote separate layers (filtered img vs transformed parent). */
+    .app-icon-wrap { padding: 18px 22px 22px; margin-bottom: 4px; }
     .app-icon-stage {
-      display: inline-block;
-      line-height: 0;
-      transform-origin: 50% 85%;
-      filter:
-        drop-shadow(0 1px 1px var(--shadow-xs))
-        drop-shadow(0 10px 20px var(--shadow-md));
-      /* Safari compositing: pre-promote layer so filter+transform animation
-         doesn't create an opaque backing store mid-animation */
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
+      display: inline-block; line-height: 0; transform-origin: 50% 85%;
+      filter: drop-shadow(0 2px 3px rgb(22 21 19 / 0.12)) drop-shadow(0 20px 26px var(--glow));
+      -webkit-backface-visibility: hidden; backface-visibility: hidden;
     }
-
-    .app-icon-stage.is-wiggling {
-      animation: app-icon-wiggle 1.1s ease-out 1 both;
-    }
-
-    .app-icon {
-      display: block;
-      width: 96px;
-      height: 96px;
-    }
-
+    .app-icon-stage.is-wiggling { animation: app-icon-wiggle 1.1s ease-out 1 both; }
+    .app-icon { display: block; width: 128px; height: 128px; }
     @keyframes app-icon-wiggle {
       0%   { transform: rotate(0deg); }
       15%  { transform: rotate(-9deg); }
@@ -251,1425 +231,352 @@
       75%  { transform: rotate(-2deg); }
       100% { transform: rotate(0deg); }
     }
+    .hero h1 { font-size: clamp(40px, 6.4vw, 72px); line-height: 1.02; letter-spacing: -0.04em; font-weight: 700; }
+    .tagline { margin-top: 12px; font-size: clamp(21px, 2.4vw, 26px); font-weight: 600; letter-spacing: -0.022em; line-height: 1.2; color: var(--ink-soft); }
+    .description { margin: 14px auto 0; max-width: 34rem; font-size: clamp(17px, 1.8vw, 19px); color: var(--muted); letter-spacing: -0.012em; }
+    .buttons { display: flex; justify-content: center; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+    .version { margin: 14px auto 0; max-width: 34rem; font-size: 14px; line-height: 1.5; color: var(--muted); }
 
-    @media (prefers-reduced-motion: reduce) {
-      .app-icon-stage.is-wiggling { animation: none; }
-    }
-
-    /* GitHub hover star burst — count grows gently with stargazers (sqrt curve, capped) */
+    /* ---------- GitHub star burst (the family's) ---------- */
     .gh-star {
-      position: fixed;
-      pointer-events: none;
+      position: fixed; pointer-events: none; z-index: 200; line-height: 1;
       color: var(--brand);
-      text-shadow:
-        0 0 6px color-mix(in srgb, var(--brand) 55%, transparent),
-        0 0 14px color-mix(in srgb, var(--brand) 35%, transparent);
+      text-shadow: 0 0 6px color-mix(in srgb, var(--brand) 55%, transparent), 0 0 14px color-mix(in srgb, var(--brand) 35%, transparent);
       transform: translate(-50%, -50%) scale(0.4);
-      z-index: 200;
-      line-height: 1;
       animation: gh-star-fly var(--dur, 1600ms) cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
       will-change: transform, opacity;
     }
     @keyframes gh-star-fly {
       0%   { transform: translate(-50%, -50%) scale(0.3) rotate(0deg); opacity: 0; }
       18%  { opacity: 1; }
-      100% {
-        transform:
-          translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
-          scale(1) rotate(var(--rot));
-        opacity: 0;
-      }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--rot)); opacity: 0; }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .gh-star { display: none; }
-    }
-
-    /* Sync the in-button star + count with the burst color */
-    .btn-secondary .gh-star-anchor,
-    .btn-secondary #gh-stars-count {
-      transition: color 180ms ease, text-shadow 180ms ease;
-    }
-    .btn-secondary.is-bursting .gh-star-anchor,
-    .btn-secondary.is-bursting #gh-stars-count {
+    .gh-star-anchor, [data-gh-stars-count] { transition: color 180ms ease, text-shadow 180ms ease; }
+    .is-bursting .gh-star-anchor, .is-bursting [data-gh-stars-count] {
       color: var(--brand);
       text-shadow: 0 0 6px color-mix(in srgb, var(--brand) 45%, transparent);
     }
 
-    h1 {
-      font-size: 56px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--brand);
-      line-height: 1;
-      margin-bottom: 10px;
-    }
-
-    .tagline {
-      font-size: 17px;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-    }
-
-    .description {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.55;
-      margin-bottom: 28px;
-      max-width: 400px;
-      text-wrap: pretty;
-    }
-
-    .description-chip {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      border: 1px solid color-mix(in srgb, var(--brand) 30%, transparent);
-      background: color-mix(in srgb, var(--brand) 12%, transparent);
-      color: var(--brand);
-      font-size: 12px;
-      font-weight: 600;
-      line-height: 1;
-      padding: 4px 8px;
-      margin-right: 8px;
-      white-space: nowrap;
-      vertical-align: baseline;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: background 0.15s ease, transform 0.1s ease;
-      border: 1px solid transparent;
-      line-height: 1.4;
-    }
-
-    .btn:has(> svg) {
-      padding-left: 11px;
-    }
-
-    .btn-primary {
-      background: var(--brand);
-      color: var(--text-on-brand);
-    }
-
-    .btn-primary:hover {
-      background: var(--brand-hover);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border-color: var(--divider);
-    }
-
-    .btn-secondary:hover {
-      background: var(--button-secondary-hover);
-    }
-
-    .btn svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .version {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin: 8px auto 0;
-      max-width: 320px;
-      line-height: 1.5;
-    }
-
-    .screenshots {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      width: 100%;
-      max-width: 960px;
-      margin-top: 32px;
-      padding: 0 8px;
-    }
-
-    .screenshots img {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px var(--shadow-xs);
-      display: block;
-    }
-
-    /* Placeholder gradients until real screenshots ship */
-    .ss-placeholder {
-      width: 100%;
-      height: 100%;
-      min-height: 220px;
-      align-self: stretch;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px var(--shadow-xs);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: clamp(24px, 6vw, 40px);
-      text-align: center;
-      flex-shrink: 0;
-      color: rgba(255, 255, 255, 0.95);
-    }
-    .ss-placeholder-caption {
-      font-size: clamp(13px, 2.5vw, 15px);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1.35;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-      max-width: 18em;
-      text-wrap: pretty;
-    }
-    .ss-placeholder-sub {
-      font-size: 12px;
-      font-weight: 500;
-      opacity: 0.85;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-      max-width: 22em;
-      line-height: 1.4;
-      text-wrap: pretty;
-    }
-    .ss-placeholder-icon {
-      width: 44px;
-      height: 44px;
-      opacity: 0.92;
-      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
-    }
-    .ss-placeholder--1 {
-      background: linear-gradient(145deg, oklch(0.73 0.19 8) 0%, oklch(0.56 0.21 342) 50%, oklch(0.42 0.17 330) 100%);
-    }
-    .ss-placeholder--2 {
-      background: linear-gradient(145deg, oklch(0.73 0.19 8) 0%, oklch(0.56 0.21 342) 50%, oklch(0.42 0.17 330) 100%);
-    }
-    .ss-placeholder--3 {
-      background: linear-gradient(145deg, oklch(0.8 0.12 18) 0%, oklch(0.62 0.2 5) 50%, oklch(0.45 0.18 348) 100%);
-    }
-    .ss-placeholder--4 {
-      background: linear-gradient(145deg, oklch(0.72 0.16 355) 0%, oklch(0.54 0.21 338) 50%, oklch(0.36 0.14 320) 100%);
-    }
-    .ss-placeholder--5 {
-      background: linear-gradient(145deg, oklch(0.84 0.11 25) 0%, oklch(0.63 0.18 8) 50%, oklch(0.46 0.19 350) 100%);
-    }
-
-    .ss-row {
-      display: grid;
-      grid-template-columns: 3fr 2fr;
-      gap: 16px;
-      /* Stretch so the screenshot column matches the text card height */
-      align-items: stretch;
-    }
-
-    .ss-row.is-rev {
-      grid-template-columns: 2fr 3fr;
-    }
-
-    .ss-row > img,
-    .ss-row > .ss-placeholder {
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      align-self: stretch;
-      object-fit: cover;
-      object-position: center;
-    }
-
-    .ss-shot {
-      align-self: center;
-    }
-
-    /* Square screenshot: don't stretch to match the text card — keeps 1:1 assets uncropped */
-    .ss-shot img {
-      width: 100%;
-      aspect-ratio: 1;
-      height: auto;
-      object-fit: contain;
-      object-position: center;
-    }
-
-    .ss-card {
-      background: var(--faq-row-even);
-      border: 1px solid var(--divider);
-      border-radius: 12px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 18px;
-      align-self: stretch;
-    }
-
-    .ss-card.is-hero {
-      gap: 12px;
-      justify-content: flex-start;
-    }
-
-    .ss-card-features {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
-
-    .ss-card-features.is-2col {
-      grid-template-columns: 1fr 1fr;
-      gap: 24px 28px;
-    }
-
-    .ss-card-feature .feature-icon {
-      width: 20px;
-      height: 20px;
-      margin-bottom: 6px;
-    }
-
-    .ss-card-feature h3 {
-      margin: 0 0 4px;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--text);
-    }
-
-    .ss-card-feature p {
-      margin: 0;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text-secondary);
-    }
-
-    .ss-card-hero-title {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 600;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-
-    .ss-card-hero-text {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-    }
-
-    .ss-card.is-hero .ss-card-hero-text + .ss-card-hero-text {
-      margin-top: 10px;
-    }
-
-    .ss-card-hero-text a {
-      color: var(--brand);
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-
-    .ss-card-hero-text a:hover {
-      color: var(--brand-hover);
-    }
-
-    .ss-card-hero-text code {
-      font-size: 0.92em;
-      padding: 0.12em 0.35em;
-      border-radius: 4px;
-      background: var(--surface);
-      color: var(--text);
-    }
-
-    .ss-hero-stat {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-top: 4px;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    .ss-hero-stat-from {
-      color: var(--text-secondary);
-      text-decoration: line-through;
-      text-decoration-thickness: 1px;
-    }
-
-    .ss-hero-stat-arrow {
-      color: var(--text-secondary);
-      font-size: 18px;
-    }
-
-    .ss-hero-stat-to {
-      color: var(--brand);
-    }
-
-    .ss-hero-stat-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-weight: 600;
-      opacity: 0.7;
-    }
-
-    .ss-hero-eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--brand);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 600;
-      margin-bottom: -8px;
-    }
-    .ss-hero-eyebrow-icon {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      color: inherit;
-    }
-
-    .meta-note {
-      margin-top: 20px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      text-align: center;
-      max-width: min(34em, 100%);
-      width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 8px;
-      line-height: 1.45;
-      text-wrap: pretty;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px 40px;
-      width: 100%;
-      max-width: 900px;
-      margin-top: 40px;
-      padding: 0 8px;
-    }
-
-    .feature-icon {
-      width: 24px;
-      height: 24px;
-      color: var(--brand);
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .feature h3 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-      letter-spacing: -0.01em;
-    }
-
-    .feature p {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    .feature p + p {
-      margin-top: 10px;
-    }
-
-    .install-fallback {
-      display: block;
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-    .install-fallback a {
-      color: inherit;
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-    .install-fallback a:hover { color: var(--text); }
-    /* Opened from hero “how to install” or MCP — no “download didn’t start” line */
-    #install-modal.install-modal--help .install-fallback {
-      display: none;
-    }
-    .install-step-stack {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .install-step-stack p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text);
-    }
-
-    .install-callout {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 20px;
-      padding: 12px 14px;
-      background: var(--row-hover);
-      border-radius: 10px;
-    }
-
-    .install-callout-icon {
-      width: 18px;
-      height: 18px;
-      color: var(--brand);
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .install-callout p {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    .install-callout p strong {
-      color: var(--text);
-    }
-
-    /* Segmented tab control (install modal) */
-    .cmp-segmented {
-      display: flex;
-      width: 100%;
-      max-width: 360px;
-      margin: 0 auto;
-      padding: 3px;
-      gap: 2px;
-      border-radius: 10px;
-      background: var(--surface);
-      box-sizing: border-box;
-    }
-    .cmp-tab {
-      flex: 1 1 0;
-      min-width: 0;
-      margin: 0;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text-secondary);
-      font: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.25;
-      letter-spacing: -0.01em;
-      cursor: pointer;
-      -webkit-appearance: none;
-      appearance: none;
-      transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        box-shadow 0.15s ease;
-    }
-    .cmp-tab:hover:not(.is-active) {
-      color: var(--text);
-    }
-    .cmp-tab.is-active {
-      background: var(--segmented-tab-active);
-      color: var(--text);
-      box-shadow: 0 1px 2px var(--segmented-tab-shadow);
-    }
-    .cmp-tab:focus {
-      outline: none;
-    }
-    .cmp-tab:focus-visible {
-      outline: 2px solid var(--brand);
-      outline-offset: 2px;
-    }
-
-    .install-modal-tabstrip {
-      margin: 0 0 18px;
-    }
-    .install-modal-tabstrip .cmp-segmented {
-      max-width: none;
-      width: 100%;
-      margin: 0;
-    }
-    .install-homebrew-note {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    .install-homebrew-note a {
-      color: var(--brand);
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-    .install-homebrew-note a:hover {
-      color: var(--text);
-    }
-    .install-code-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .install-homebrew-foot {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.45;
-      margin-top: 4px;
-    }
-
-    /* Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--shadow-overlay);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .modal-overlay.open { display: flex; }
-
-    /* Lock page scroll while any modal is open */
-    html.modal-scroll-locked {
-      overflow: hidden;
-      overscroll-behavior: none;
-    }
-    .modal {
-      background: var(--modal-bg);
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 520px;
-      width: 100%;
-      max-height: min(90vh, 720px);
-      overflow-y: auto;
-      box-shadow: 0 24px 64px var(--shadow-md);
-      position: relative;
-    }
-    .modal h2 {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
-    }
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: var(--surface);
-      border: none;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-      font-size: 16px;
-      line-height: 1;
-    }
-    .modal-close:hover { background: var(--surface-hover); color: var(--text); }
-    .install-steps {
-      list-style: none;
-      counter-reset: steps;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .install-steps li {
-      counter-increment: steps;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text);
-    }
-    .install-steps li::before {
-      content: counter(steps);
-      min-width: 22px;
-      height: 22px;
-      background: var(--brand);
-      color: var(--text-on-brand);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .install-steps li span {
-      flex: 1;
-      min-width: 0;
-    }
-    .install-steps li kbd {
-      font-family: inherit;
-      font-size: 13px;
-      background: var(--surface);
-      border-radius: 4px;
-      padding: 1px 5px;
-      white-space: nowrap;
-    }
-    .code-block {
-      background: var(--code-bg);
-      border-radius: 10px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .code-block code {
-      font-family: "SF Mono", "Fira Mono", "Menlo", monospace;
-      font-size: 12.5px;
-      color: var(--code-text);
-      word-break: break-all;
-    }
-    .copy-btn {
-      background: rgba(255, 255, 255, 0.12);
-      background: oklch(1 0 0 / 0.12);
-      border: none;
-      border-radius: 6px;
-      color: var(--code-muted);
-      cursor: pointer;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-family: inherit;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background 0.15s;
-    }
-    .copy-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      background: oklch(1 0 0 / 0.2);
-      color: var(--text-on-brand);
-    }
-    .copy-btn.copied { color: var(--success); }
-
-    /* Your data (distribution + outbound calls) */
-    .data-blurb {
-      display: grid;
-      grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
-      gap: 28px 40px;
-      align-items: start;
-      width: 100%;
-      max-width: 960px;
-      margin-top: 64px;
-      padding: 28px 32px;
-      border: 1px solid var(--divider);
-      border-radius: 16px;
-      background: var(--faq-row-even);
-      box-sizing: border-box;
-    }
-    .data-blurb-col--title {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 14px;
-    }
-    .data-blurb-icon {
-      color: var(--brand);
-      line-height: 0;
-    }
-    .data-blurb-icon svg {
-      width: 28px;
-      height: 28px;
-      display: block;
-    }
-    .data-blurb-title {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin: 0;
-      color: var(--text);
-      text-align: left;
-      line-height: 1.25;
-    }
-    .data-blurb-col--body {
-      min-width: 0;
-    }
-    .data-blurb-lead,
-    .data-blurb-body,
-    .data-blurb-sub,
-    .data-blurb-list li {
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-      margin: 0 0 12px;
-    }
-    .data-blurb-list {
-      margin: 0 0 0 1.15rem;
-      padding: 0;
-    }
-    .data-blurb-list li + li {
-      margin-top: 8px;
-    }
-    .data-blurb-sub {
-      font-weight: 600;
-      color: var(--text);
-      margin-top: 18px;
-      margin-bottom: 8px;
-    }
-
-    /* FAQ */
-    .faq {
-      width: 100%;
-      max-width: 900px;
-      margin-top: 80px;
-    }
-    .faq > h2 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 32px;
-      text-align: center;
-    }
-    .faq-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      column-gap: 48px;
-      row-gap: 0;
-      padding: 0 8px;
-    }
-    .faq-item {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 24px 0;
-      border-top: 1px solid var(--divider);
-    }
-    .faq-item:nth-child(-n+2) {
-      border-top: none;
-      padding-top: 0;
-    }
-    .faq-q {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
-      line-height: 1.4;
-    }
-    .faq-a {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    /* Same link treatment as footer — secondary + underline; hover to primary text */
-    footer a,
-    .faq-a a,
-    .cmp-text-card a,
-    .data-blurb a {
-      color: var(--text-secondary);
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-    footer a:hover,
-    .faq-a a:hover,
-    .cmp-text-card a:hover,
-    .data-blurb a:hover {
-      color: var(--text);
-    }
-    .faq-inline-link {
-      display: inline;
-      margin: 0;
-      padding: 0;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font: inherit;
-      color: var(--text-secondary);
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-    .faq-inline-link:hover {
-      color: var(--text);
-    }
-    .faq-inline-link.version-install-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      vertical-align: -0.2em;
-    }
-    .faq-inline-link.version-install-link svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-    }
-    .gatekeeper-lead,
-    .install-modal-sublead {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.55;
-      margin: 0 0 14px;
-    }
-
-    .install-modal-lead {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text);
-      margin: 0 0 16px;
-    }
-
-    @media (max-width: 700px) {
-      .data-blurb {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 22px 18px;
-      }
-      .faq-grid { grid-template-columns: 1fr; }
-      .faq-item:nth-child(-n+2) { border-top: 1px solid var(--divider); padding-top: 24px; }
-      .faq-item:first-child { border-top: none; padding-top: 0; }
-    }
-
-    /* Comparison */
-    .comparison {
-      width: 100%;
-      max-width: 960px;
-      margin-top: 80px;
-    }
-    .cmp-row {
-      display: grid;
-      grid-template-columns: 2fr 3fr;
-      gap: var(--cmp-row-gap);
-      align-items: stretch;
-    }
-    .cmp-text-card {
-      background: var(--faq-row-even);
-      border: 1px solid var(--divider);
-      border-radius: 16px;
-      padding: 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      gap: 14px;
-    }
-    .cmp-title {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-    .cmp-desc {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-    }
-    .cmp-footnote {
-      margin: 0;
-      margin-top: auto;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text-secondary);
-    }
-
-    .cmp-writeups {
-      width: 100%;
-      max-width: 960px;
-      margin: var(--cmp-row-gap) auto 0;
-    }
-    .cmp-writeups-specialists {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      gap: 28px 40px;
-      padding-bottom: 32px;
-      border-bottom: 1px solid var(--divider);
-    }
-    .cmp-writeups-specialists-intro {
-      flex: 1 1 220px;
-      max-width: min(26rem, 100%);
-      min-width: min(100%, 11rem);
-    }
-    .cmp-writeups-specialists .cmp-writeups-grid {
-      flex: 2 1 400px;
-      min-width: min(100%, 280px);
-    }
-    .cmp-writeups-specialists-title {
-      margin: 0 0 10px;
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-    .cmp-writeups-specialists-lead {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-    }
-    .cmp-writeups-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px 32px;
-      align-items: start;
-    }
-    .cmp-writeups-cat {
-      margin: 0 0 10px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-    }
-    .cmp-writeups-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      font-size: 14px;
-      line-height: 1.65;
-    }
-    .cmp-writeups-list li + li {
-      margin-top: 6px;
-    }
-    .cmp-writeups-list a {
-      color: var(--text-secondary);
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-    .cmp-writeups-list a:hover {
-      color: var(--text);
-    }
-
-    .cmp-writeups-suite {
-      margin: 0 0 28px;
-    }
-    .cmp-writeups-suite-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-    .cmp-writeups-suite-card {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      background: var(--bg);
-      border: 1px solid var(--divider);
-      border-radius: 12px;
-      padding: 18px 20px;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-    .cmp-writeups-suite-card:hover {
-      border-color: var(--brand);
-      box-shadow: 0 4px 20px var(--shadow-xs);
-    }
-    .cmp-writeups-suite-card-kicker {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--brand);
-      margin-bottom: 6px;
-    }
-    .cmp-writeups-suite-card-name {
-      display: block;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    .cmp-writeups-suite-card-desc {
-      margin: 0 0 12px;
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-    }
-    .cmp-writeups-suite-card-cta {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--brand);
-    }
-
-    .comparison-card {
-      background: var(--faq-row-even);
-      border: 1px solid var(--divider);
-      border-radius: 16px;
-      overflow: hidden;
-      padding-top: 0;
-    }
-
-    .comparison-card > .comparison-scroll:first-child {
-      padding-top: 14px;
-    }
-    .comparison-scroll {
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .comparison-table {
-      width: 100%;
-      min-width: 0;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-    .comparison-table[data-active-cat="image"] th[data-cat="video"],
-    .comparison-table[data-active-cat="image"] th[data-cat="pdf"],
-    .comparison-table[data-active-cat="image"] td[data-col="video"],
-    .comparison-table[data-active-cat="image"] td[data-col="pdf"],
-    .comparison-table[data-active-cat="video"] th[data-cat="image"],
-    .comparison-table[data-active-cat="video"] th[data-cat="pdf"],
-    .comparison-table[data-active-cat="video"] td[data-col="image"],
-    .comparison-table[data-active-cat="video"] td[data-col="pdf"],
-    .comparison-table[data-active-cat="pdf"] th[data-cat="image"],
-    .comparison-table[data-active-cat="pdf"] th[data-cat="video"],
-    .comparison-table[data-active-cat="pdf"] td[data-col="image"],
-    .comparison-table[data-active-cat="pdf"] td[data-col="video"] { display: none; }
-    .comparison-table thead th {
-      padding: 0 16px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-align: center;
-      border-bottom: 1px solid var(--divider);
-      white-space: nowrap;
-    }
-    .comparison-table thead th:first-child {
-      text-align: left;
-      padding-left: 24px;
-    }
-    .comparison-table thead th:last-child,
-    .comparison-table tbody td:last-child { padding-right: 24px; }
-    .comparison-table thead .th-binky,
-    .comparison-table thead .th-cycle { width: 170px; min-width: 148px; }
-    .comparison-table thead .th-binky { padding-bottom: 10px; vertical-align: top; }
-    .th-binky-name {
-      display: inline-block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--brand);
-      letter-spacing: -0.01em;
-      line-height: 22px;
-    }
-
-    /* Static organizer comparison */
-    .comparison-table--static thead th.th-tool-col {
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--text);
-      white-space: normal;
-      vertical-align: bottom;
-      max-width: 128px;
-    }
-
-    .comparison-table thead .th-cycle { padding-bottom: 10px; vertical-align: top; }
-    .th-cat {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 4px;
-      opacity: 0.7;
-    }
-    .th-cycle-row {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      justify-content: center;
-    }
-    .th-tool {
-      display: inline-block;
-      min-width: 0;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
-      line-height: 22px;
-      white-space: nowrap;
-      transition: opacity 0.18s ease;
-    }
-    .th-tool.fading { opacity: 0; }
-    .th-cycle-btn {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 1px solid var(--divider);
-      background: transparent;
-      color: var(--text-secondary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      padding: 0;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-    .th-cycle-btn:hover {
-      background: var(--button-secondary-hover);
-      color: var(--text);
-      border-color: var(--text-secondary);
-    }
-    .th-cycle-btn svg { width: 10px; height: 10px; }
-    .comparison-table tbody td {
-      padding: 12px 16px;
-      text-align: center;
-      font-size: 14px;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      border-bottom: 1px solid var(--divider);
-      transition: background 0.15s ease;
-    }
-    .comparison-table tbody tr:last-child td {
-      border-bottom: none;
-    }
-    .comparison-table tbody tr:hover td {
-      background: var(--row-hover);
-    }
-    .comparison-table tbody tr:hover .cmp-label {
-      color: var(--brand);
-    }
-    .comparison-table tbody tr:hover .cmp-icon {
-      color: var(--brand);
-    }
-
-    .cmp-label-cell {
-      text-align: left !important;
-      padding-left: 24px !important;
-    }
-    .cmp-label {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      letter-spacing: -0.01em;
-      transition: color 0.15s ease;
-    }
-    .cmp-icon {
-      width: 15px;
-      height: 15px;
-      color: var(--text-secondary);
-      flex-shrink: 0;
-      overflow: visible;
-      transition: color 0.15s ease;
-    }
-    .cmp-check {
-      width: 16px;
-      height: 16px;
-      vertical-align: middle;
-      color: var(--brand);
-    }
-    .cmp-cross { color: var(--cmp-cross); }
-    .cmp-dim {
-      color: var(--cmp-dim);
-      font-size: 13px;
-    }
-
-    @media (max-width: 900px) {
-      .cmp-row { grid-template-columns: 1fr; }
-      .cmp-text-card { padding: 24px; }
-      .cmp-writeups-specialists {
-        flex-direction: column;
-        gap: 24px;
-      }
-      .cmp-writeups-specialists-intro {
-        flex: none;
-        max-width: 42rem;
-      }
-      .cmp-writeups-specialists .cmp-writeups-grid {
-        flex: none;
-        width: 100%;
-        min-width: 0;
-      }
-      .cmp-writeups-grid { grid-template-columns: 1fr; gap: 20px; }
-      .cmp-writeups-suite-cards { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 700px) {
-      .comparison-card { border-radius: 12px; padding-top: 8px; }
-      .comparison-table thead .th-binky { width: 56px; }
-      .comparison-table thead .th-cycle { width: min(170px, 42vw); min-width: min(148px, 42vw); }
-      .comparison-table thead th:first-child,
-      .cmp-label-cell { padding-left: 12px !important; }
-      .comparison-table thead th:last-child,
-      .comparison-table tbody td:last-child { padding-right: 12px; }
-      .comparison-table th,
-      .comparison-table td { padding: 10px 4px; font-size: 12px; white-space: normal; }
-      .comparison-table .cmp-label { font-size: 12px; gap: 7px; }
-      .comparison-table .cmp-icon { width: 14px; height: 14px; }
-      .th-cycle-row { gap: 4px; flex-wrap: nowrap; }
-      .th-cycle-btn { width: 16px; height: 16px; flex-shrink: 0; }
-      .th-cycle-btn svg { width: 9px; height: 9px; }
-      .th-tool { font-size: 12px; min-width: 0; white-space: nowrap; }
-      .th-cat { font-size: 10px; }
-    }
-
-    .reviews { width: 100%; max-width: 960px; margin-top: 56px; }
-    .reviews-head { text-align: center; margin-bottom: 24px; }
-    .reviews-title { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; }
-    .reviews-sub { font-size: 14px; color: var(--text-secondary); }
-    .reviews-sub a { color: var(--text-secondary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-    .reviews-sub a:hover { color: var(--text); }
-    .reviews-grid { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 0 8px; }
-    .review-card { background: var(--faq-row-even); border: 1px solid var(--divider); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
-    .review-stars { color: var(--brand); font-size: 14px; letter-spacing: 2px; line-height: 1; }
-    .review-stars .dim { color: var(--cmp-cross); }
-    .review-quote { font-size: 14px; line-height: 1.55; color: var(--text); }
-    .review-author { display: flex; align-items: center; gap: 10px; margin-top: auto; }
-    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); flex-shrink: 0; }
-    .review-name { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-    .review-handle { font-size: 12px; color: var(--text-secondary); }
-    .review-handle a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-    .review-handle a:hover { color: var(--text); }
-    .review-source { font-size: 11px; color: var(--text-secondary); margin-left: auto; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-    .review-source:hover { color: var(--text); }
-    @media (max-width: 700px) {
-      .reviews-grid { grid-template-columns: 1fr; }
-    }
-
-    footer {
-      margin-top: 80px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      text-align: center;
-    }
-
-    @media (max-width: 700px) {
-      .features {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px 24px;
-      }
-    }
-
-    @media (max-width: 700px) {
-      body {
-        padding: 32px 20px 32px;
-        --site-tabs-pull-x: 20px;
-        --site-tabs-pull-y: 32px;
-      }
-
-      h1 {
-        font-size: 48px;
-      }
-
-      .tagline {
-        font-size: 16px;
-      }
-
-      .app-icon-wrap {
-        margin-bottom: 10px;
-        padding: 16px 18px;
-      }
-
-      .app-icon {
-        width: 72px;
-        height: 72px;
-      }
-
-      .screenshots {
-        margin-top: 32px;
-      }
-
-      .ss-row,
-      .ss-row.is-rev {
-        grid-template-columns: 1fr;
-      }
-
-      /* Keep screenshot above copy when rows stack (is-rev markup is card-then-image) */
-      .ss-row.is-rev > img,
-      .ss-row.is-rev > .ss-placeholder {
-        order: -1;
-      }
-
-      .ss-card {
-        padding: 24px;
-        gap: 20px;
-      }
-
-      .ss-card-features.is-2col {
-        grid-template-columns: 1fr;
-      }
-
-      .features {
-        margin-top: 56px;
-      }
-
-      footer {
-        margin-top: 56px;
-      }
-    }
-
-    /* Who's it for — two equal ss-cards, same width as screenshot rows */
-    .who-for-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      width: 100%;
-    }
-
-    @media (max-width: 700px) {
-      .who-for-row { grid-template-columns: 1fr; }
-    }
+    /* ---------- Desktops: little Mac screens where the mesh wallpaper lives ---------- */
+    .desktop {
+      position: relative; border-radius: 14px; overflow: hidden; isolation: isolate;
+      box-shadow: 0 0 0 1px var(--hair), var(--shadow);
+      background: var(--c5);
+    }
+    /* The wallpaper: the testamentmade mesh (five radial pools) in Binky's pinks, drifting slowly. */
+    .desktop::before {
+      content: ''; position: absolute; inset: -22%; z-index: -1;
+      background:
+        radial-gradient(at 14% 16%, var(--c1) 0, transparent 52%),
+        radial-gradient(at 86% 14%, var(--c2) 0, transparent 48%),
+        radial-gradient(at 80% 86%, var(--c3) 0, transparent 52%),
+        radial-gradient(at 16% 84%, var(--c4) 0, transparent 50%),
+        radial-gradient(at 52% 48%, var(--c5) 0, transparent 46%),
+        var(--c5);
+      animation: mesh-drift 22s ease-in-out infinite alternate;
+    }
+    @keyframes mesh-drift {
+      0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+      50% { transform: translate3d(-2.5%, 2%, 0) rotate(3deg) scale(1.04); }
+      100% { transform: translate3d(2%, -1.5%, 0) rotate(-2deg) scale(1.02); }
+    }
+    /* Tahoe's menu bar: clear, text right on the wallpaper, rounded highlights. */
+    .menubar {
+      --mb-ink: rgb(0 0 0 / 0.85);
+      position: relative; z-index: 3; display: flex; align-items: center; height: 26px; padding: 0 6px;
+      font-family: var(--app-font); font-size: 13px; line-height: 1; letter-spacing: -0.005em; color: var(--mb-ink);
+      -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
+    }
+    .mb-item { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 6px; white-space: nowrap; transition: background 0.12s; }
+    .mb-item:hover { background: rgb(0 0 0 / 0.1); }
+    .mb-app { font-weight: 700; }
+    .mb-right { margin-left: auto; display: flex; align-items: center; }
+    .mb-icon { padding: 0 7px; }
+    .mb-icon svg { display: block; }
+    .mb-clock { font-variant-numeric: tabular-nums; padding-right: 8px; }
+    @media (max-width: 640px) { .mb-more { display: none; } .mb-item { padding: 0 6px; } }
+    @media (prefers-color-scheme: dark) {
+      .menubar { --mb-ink: rgb(255 255 255 / 0.92); }
+      .mb-item:hover { background: rgb(255 255 255 / 0.14); }
+    }
+    .desktop__stage { position: relative; display: grid; place-items: center; padding: 36px 32px 42px; }
+    /* The screenshot sits on the wallpaper like an app window */
+    .desktop__stage .ss-screenshot {
+      display: block; width: 100%; height: auto; border-radius: 12px;
+      box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.16), 0 24px 48px -20px rgb(70 0 25 / 0.5), 0 4px 10px -4px rgb(70 0 25 / 0.2);
+    }
+    .desktop--hero { margin-top: 52px; width: 100%; }
+    .desktop--hero .desktop__stage { padding: 48px 56px 60px; }
+    .desktop--hero .ss-screenshot { max-width: 900px; }
+    @media (max-width: 640px) {
+      .desktop__stage, .desktop--hero .desktop__stage { padding: 22px 14px 26px; }
+      .desktop__stage .ss-screenshot { border-radius: 8px; }
+    }
+
+    /* ---------- Feature cards (shared) ---------- */
+    .feature-icon { display: block; width: 22px; height: 22px; color: var(--brand); flex: none; }
+    .ss-card { border-radius: 22px; padding: 28px; }
+    .ss-card-features { display: grid; gap: 22px; }
+    .ss-card-feature h3 { margin: 10px 0 4px; font-size: 18px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.3; }
+    .ss-card-feature p { font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+
+    /* Under the hero desktop: its three features, side by side */
+    .ss-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 16px; width: 100%; text-align: left; }
+    .ss-trio .ss-card { padding: 22px; }
+    @media (max-width: 860px) { .ss-trio { grid-template-columns: 1fr; } }
+
+    /* Screenshot rows: a desktop beside a card */
+    .ss-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 16px; align-items: center; margin-top: 96px; }
+    .ss-row.is-rev { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+    @media (max-width: 860px) {
+      .ss-row, .ss-row.is-rev { grid-template-columns: 1fr; margin-top: 64px; }
+      /* Keep the screenshot above the copy when rows stack (is-rev markup is card-then-desktop) */
+      .ss-row.is-rev > .desktop { order: -1; }
+    }
+
+    /* ---------- Sections ---------- */
+    .section { padding-top: 120px; }
+    .section-head { text-align: center; max-width: 44rem; margin: 0 auto; }
+    .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-ink); }
+    .section-title, .reviews-title, .cta-mid-headline { font-size: clamp(30px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.032em; font-weight: 700; }
+    .section-head .eyebrow + .section-title { margin-top: 8px; }
+    @media (max-width: 860px) { .section { padding-top: 88px; } }
+
+    /* Also in Binky: the feature tiles */
+    .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 40px; }
+    .feature { border-radius: 22px; padding: 22px; display: grid; gap: 6px; align-content: start; }
+    .feature .feature-icon { margin-bottom: 4px; }
+    .feature h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.3; }
+    .feature p { font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+    @media (max-width: 860px) { .features { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
+
+    /* Who it's for */
+    .who-for-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 40px; }
+    .ss-card.is-hero { display: grid; gap: 10px; align-content: start; padding: 30px; }
+    .ss-hero-eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-ink); }
+    .ss-card-hero-title { font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; }
+    .ss-card-hero-text { font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+    @media (max-width: 760px) { .who-for-row { grid-template-columns: 1fr; } }
 
     /* Mid-page CTA */
-    .cta-mid {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      text-align: center;
-      padding: 48px 24px;
-      width: 100%;
-      max-width: 560px;
+    .cta-mid { padding-top: 120px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .cta-mid-sub { margin: 14px auto 26px; max-width: min(34ch, 100%); font-size: 18px; line-height: 1.55; color: var(--ink-soft); letter-spacing: -0.012em; }
+    @media (max-width: 860px) { .cta-mid { padding-top: 88px; } }
+
+    /* ---------- Comparison ---------- */
+    .cmp-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 16px; align-items: stretch; }
+    .cmp-text-card { border-radius: 22px; padding: 32px; display: flex; flex-direction: column; gap: 12px; }
+    .cmp-title { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.08; letter-spacing: -0.032em; font-weight: 700; }
+    .cmp-desc { font-size: 17px; line-height: 1.55; color: var(--ink-soft); }
+    .cmp-footnote { margin-top: auto; padding-top: 12px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+    .comparison-card { border-radius: 22px; padding: 18px 8px 8px; overflow: hidden; }
+    .comparison-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .comparison-table thead th {
+      padding: 0 14px 12px; font-size: 14px; font-weight: 600; color: var(--ink-soft); text-align: center; white-space: nowrap;
+      border-bottom: 1px solid var(--hair);
+    }
+    .comparison-table thead th:first-child { text-align: left; padding-left: 18px; }
+    .comparison-table thead .th-binky, .comparison-table thead .th-cycle { width: 170px; min-width: 148px; vertical-align: top; padding-top: 10px; }
+    .th-binky-name { display: inline-block; font-size: 14px; font-weight: 700; color: var(--brand-ink); letter-spacing: -0.01em; line-height: 22px; }
+    /* Binky's own column, tinted like the family's "us" column */
+    .comparison-table .th-binky, .comparison-table .cmp-binky { background: color-mix(in oklch, var(--brand) 9%, transparent); }
+    .comparison-table thead .th-binky { border-radius: 14px 14px 0 0; }
+    .comparison-table tbody tr:last-child .cmp-binky { border-radius: 0 0 14px 14px; }
+    .th-cycle-row { display: inline-flex; align-items: center; gap: 6px; justify-content: center; }
+    .th-tool { display: inline-block; min-width: 0; font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; line-height: 22px; white-space: nowrap; transition: opacity 0.18s ease; }
+    .th-tool.fading { opacity: 0; }
+    .th-cycle-btn {
+      width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: var(--fill); color: var(--ink-soft);
+      display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease);
+    }
+    .th-cycle-btn:hover { background: var(--fill-strong); color: var(--ink); }
+    .th-cycle-btn svg { width: 11px; height: 11px; }
+    .comparison-table tbody td {
+      padding: 12px 14px; text-align: center; font-size: 15px; color: var(--ink-soft); white-space: nowrap;
+      border-bottom: 1px solid color-mix(in oklch, var(--ink) 8%, transparent);
+      transition: background var(--t-ui) ease;
+    }
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+    .comparison-table tbody tr:hover td:not(.cmp-binky) { background: color-mix(in oklch, var(--brand) 4%, transparent); }
+    .comparison-table tbody tr:hover .cmp-label, .comparison-table tbody tr:hover .cmp-icon { color: var(--brand-ink); }
+    .cmp-label-cell { text-align: left !important; padding-left: 18px !important; }
+    .cmp-label { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 500; color: var(--ink); letter-spacing: -0.01em; transition: color var(--t-ui) ease; }
+    .cmp-icon { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; overflow: visible; transition: color var(--t-ui) ease; }
+    .cmp-check { width: 17px; height: 17px; vertical-align: middle; color: var(--brand); display: inline-block; }
+    .cmp-cross { color: var(--cmp-cross); }
+    .cmp-dim { color: var(--cmp-dim); font-size: 14px; }
+    @media (max-width: 900px) {
+      .cmp-row { grid-template-columns: 1fr; }
+      .cmp-text-card { padding: 26px; }
+    }
+    @media (max-width: 700px) {
+      .comparison-card { padding: 12px 4px 4px; }
+      .comparison-table thead .th-binky { width: 64px; min-width: 0; }
+      .comparison-table thead .th-cycle { width: min(170px, 42vw); min-width: min(148px, 42vw); }
+      .comparison-table thead th:first-child, .cmp-label-cell { padding-left: 10px !important; }
+      .comparison-table thead th, .comparison-table tbody td { padding: 10px 6px; font-size: 12.5px; white-space: normal; }
+      .comparison-table thead .th-binky, .comparison-table thead .th-cycle { padding-top: 8px; }
+      .comparison-table .cmp-label { font-size: 12.5px; gap: 7px; }
+      .comparison-table .cmp-icon { width: 14px; height: 14px; }
+      .cmp-dim { font-size: 12px; }
+      .th-cycle-row { gap: 4px; flex-wrap: nowrap; }
+      .th-cycle-btn { width: 20px; height: 20px; flex-shrink: 0; }
+      .th-cycle-btn svg { width: 10px; height: 10px; }
+      .th-tool { font-size: 12.5px; white-space: nowrap; }
     }
 
-    .cta-mid-headline {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      margin: 0;
+    /* ---------- Reviews ---------- */
+    .reviews-head { text-align: center; margin-bottom: 36px; }
+    .reviews-sub { margin-top: 12px; font-size: 16px; color: var(--ink-soft); }
+    .reviews-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .review-card { border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .review-stars { color: var(--brand); font-size: 14px; letter-spacing: 2px; line-height: 1; }
+    .review-stars .dim { color: var(--cmp-cross); }
+    .review-quote { font-size: 16px; line-height: 1.55; color: var(--ink); }
+    .review-author { display: flex; align-items: center; gap: 10px; margin-top: auto; }
+    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--fill); flex-shrink: 0; display: block; }
+    .review-name { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .review-handle { font-size: 13px; color: var(--muted); }
+    .review-source { font-size: 12px; color: var(--muted); margin-left: auto; }
+    @media (max-width: 700px) { .reviews-grid { grid-template-columns: 1fr; } }
+
+    /* ---------- Your data ---------- */
+    .data-blurb {
+      display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 24px 48px; align-items: start;
+      border-radius: 22px; padding: 34px 36px;
+    }
+    .data-blurb-col--title { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+    .data-blurb-icon { color: var(--brand); line-height: 0; }
+    .data-blurb-icon svg { width: 28px; height: 28px; display: block; }
+    .data-blurb-title { font-size: clamp(26px, 3vw, 32px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; }
+    .data-blurb-col--body { min-width: 0; }
+    .data-blurb-lead, .data-blurb-body, .data-blurb-list li { font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+    .data-blurb-lead, .data-blurb-body { margin-bottom: 12px; }
+    .data-blurb-list { margin: 0 0 0 1.15rem; padding: 0; }
+    .data-blurb-list li + li { margin-top: 8px; }
+    .data-blurb-sub { font-weight: 600; color: var(--ink); margin: 20px 0 8px; font-size: 16px; }
+    @media (max-width: 760px) { .data-blurb { grid-template-columns: 1fr; gap: 18px; padding: 26px 22px; } }
+
+    /* ---------- FAQ ---------- */
+    .faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 40px; align-items: start; }
+    .faq-item { border-radius: 20px; padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 6px; scroll-margin-top: 90px; }
+    .faq-q { font-size: 17px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; }
+    .faq-a { font-size: 15.5px; line-height: 1.55; color: var(--ink-soft); }
+    @media (max-width: 760px) { .faq-grid { grid-template-columns: 1fr; } }
+
+    /* Links inside copy: quiet underline, ink on hover */
+    footer a, .faq-a a, .cmp-footnote a, .data-blurb a, .ss-card-hero-text a, .reviews-sub a, .review-handle a, .review-source,
+    .install-fallback a, .install-homebrew-note a {
+      color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+      text-decoration-color: color-mix(in oklch, currentColor 45%, transparent);
+    }
+    footer a:hover, .faq-a a:hover, .cmp-footnote a:hover, .data-blurb a:hover, .ss-card-hero-text a:hover, .reviews-sub a:hover,
+    .review-handle a:hover, .review-source:hover, .install-fallback a:hover, .install-homebrew-note a:hover {
+      color: var(--ink); text-decoration-color: currentColor;
+    }
+    .faq-inline-link {
+      display: inline; margin: 0; padding: 0; border: none; background: none; cursor: pointer; font: inherit;
+      color: var(--brand-ink); font-weight: 600; text-decoration: none;
+    }
+    .faq-inline-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .faq-inline-link.version-install-link { display: inline-flex; align-items: center; gap: 5px; vertical-align: -0.2em; font-weight: 600; color: var(--ink-soft); }
+    .faq-inline-link.version-install-link:hover { color: var(--ink); }
+    .faq-inline-link.version-install-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ---------- Footer ---------- */
+    footer { margin-top: 120px; padding: 32px 0 48px; text-align: center; font-size: 14.5px; color: var(--muted); border-top: 1px solid var(--hair); }
+
+    /* ---------- Modals ---------- */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 20px;
+      background: rgb(22 21 19 / 0.36);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    }
+    .modal-overlay.open { display: flex; }
+    html.modal-scroll-locked { overflow: hidden; overscroll-behavior: none; }
+    .modal {
+      position: relative; width: 100%; max-width: 540px; max-height: min(90vh, 760px); overflow-y: auto;
+      background: var(--card); border-radius: 26px; padding: 30px; box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift);
+      animation: modal-in 0.35s var(--ease) both;
+    }
+    @keyframes modal-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .modal h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; margin: 0 40px 14px 0; }
+    .modal-close {
+      position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border: none; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      background: var(--fill); color: var(--ink-soft); font-size: 15px; line-height: 1;
+      transition: background var(--t-ui) var(--ease);
+    }
+    .modal-close:hover { background: var(--fill-strong); color: var(--ink); }
+    .install-modal-lead { font-size: 15.5px; line-height: 1.55; color: var(--ink); margin: 0 0 16px; }
+    .gatekeeper-lead, .install-modal-sublead { font-size: 15px; line-height: 1.55; color: var(--ink-soft); margin: 0 0 16px; }
+    .install-modal-tabstrip { margin: 0 0 18px; }
+    /* Segmented control: a pill track with a raised pill */
+    .cmp-segmented { display: flex; width: 100%; padding: 3px; gap: 2px; border-radius: 999px; background: var(--fill); }
+    .cmp-tab {
+      flex: 1 1 0; min-width: 0; margin: 0; height: 34px; padding: 0 12px; border: none; border-radius: 999px; background: transparent;
+      color: var(--ink-soft); font: inherit; font-size: 14px; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      transition: background var(--t-ui) ease, color var(--t-ui) ease, box-shadow var(--t-ui) ease;
+    }
+    .cmp-tab:hover:not(.is-active) { color: var(--ink); }
+    .cmp-tab.is-active { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgb(0 0 0 / 0.12), 0 0 0 0.5px rgb(0 0 0 / 0.04); }
+    .cmp-tab:focus { outline: none; }
+    .cmp-tab:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .install-steps { list-style: none; counter-reset: steps; display: flex; flex-direction: column; gap: 14px; margin: 0 0 18px; padding: 0; }
+    .install-steps li { counter-increment: steps; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.55; color: var(--ink); }
+    .install-steps li::before {
+      content: counter(steps); min-width: 24px; height: 24px; margin-top: 0; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; border-radius: 50%;
+      background: var(--brand); color: var(--text-on-brand); font-size: 12.5px; font-weight: 700;
+    }
+    .install-steps li > span { flex: 1; min-width: 0; }
+    .install-fallback { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); line-height: 1.45; }
+    #install-modal.install-modal--help .install-fallback { display: none; }
+    .install-step-stack { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+    .install-step-stack p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink); }
+    .install-homebrew-note { font-size: 15px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 12px; }
+    .install-code-stack { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .install-homebrew-foot { font-size: 13.5px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+    .install-homebrew-foot code { font-size: 12.5px; background: var(--fill) !important; color: var(--ink); }
+    .code-block {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 12px 12px 16px; border-radius: 14px; background: var(--code-bg);
+    }
+    .code-block code { font-size: 12.5px; color: var(--code-text); word-break: break-all; }
+    .copy-btn {
+      flex-shrink: 0; white-space: nowrap; cursor: pointer; border: none; border-radius: 999px; padding: 6px 12px;
+      background: rgb(255 255 255 / 0.12); color: var(--code-muted); font-family: var(--font); font-size: 12.5px; font-weight: 600;
+      transition: background var(--t-ui) ease, color var(--t-ui) ease;
+    }
+    .copy-btn:hover { background: rgb(255 255 255 / 0.2); color: #fff; }
+    .copy-btn.copied { color: var(--success); }
+    .install-callout {
+      display: flex; align-items: flex-start; gap: 10px; margin-top: 20px; padding: 12px 14px; border-radius: 14px;
+      background: color-mix(in oklch, var(--brand) 8%, transparent);
+    }
+    .install-callout-icon { width: 18px; height: 18px; color: var(--brand); flex-shrink: 0; margin-top: 2px; }
+    .install-callout p { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+    .install-callout p strong { color: var(--ink); }
+    .install-steps li kbd { font-family: inherit; font-size: 13px; background: var(--fill); border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+
+    @media (max-width: 640px) {
+      .hero { padding-top: 92px; }
+      .app-icon { width: 104px; height: 104px; }
+      .modal { padding: 24px 20px; border-radius: 22px; }
     }
 
-    .cta-mid-sub {
-      font-size: 14px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-      margin: -10px 0 10px;
-      /* Narrow measure so the rag isn’t one long line + a stub; not `balance` (equal-ish lines). */
-      max-width: min(34ch, 100%);
-      margin-left: auto;
-      margin-right: auto;
-      text-wrap: pretty;
+    /* The family's global reduced-motion switch */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0s !important; transition-duration: 1ms !important; }
+      .desktop::before { animation: none; }
+      .app-icon-stage.is-wiggling { animation: none; }
+      .gh-star { display: none; }
     }
-
   </style>
   <script>
     function initBinkyWebMcp() {
@@ -1745,10 +652,20 @@
     <a class="dock__app" href="https://slinkyfiles.com" aria-label="Slinky: Keeps secrets out of files"><img src="/family/slinky.webp" alt="" width="54" height="54" /><span class="dock__name" aria-hidden="true">Slinky</span></a>
   </nav>
   <script src="/family-dock.js" defer></script>
-  <section class="hero">
+  <nav class="nav float-glass" aria-label="Binky">
+    <a class="nav__home" href="#top"><img src="/app-icon.webp" alt="" width="26" height="26" /><span class="nav__home-name">Binky</span></a>
+    <a class="nav__link" href="#features">Features</a>
+    <a class="nav__link" href="#comparison">Compare</a>
+    <a class="nav__link" href="#faq">FAQ</a>
+    <a class="btn btn-secondary btn--small" href="https://github.com/heyderekj/binky" data-gh-burst aria-label="Binky on GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="nav__gh-label">GitHub</span><span class="gh-star-anchor" aria-hidden="true">★</span><span data-gh-stars-count></span></a>
+    <a class="btn btn-primary btn--small" href="https://github.com/heyderekj/binky/releases/download/v1.5.1/Binky-1.5.1.dmg" onclick="window.fathom&&window.fathom.trackEvent('Download macOS nav'); var im=document.getElementById('install-modal'); im.classList.remove('install-modal--help'); im.classList.add('open')">Download</a>
+  </nav>
+
+  <main id="top">
+  <section class="hero wrap">
     <div class="app-icon-wrap">
       <div class="app-icon-stage">
-        <img src="Binky%20App%20Icon.png" alt="Binky app icon" class="app-icon" width="96" height="96" />
+        <img src="/app-icon.webp" alt="Binky app icon" class="app-icon" width="128" height="128" />
       </div>
     </div>
     <h1>Binky</h1>
@@ -1759,19 +676,48 @@
 
     <div class="buttons">
       <a class="btn btn-primary" href="https://github.com/heyderekj/binky/releases/download/v1.5.1/Binky-1.5.1.dmg" onclick="window.fathom&&window.fathom.trackEvent('Download macOS hero'); var im=document.getElementById('install-modal'); im.classList.remove('install-modal--help'); im.classList.add('open')">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
         Download for macOS
       </a>
-      <a class="btn btn-secondary" href="https://github.com/heyderekj/binky">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-        </svg>
-        GitHub<span id="gh-stars"> · <span class="gh-star-anchor" aria-hidden="true">★</span><span id="gh-stars-count"></span></span>
+      <a class="btn btn-secondary" href="https://github.com/heyderekj/binky" data-gh-burst>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub<span id="gh-stars"> · <span class="gh-star-anchor" aria-hidden="true">★</span><span id="gh-stars-count" data-gh-stars-count></span></span>
       </a>
     </div>
     <p class="version">13 MB · v1.5.1 · Apple Silicon · macOS 14 Sonoma <button type="button" class="faq-inline-link version-install-link" onclick="window.fathom&&window.fathom.trackEvent('install_modal_from_version'); document.getElementById('install-modal').classList.add('install-modal--help','open')" aria-haspopup="dialog" aria-controls="install-modal"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>How to Install</button></p>
+
+    <!-- Row 1: Sort + sorted folders -->
+    <div class="desktop desktop--hero">
+      <div class="menubar" aria-hidden="true">
+        <span class="mb-item mb-app">Binky</span><span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">View</span><span class="mb-item mb-more">Window</span><span class="mb-item mb-more">Help</span>
+        <span class="mb-right">
+          <span class="mb-item mb-icon"><svg viewBox="0 0 20 14" width="16" height="12"><path fill="currentColor" d="M10 2.4c2.7 0 5.2 1 7 2.8l1.3-1.3A11.7 11.7 0 0 0 10 .5 11.7 11.7 0 0 0 1.7 3.9L3 5.2a9.9 9.9 0 0 1 7-2.8Zm0 3.8c1.7 0 3.2.6 4.3 1.7l1.3-1.3A7.9 7.9 0 0 0 10 4.3c-2.2 0-4.1.9-5.6 2.3l1.3 1.3A6.1 6.1 0 0 1 10 6.2Zm0 3.7c.7 0 1.4.3 1.9.8L10 12.6l-1.9-1.9c.5-.5 1.2-.8 1.9-.8Z"/></svg></span>
+          <span class="mb-item mb-clock">Fri Oct 17&nbsp;&nbsp;9:41 AM</span>
+        </span>
+      </div>
+      <div class="desktop__stage">
+        <img src="screenshots/binky-sorting-2.webp" alt="Binky organizer with Downloads sorted into tidy folders" class="ss-screenshot" width="1792" height="1360" loading="lazy" />
+      </div>
+    </div>
+    <div class="ss-trio">
+      <div class="ss-card ss-card-feature">
+            <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z"/><path fill-rule="evenodd" d="M12 12.75a.75.75 0 0 1 .75.75v3.69l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72v-3.69a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/></svg>
+            <h3>Sorted folders</h3>
+            <p>Images, PDFs, media, documents, archives, apps, screenshots, misc — each routed into tidy destinations inside the fussy folder you&apos;re calming.</p>
+      </div>
+      <div class="ss-card ss-card-feature">
+            <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 2.25a.75.75 0 0 1 .75.75v.54l1.838-.46a9.75 9.75 0 0 1 6.725.738l.108.054A8.25 8.25 0 0 0 18 4.524l3.11-.732a.75.75 0 0 1 .917.81 47.784 47.784 0 0 0 .005 10.337.75.75 0 0 1-.574.812l-3.114.733a9.75 9.75 0 0 1-6.594-.77l-.108-.054a8.25 8.25 0 0 0-5.69-.625l-2.202.55V21a.75.75 0 0 1-1.5 0V3A.75.75 0 0 1 3 2.25Z" clip-rule="evenodd"/></svg>
+            <h3>Review folder</h3>
+            <p>Unknowns land here first — nothing sketchy silently disappears. Activity and history spell out messy origins.</p>
+      </div>
+      <div class="ss-card ss-card-feature">
+            <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd"/>
+            </svg>
+            <h3>Menu bar mode</h3>
+            <p>Hide the Dock icon and run Binky quietly from the menu bar. Sort Now, pause watching, open History — no window needed.</p>
+      </div>
+    </div>
   </section>
 
   <!-- Install modal -->
@@ -1818,7 +764,7 @@
             <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
           </div>
         </div>
-        <p class="install-homebrew-foot"><strong>Upgrading Binky:</strong> in Terminal, run <code style="font-size: 12px; background: var(--surface); padding: 2px 6px; border-radius: 4px;">brew update &amp;&amp; brew upgrade --cask binky</code> when you want a newer release. <strong>If macOS blocks the first launch,</strong> switch to the <strong>Download &amp; install</strong> tab and run the Terminal command in step 2.</p>
+        <p class="install-homebrew-foot"><strong>Upgrading Binky:</strong> in Terminal, run <code>brew update &amp;&amp; brew upgrade --cask binky</code> when you want a newer release. <strong>If macOS blocks the first launch,</strong> switch to the <strong>Download &amp; install</strong> tab and run the Terminal command in step 2.</p>
       </div>
       <div class="install-callout">
         <!-- arrow-path -->
@@ -1843,33 +789,7 @@
     </div>
   </div>
 
-    <section class="screenshots">
-    <!-- Row 1: Sort + sorted folders -->
-    <div class="ss-row">
-      <img src="screenshots/binky-sorting-2.webp" alt="Binky organizer with Downloads sorted into tidy folders" class="ss-screenshot" loading="lazy" />
-      <div class="ss-card">
-        <div class="ss-card-features">
-          <div class="ss-card-feature">
-            <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z"/><path fill-rule="evenodd" d="M12 12.75a.75.75 0 0 1 .75.75v3.69l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72v-3.69a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/></svg>
-            <h3>Sorted folders</h3>
-            <p>Images, PDFs, media, documents, archives, apps, screenshots, misc — each routed into tidy destinations inside the fussy folder you&apos;re calming.</p>
-          </div>
-          <div class="ss-card-feature">
-            <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 2.25a.75.75 0 0 1 .75.75v.54l1.838-.46a9.75 9.75 0 0 1 6.725.738l.108.054A8.25 8.25 0 0 0 18 4.524l3.11-.732a.75.75 0 0 1 .917.81 47.784 47.784 0 0 0 .005 10.337.75.75 0 0 1-.574.812l-3.114.733a9.75 9.75 0 0 1-6.594-.77l-.108-.054a8.25 8.25 0 0 0-5.69-.625l-2.202.55V21a.75.75 0 0 1-1.5 0V3A.75.75 0 0 1 3 2.25Z" clip-rule="evenodd"/></svg>
-            <h3>Review folder</h3>
-            <p>Unknowns land here first — nothing sketchy silently disappears. Activity and history spell out messy origins.</p>
-          </div>
-          <div class="ss-card-feature">
-            <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd"/>
-            </svg>
-            <h3>Menu bar mode</h3>
-            <p>Hide the Dock icon and run Binky quietly from the menu bar. Sort Now, pause watching, open History — no window needed.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <section class="screenshots wrap" aria-label="Quick Sort, Routines and rules">
     <!-- Row 2: Routines -->
     <div class="ss-row is-rev">
       <div class="ss-card">
@@ -1891,12 +811,34 @@
           </div>
         </div>
       </div>
-      <img src="screenshots/binky-routines-new.webp" alt="Binky in Routines mode — named watchers, sources, rules, and organizer" class="ss-screenshot" loading="lazy" />
+      <div class="desktop">
+        <div class="menubar" aria-hidden="true">
+          <span class="mb-item mb-app">Binky</span><span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">View</span><span class="mb-item mb-more">Window</span><span class="mb-item mb-more">Help</span>
+          <span class="mb-right">
+            <span class="mb-item mb-icon"><svg viewBox="0 0 20 14" width="16" height="12"><path fill="currentColor" d="M10 2.4c2.7 0 5.2 1 7 2.8l1.3-1.3A11.7 11.7 0 0 0 10 .5 11.7 11.7 0 0 0 1.7 3.9L3 5.2a9.9 9.9 0 0 1 7-2.8Zm0 3.8c1.7 0 3.2.6 4.3 1.7l1.3-1.3A7.9 7.9 0 0 0 10 4.3c-2.2 0-4.1.9-5.6 2.3l1.3 1.3A6.1 6.1 0 0 1 10 6.2Zm0 3.7c.7 0 1.4.3 1.9.8L10 12.6l-1.9-1.9c.5-.5 1.2-.8 1.9-.8Z"/></svg></span>
+            <span class="mb-item mb-clock">Fri Oct 17&nbsp;&nbsp;9:41 AM</span>
+          </span>
+        </div>
+        <div class="desktop__stage">
+          <img src="screenshots/binky-routines-new.webp" alt="Binky in Routines mode — named watchers, sources, rules, and organizer" class="ss-screenshot" width="1864" height="1326" loading="lazy" />
+        </div>
+      </div>
     </div>
 
     <!-- Row 3: Preview, routing, natural-language rules -->
     <div class="ss-row">
-      <img src="screenshots/binky-sorting-summary.webp" alt="Binky sorting summary showing batch outcomes after a tidy run" class="ss-screenshot" loading="lazy" />
+      <div class="desktop">
+        <div class="menubar" aria-hidden="true">
+          <span class="mb-item mb-app">Binky</span><span class="mb-item">File</span><span class="mb-item">Edit</span><span class="mb-item">View</span><span class="mb-item mb-more">Window</span><span class="mb-item mb-more">Help</span>
+          <span class="mb-right">
+            <span class="mb-item mb-icon"><svg viewBox="0 0 20 14" width="16" height="12"><path fill="currentColor" d="M10 2.4c2.7 0 5.2 1 7 2.8l1.3-1.3A11.7 11.7 0 0 0 10 .5 11.7 11.7 0 0 0 1.7 3.9L3 5.2a9.9 9.9 0 0 1 7-2.8Zm0 3.8c1.7 0 3.2.6 4.3 1.7l1.3-1.3A7.9 7.9 0 0 0 10 4.3c-2.2 0-4.1.9-5.6 2.3l1.3 1.3A6.1 6.1 0 0 1 10 6.2Zm0 3.7c.7 0 1.4.3 1.9.8L10 12.6l-1.9-1.9c.5-.5 1.2-.8 1.9-.8Z"/></svg></span>
+            <span class="mb-item mb-clock">Fri Oct 17&nbsp;&nbsp;9:41 AM</span>
+          </span>
+        </div>
+        <div class="desktop__stage">
+          <img src="screenshots/binky-sorting-summary.webp" alt="Binky sorting summary showing batch outcomes after a tidy run" class="ss-screenshot" width="1740" height="1342" loading="lazy" />
+        </div>
+      </div>
       <div class="ss-card">
         <div class="ss-card-features">
           <div class="ss-card-feature">
@@ -1922,7 +864,12 @@
 
   </section>
 
-    <section class="features" id="features">
+  <section class="section wrap" id="features" aria-labelledby="features-heading">
+    <div class="section-head">
+      <p class="eyebrow">Also in Binky</p>
+      <h2 class="section-title" id="features-heading">Quiets the mess right down.</h2>
+    </div>
+    <div class="features">
 
     <div class="feature">
       <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -2018,9 +965,14 @@
       <p>Files that haven&apos;t been touched in ages get quietly archived. The watch folder stays clean.</p>
     </div>
 
+    </div>
   </section>
 
-  <section class="screenshots" id="who-for" aria-labelledby="who-for-heading">
+  <section class="section wrap" id="who-for" aria-labelledby="who-for-heading">
+    <div class="section-head">
+      <p class="eyebrow">Who it&apos;s for</p>
+      <h2 class="section-title" id="who-for-heading">Fussy inbox. Meet Binky.</h2>
+    </div>
     <div class="who-for-row">
       <div class="ss-card is-hero">
         <div class="ss-hero-eyebrow">
@@ -2039,8 +991,8 @@
     </div>
   </section>
 
-  <section class="cta-mid">
-    <h2 class="cta-mid-headline">Give it to Binky.</h2>
+  <section class="cta-mid wrap" aria-labelledby="cta-mid-heading">
+    <h2 class="cta-mid-headline" id="cta-mid-heading">Give it to Binky.</h2>
     <p class="cta-mid-sub">Quick Sort or Routines. Sorted folders. Source-aware rules. A Review pile for the weird stuff.</p>
     <a class="btn btn-primary" href="https://github.com/heyderekj/binky/releases/download/v1.5.1/Binky-1.5.1.dmg" onclick="window.fathom&&window.fathom.trackEvent('Download macOS mid'); var im=document.getElementById('install-modal'); im.classList.remove('install-modal--help'); im.classList.add('open')">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
@@ -2050,10 +1002,11 @@
     </a>
   </section>
 
-  <section class="comparison" id="comparison">
+  <section class="section wrap comparison" id="comparison" aria-labelledby="comparison-heading">
     <div class="cmp-row">
       <div class="cmp-text-card">
-        <h2 class="cmp-title">The quiet one is Binky.</h2>
+        <p class="eyebrow">Compare</p>
+        <h2 class="cmp-title" id="comparison-heading">The quiet one is Binky.</h2>
         <p class="cmp-desc">Hazel writes rules. Refolder asks AI. Dropzone wants a drag. Binky just watches, sorts, and parks the mess — no subscription, no setup tax.</p>
         <p class="cmp-footnote">Rough tradeoffs — features move. <a href="/compare/">Full comparisons →</a></p>
       </div>
@@ -2161,7 +1114,7 @@
     </div>
   </section>
 
-  <section class="reviews" id="reviews" hidden>
+  <section class="section wrap reviews" id="reviews" hidden>
     <div class="reviews-head">
       <h2 class="reviews-title">People who popped in a Binky</h2>
       <p class="reviews-sub">Real quotes from <a href="https://github.com/heyderekj/binky/discussions/categories/reviews" target="_blank" rel="noopener">GitHub Discussions</a>. Want to share your take? <a href="https://github.com/heyderekj/binky/discussions/new?category=reviews" target="_blank" rel="noopener">Leave a review</a>.</p>
@@ -2169,6 +1122,7 @@
     <ul class="reviews-grid" id="reviews-grid"></ul>
   </section>
 
+  <div class="section wrap">
   <section class="data-blurb" id="data" aria-labelledby="data-heading">
     <div class="data-blurb-col data-blurb-col--title">
       <div class="data-blurb-icon" aria-hidden="true">
@@ -2189,7 +1143,13 @@
     </div>
   </section>
 
-  <section class="faq" id="faq">
+  </div>
+
+  <section class="section wrap faq" id="faq" aria-labelledby="faq-heading">
+    <div class="section-head">
+      <p class="eyebrow">Questions</p>
+      <h2 class="section-title" id="faq-heading">Good to know</h2>
+    </div>
     <div class="faq-grid">
       <div class="faq-item">
         <h3 class="faq-q">macOS says Binky can't be opened — what do I do?</h3>
@@ -2264,7 +1224,9 @@
 
   </section>
 
-  <footer>
+  </main>
+
+  <footer class="wrap">
     © <a href="https://testamentmade.com" target="_blank" rel="noopener">Testament Made, LLC</a> · <a href="mailto:help@binkyfiles.com">help@binkyfiles.com</a>
   </footer>
 
@@ -2368,14 +1330,18 @@
       .then(d => {
         if (typeof d.stargazers_count === 'number') {
           __ghStarCount = d.stargazers_count;
-          document.getElementById('gh-stars-count').textContent = ' ' + d.stargazers_count.toLocaleString();
+          // Hero and nav GitHub buttons both show the count
+          document.querySelectorAll('[data-gh-stars-count]').forEach(function (el) {
+            el.textContent = ' ' + d.stargazers_count.toLocaleString();
+          });
         }
       })
       .catch(() => {});
 
     (function () {
-      const ghBtn = document.querySelector('a.btn-secondary[href*="github.com/heyderekj/binky"]');
-      if (!ghBtn) return;
+      // Every GitHub button (nav + hero) gets the family star burst
+      const ghBtns = document.querySelectorAll('a[data-gh-burst]');
+      if (!ghBtns.length) return;
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
@@ -2425,7 +1391,7 @@
         star.addEventListener('animationend', () => star.remove(), { once: true });
       }
 
-      function burst() {
+      function burst(ghBtn) {
         if (bursting) return;
         bursting = true;
         ghBtn.classList.add('is-bursting');
@@ -2450,8 +1416,10 @@
         setTimeout(() => { bursting = false; }, total * stagger + 900);
       }
 
-      ghBtn.addEventListener('mouseenter', burst);
-      ghBtn.addEventListener('focus', burst);
+      ghBtns.forEach(function (ghBtn) {
+        ghBtn.addEventListener('mouseenter', function () { burst(ghBtn); });
+        ghBtn.addEventListener('focus', function () { burst(ghBtn); });
+      });
     })();
 
     (function () {
