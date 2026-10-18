@@ -239,7 +239,11 @@
     .tagline { margin-top: 12px; font-size: clamp(21px, 2.4vw, 26px); font-weight: 600; letter-spacing: -0.022em; line-height: 1.2; color: var(--ink-soft); }
     .description { margin: 14px auto 0; max-width: 34rem; text-wrap: balance; font-size: clamp(17px, 1.8vw, 19px); color: var(--muted); letter-spacing: -0.012em; }
     .buttons { display: flex; justify-content: center; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
-    .version { margin: 14px auto 0; max-width: 34rem; font-size: 14px; line-height: 1.5; color: var(--muted); }
+    .version { margin: 14px auto 0; max-width: 34rem; font-size: 14px; line-height: 1.5; color: var(--muted); text-wrap: balance; }
+    @media (max-width: 520px) {
+      .version .version-sep { display: none; }
+      .version .version-install-link { display: block !important; margin: 2px auto 0 !important; }
+    }
 
     /* ---------- GitHub star burst (the family's) ---------- */
     .gh-star {
@@ -811,7 +815,7 @@
         GitHub<span id="gh-stars"> <span class="gh-star-anchor" aria-hidden="true">★</span><span id="gh-stars-count" data-gh-stars-count></span></span>
       </a>
     </div>
-    <p class="version">v1.5.1 · macOS 14 Sonoma · Apple silicon · <button type="button" class="faq-inline-link version-install-link" onclick="window.fathom&&window.fathom.trackEvent('install_modal_from_version'); document.getElementById('install-modal').classList.add('install-modal--help','open')" aria-haspopup="dialog" aria-controls="install-modal">How to install</button></p>
+    <p class="version">v1.5.1 · macOS 14 Sonoma · Apple silicon<span class="version-sep"> · </span><button type="button" class="faq-inline-link version-install-link" onclick="window.fathom&&window.fathom.trackEvent('install_modal_from_version'); document.getElementById('install-modal').classList.add('install-modal--help','open')" aria-haspopup="dialog" aria-controls="install-modal">How to install</button></p>
 
     <!-- Row 1: Sort + sorted folders -->
     <div class="desktop desktop--hero">
