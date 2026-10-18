@@ -226,3 +226,8 @@ html.fmb-sheet-open { overflow: hidden; }
 @media (hover: hover) { .fask-mail:hover { text-decoration: underline; } }
 .fask-copy { display: inline-block; vertical-align: 1px; margin-left: 2px; padding: 2px 9px; border: 0; border-radius: 999px; font: 500 12px/1.5 inherit; font-family: inherit; background: color-mix(in oklch, var(--fmb-accent, #0b7f8f) 14%, transparent); color: var(--fmb-accent, #0b7f8f); cursor: pointer; white-space: nowrap; }
 @media (hover: hover) { .fask-copy:hover { background: color-mix(in oklch, var(--fmb-accent, #0b7f8f) 22%, transparent); } }
+
+/* Phones: the mock menu bar keeps the app's name, Window and Help, without File, Edit and View. */
+@media (max-width: 640px) {
+  .menubar [data-mb="file"], .menubar [data-mb="edit"], .menubar [data-mb="view"] { display: none; }
+}
