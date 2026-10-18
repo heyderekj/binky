@@ -628,7 +628,9 @@
       .modal-close { top: 14px; right: 14px; width: 40px; height: 40px; }
       .cmp-tab { height: 40px; }
       .copy-btn { min-height: 36px; padding: 6px 14px; }
-      .version-install-link { padding: 12px 4px !important; margin: -12px -4px !important; }
+      /* A finger-sized tap area that takes no room in the layout, so the link sits where it does on the other sites. */
+      .version-install-link { position: relative; }
+      .version-install-link::after { content: ''; position: absolute; inset: -11px -4px; }
       .th-cycle-btn { position: relative; }
       .th-cycle-btn::after { content: ''; position: absolute; inset: -11px -6px; }
       footer { line-height: 2.2; }
