@@ -64,7 +64,10 @@
     const btn = list.parentElement.querySelector('[data-faq-all]');
     if (btn) btn.hidden = true;
   };
-  window.familyReveal = (el) => { if (el?.closest?.('.faq-more')) expand(el.closest('[data-faq-collapsed]')); };
+  window.familyReveal = (el) => {
+    if (el?.tagName === 'DETAILS') el.open = true; // a link to a collapsed answer opens it
+    if (el?.closest?.('.faq-more')) expand(el.closest('[data-faq-collapsed]'));
+  };
   for (const btn of document.querySelectorAll('[data-faq-all]')) {
     btn.addEventListener('click', () => {
       const list = btn.parentElement.querySelector('[data-faq-collapsed]');

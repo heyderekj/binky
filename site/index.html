@@ -512,9 +512,14 @@
 
     /* ---------- FAQ ---------- */
     .faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 40px; align-items: start; }
-    .faq-item { border-radius: 20px; padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 6px; scroll-margin-top: 90px; }
-    .faq-q { font-size: 17px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; }
-    .faq-a { font-size: 15.5px; line-height: 1.55; color: var(--ink-soft); }
+    /* Collapsible questions, like Slinky's: a row with a plus that turns to a cross, and the answer under it. */
+    .faq-item { border-radius: 20px; padding: 0; scroll-margin-top: 90px; }
+    .faq-q { list-style: none; cursor: pointer; padding: 18px 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 17px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; border-radius: 20px; }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-q::after { content: '+'; flex: none; font-weight: 400; font-size: 22px; line-height: 1; color: var(--muted); transition: rotate var(--t-ui) var(--ease); }
+    .faq-item[open] .faq-q::after { rotate: 45deg; }
+    .faq-q:focus-visible { outline: 2px solid var(--brand, currentColor); outline-offset: -2px; }
+    .faq-a { margin: 0; padding: 0 20px 18px; font-size: 15.5px; line-height: 1.55; color: var(--ink-soft); }
     @media (max-width: 760px) { .faq-grid { grid-template-columns: 1fr; } }
 
     /* Links inside copy: quiet underline, ink on hover */
@@ -783,7 +788,7 @@
     <a class="dock__app" href="https://slinkyfiles.com" aria-label="Slinky: Keeps secrets out of files"><img src="/family/slinky.webp" alt="" width="54" height="54" /><span class="dock__name" aria-hidden="true">Slinky</span></a>
   </nav>
   <script src="/family-dock.js?v=0df45895" defer></script>
-  <script src="/family-ask.js?v=315c713f" defer></script>
+  <script src="/family-ask.js?v=4f426407" defer></script>
   <script src="/family-menubar.js?v=f52333a4" defer></script>
   <script src="/app-ui.js" defer></script>
   <nav class="nav float-glass is-tucked" aria-label="Binky">
@@ -1602,74 +1607,32 @@
     <div class="fask__answer" data-ask-answer hidden><span class="fmb-orb" aria-hidden="true"></span><div><p data-ask-text aria-live="polite"></p><p data-ask-src hidden></p></div></div>
     <div class="faq-grid" data-faq-collapsed>
 
-      <div class="faq-item" id="faq-do-i-need-to-be-technical-to-use-this">
-        <h3 class="faq-q">Do I need to be technical to use this?</h3>
-        <p class="faq-a">Nope. Open the app, stay on Quick Sort, hit Sort when you want a folder calmed — Downloads stays the polite default. Add Routines when you want the same routing to run on its own. Reach for Describe a rule once you crave specifics.</p>
-      </div>
+      <details class="faq-item" id="faq-do-i-need-to-be-technical-to-use-this"><summary class="faq-q">Do I need to be technical to use this?</summary><p class="faq-a">Nope. Open the app, stay on Quick Sort, hit Sort when you want a folder calmed — Downloads stays the polite default. Add Routines when you want the same routing to run on its own. Reach for Describe a rule once you crave specifics.</p></details>
 
-      <div class="faq-item" id="faq-what-s-the-difference-between-quick-sort-and-routines">
-        <h3 class="faq-q">What’s the difference between Quick Sort and Routines?</h3>
-        <p class="faq-a">Quick Sort is a one-shot sweep — pick a folder, hit Sort, done (⌘1 jumps there). Routines are named, persistent watchers: each one has its own source folder, rule stack, and tag defaults that run automatically (⌘2). Start with Quick Sort; graduate to Routines when the same folder keeps yelling.</p>
-      </div>
+      <details class="faq-item" id="faq-what-s-the-difference-between-quick-sort-and-routines"><summary class="faq-q">What’s the difference between Quick Sort and Routines?</summary><p class="faq-a">Quick Sort is a one-shot sweep — pick a folder, hit Sort, done (⌘1 jumps there). Routines are named, persistent watchers: each one has its own source folder, rule stack, and tag defaults that run automatically (⌘2). Start with Quick Sort; graduate to Routines when the same folder keeps yelling.</p></details>
 
-      <div class="faq-item" id="faq-does-binky-upload-my-files">
-        <h3 class="faq-q">Does Binky upload my files?</h3>
-        <p class="faq-a">No. Sorting stays on your Mac — no Binky cloud, no account. Once a day the app checks GitHub for a newer release (that&apos;s the only automatic outbound request). Details: <a href="#data">Your data, in plain English</a>.</p>
-      </div>
+      <details class="faq-item" id="faq-does-binky-upload-my-files"><summary class="faq-q">Does Binky upload my files?</summary><p class="faq-a">No. Sorting stays on your Mac — no Binky cloud, no account. Once a day the app checks GitHub for a newer release (that&apos;s the only automatic outbound request). Details: <a href="#data">Your data, in plain English</a>.</p></details>
 
-      <div class="faq-item" id="faq-does-it-move-originals-or-make-copies">
-        <h3 class="faq-q">Does it move originals or make copies?</h3>
-        <p class="faq-a">Moves originals. Nothing duplicated, nothing left behind in Downloads. That's why the stable-file gate and the Review folder exist — Binky won't touch a file it isn't sure about.</p>
-      </div>
-      <div class="faq-item faq-more" id="faq-macos-says-binky-can-t-be-opened-what-do-i-do">
-        <h3 class="faq-q">macOS says Binky can't be opened — what do I do?</h3>
-        <p class="faq-a">If Binky’s icon in Applications has a <strong>line through it</strong>, your Mac doesn’t match this build’s CPU (current releases are Apple Silicon only)—see <a href="#faq-mac-os">Mac and macOS requirements</a>. Otherwise that’s Gatekeeper. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
-      </div>
+      <details class="faq-item" id="faq-does-it-move-originals-or-make-copies"><summary class="faq-q">Does it move originals or make copies?</summary><p class="faq-a">Moves originals. Nothing duplicated, nothing left behind in Downloads. That's why the stable-file gate and the Review folder exist — Binky won't touch a file it isn't sure about.</p></details>
+      <details class="faq-item faq-more" id="faq-macos-says-binky-can-t-be-opened-what-do-i-do"><summary class="faq-q">macOS says Binky can't be opened — what do I do?</summary><p class="faq-a">If Binky’s icon in Applications has a <strong>line through it</strong>, your Mac doesn’t match this build’s CPU (current releases are Apple Silicon only)—see <a href="#faq-mac-os">Mac and macOS requirements</a>. Otherwise that’s Gatekeeper. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
-      <div class="faq-item faq-more" id="faq-is-binky-notarized-why-isn-t-it-on-the-app-store">
-        <h3 class="faq-q">Is Binky notarized? Why isn&apos;t it on the App Store?</h3>
-        <p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
-      </div>
+      <details class="faq-item faq-more" id="faq-is-binky-notarized-why-isn-t-it-on-the-app-store"><summary class="faq-q">Is Binky notarized? Why isn&apos;t it on the App Store?</summary><p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
-      <div class="faq-item faq-more" id="faq-mac-os">
-        <h3 class="faq-q">Mac only? Which Mac and macOS?</h3>
-        <p class="faq-a">Yes. SwiftUI, native frameworks, no cross-platform runtime. <strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 14 Sonoma</strong> or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-mac-os"><summary class="faq-q">Mac only? Which Mac and macOS?</summary><p class="faq-a">Yes. SwiftUI, native frameworks, no cross-platform runtime. <strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 14 Sonoma</strong> or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-about-dinky-compression">
-        <h3 class="faq-q">What about Dinky (compression)?</h3>
-        <p class="faq-a"><a href="https://dinkyfiles.com" target="_blank" rel="noopener noreferrer">Dinky</a> shrinks images, video, audio, and PDFs. Its current releases need <strong>Apple Silicon</strong> and <strong>macOS 15 Sequoia</strong> or later — see dinkyfiles.com for download and install help.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-about-dinky-compression"><summary class="faq-q">What about Dinky (compression)?</summary><p class="faq-a"><a href="https://dinkyfiles.com" target="_blank" rel="noopener noreferrer">Dinky</a> shrinks images, video, audio, and PDFs. Its current releases need <strong>Apple Silicon</strong> and <strong>macOS 15 Sequoia</strong> or later — see dinkyfiles.com for download and install help.</p></details>
 
-      <div class="faq-item faq-more" id="faq-where-do-files-land-after-sorting">
-        <h3 class="faq-q">Where do files land after sorting?</h3>
-        <p class="faq-a">Each routine declares its sorted destinations and downstream actions — rename tokens, archive extraction, Finder-only DMG installs, Finder tag spreads, Trash when warranted.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-where-do-files-land-after-sorting"><summary class="faq-q">Where do files land after sorting?</summary><p class="faq-a">Each routine declares its sorted destinations and downstream actions — rename tokens, archive extraction, Finder-only DMG installs, Finder tag spreads, Trash when warranted.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-file-types-go-in-which-destination">
-        <h3 class="faq-q">What file types go in which destination?</h3>
-        <p class="faq-a">Images (jpg, png, gif, webp, svg, heic…), PDFs, Media (mp4, mov, mp3, m4a…), Documents (doc, txt, md, xls…), Archives (zip, rar, 7z, tar…), Apps (dmg, pkg, app), Screenshots (matched by name pattern), Misc (everything else). Unknowns or ambiguous types go to Review.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-file-types-go-in-which-destination"><summary class="faq-q">What file types go in which destination?</summary><p class="faq-a">Images (jpg, png, gif, webp, svg, heic…), PDFs, Media (mp4, mov, mp3, m4a…), Documents (doc, txt, md, xls…), Archives (zip, rar, 7z, tar…), Apps (dmg, pkg, app), Screenshots (matched by name pattern), Misc (everything else). Unknowns or ambiguous types go to Review.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-about-watching-downloads-or-synced-folders">
-        <h3 class="faq-q">What about watching Downloads or synced folders?</h3>
-        <p class="faq-a">Binky watches the folder you pick (Downloads by default). For Dropbox, Drive, iCloud, etc., it reacts after the sync client finishes laying bytes on disk — same idea as catching a fussy saver.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-about-watching-downloads-or-synced-folders"><summary class="faq-q">What about watching Downloads or synced folders?</summary><p class="faq-a">Binky watches the folder you pick (Downloads by default). For Dropbox, Drive, iCloud, etc., it reacts after the sync client finishes laying bytes on disk — same idea as catching a fussy saver.</p></details>
 
-      <div class="faq-item faq-more" id="faq-can-i-set-custom-routing-rules">
-        <h3 class="faq-q">Can I set custom routing rules?</h3>
-        <p class="faq-a">Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it&apos;s junk.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-can-i-set-custom-routing-rules"><summary class="faq-q">Can I set custom routing rules?</summary><p class="faq-a">Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it&apos;s junk.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-if-binky-isn-t-running-when-files-land">
-        <h3 class="faq-q">What if Binky isn't running when files land?</h3>
-        <p class="faq-a">The watch folder only acts while Binky is running. Files that arrived while it was off sit untouched — run Sort Now when you're ready and it'll sweep them up.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-if-binky-isn-t-running-when-files-land"><summary class="faq-q">What if Binky isn't running when files land?</summary><p class="faq-a">The watch folder only acts while Binky is running. Files that arrived while it was off sit untouched — run Sort Now when you're ready and it'll sweep them up.</p></details>
 
-      <div class="faq-item faq-more" id="faq-who-made-this-and-why">
-        <h3 class="faq-q">Who made this and why?</h3>
-        <p class="faq-a"><a href="https://heyderekj.com" target="_blank" rel="noopener">Derek Castelli</a> builds client sites in Figma and Webflow. He wanted a Downloads workflow that behaved without acting sneaky.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-who-made-this-and-why"><summary class="faq-q">Who made this and why?</summary><p class="faq-a"><a href="https://heyderekj.com" target="_blank" rel="noopener">Derek Castelli</a> builds client sites in Figma and Webflow. He wanted a Downloads workflow that behaved without acting sneaky.</p></details>
     </div>
     <button type="button" class="faq-all" data-faq-all>Show all 14 questions</button>
 
