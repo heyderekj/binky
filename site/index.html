@@ -215,10 +215,10 @@
     }
 
     /* ---------- Hero ---------- */
-    .hero { padding: 104px 0 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .hero { padding: 86px 0 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
     /* Outer wrap: room for the glow and the wiggle. Inner stage: filter + wiggle on one element so
        iOS Safari does not promote separate layers (filtered img vs transformed parent). */
-    .app-icon-wrap { padding: 18px 22px 22px; margin-bottom: 4px; }
+    .app-icon-wrap { padding: 18px 22px 7px; margin-bottom: 4px; }
     .app-icon-stage {
       display: inline-block; line-height: 0; transform-origin: 50% 85%;
       filter: drop-shadow(0 2px 3px rgb(22 21 19 / 0.12)) drop-shadow(0 20px 26px var(--glow));
@@ -608,7 +608,7 @@
     .install-steps li kbd { font-family: inherit; font-size: 13px; background: var(--fill); border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
 
     @media (max-width: 640px) {
-      .hero { padding-top: 92px; }
+      .hero { padding-top: 78px; }
       .app-icon { width: 104px; height: 104px; }
       .modal { padding: 24px 20px; border-radius: 22px; }
     }
