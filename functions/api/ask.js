@@ -9,7 +9,7 @@
 const MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 const MAX_Q = 280;
 // Bump when the prompt or what answers are grounded in changes, so cached answers start over.
-const ANSWERS = 2;
+const ANSWERS = 3;
 
 // Anything that looks like a key, token or private key. Never sent to the model, never cached.
 const SECRET = /(sk[-_](?:live|test|proj|ant)[-_A-Za-z0-9]{12,}|\bgh[pousr]_[A-Za-z0-9]{20,}|\bxox[abprs]-[A-Za-z0-9-]{10,}|\bAKIA[0-9A-Z]{16}\b|\bAIza[0-9A-Za-z_-]{30,}|\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?=[A-Za-z0-9_\-+/=]*\d)(?=[A-Za-z0-9_\-+/=]*[A-Za-z])[A-Za-z0-9_\-+/=]{32,}\b)/;
