@@ -36,7 +36,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         if statusItem == nil {
             let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
             item.button?.toolTip = String(localized: "Binky", comment: "Menu bar status item tooltip (idle).")
-            item.button?.image = NSImage(systemSymbolName: "tray.and.arrow.down.fill", accessibilityDescription: "Binky")
+            // Small scale gives about 13 × 12pt of ink, in line with the system's own items (Wi-Fi 15 × 11,
+            // Spotlight 14 × 13). The default size is 14 × 15pt, which reads too big for a filled glyph.
+            item.button?.image = NSImage(systemSymbolName: "tray.and.arrow.down.fill", accessibilityDescription: "Binky")?
+                .withSymbolConfiguration(.init(pointSize: 13, weight: .regular, scale: .small))
             item.button?.image?.isTemplate = true
             let menu = NSMenu()
             menu.delegate = self

@@ -1,0 +1,233 @@
+/* The working hero menu bar (family-menubar.js), shared by Dinky, Binky and Slinky. Tahoe menus: frosted,
+   rounded, accent-colored highlight. Each site sets --fmb-accent to its brand color. */
+.menubar.fmb-live [data-mb] { cursor: default; }
+.menubar .fmb-on { background: rgb(0 0 0 / 0.1); border-radius: 6px; }
+@media (hover: hover) { .menubar.fmb-live [data-mb]:hover { background: rgb(0 0 0 / 0.1); border-radius: 6px; } }
+@media (prefers-color-scheme: dark) { .menubar .fmb-on { background: rgb(255 255 255 / 0.16); } }
+@media (prefers-color-scheme: dark) and (hover: hover) { .menubar.fmb-live [data-mb]:hover { background: rgb(255 255 255 / 0.16); } }
+.menubar .fmb-dim { opacity: 0.35; }
+.menubar .fmb-drop { background: var(--fmb-accent, #0b7f8f) !important; color: #fff; border-radius: 6px; }
+
+.fmb-menu, .fmb-panel {
+  --fmb-bg: rgb(246 246 248 / 0.78); --fmb-ink: rgb(0 0 0 / 0.86); --fmb-dim: rgb(0 0 0 / 0.42); --fmb-line: rgb(0 0 0 / 0.1);
+  position: absolute; z-index: 40; color: var(--fmb-ink); text-align: left;
+  font: 500 13px/1.2 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; letter-spacing: -0.005em;
+  background: var(--fmb-bg); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.16), inset 0 0.5px 0 rgb(255 255 255 / 0.7), 0 14px 38px -10px rgb(0 0 0 / 0.32);
+  animation: fmb-in 0.14s ease-out;
+}
+@media (prefers-color-scheme: dark) {
+  .fmb-menu, .fmb-panel { --fmb-bg: rgb(40 40 44 / 0.74); --fmb-ink: rgb(255 255 255 / 0.9); --fmb-dim: rgb(255 255 255 / 0.4); --fmb-line: rgb(255 255 255 / 0.12);
+    box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.16), inset 0 0.5px 0 rgb(255 255 255 / 0.12), 0 14px 38px -10px rgb(0 0 0 / 0.6); }
+}
+@keyframes fmb-in { from { opacity: 0; } }
+.fmb-menu { min-width: 200px; padding: 5px; border-radius: 12px; }
+.fmb-item { display: flex; align-items: center; gap: 24px; height: 24px; padding: 0 10px; border-radius: 7px; white-space: pre; }
+.fmb-item kbd { margin-left: auto; font: inherit; color: var(--fmb-dim); }
+@media (hover: hover) {
+  .fmb-item:not(.is-off):hover { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+  .fmb-item:not(.is-off):hover kbd { color: rgb(255 255 255 / 0.8); }
+}
+.fmb-item:not(.is-off):active { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+.fmb-item.is-off { color: var(--fmb-dim); }
+.fmb-sep { border: 0; height: 1px; margin: 5px 10px; background: var(--fmb-line); }
+
+.fmb-panel { border-radius: 18px; }
+.fmb-btn { margin-top: 6px; height: 26px; padding: 0 18px; border-radius: 999px; font: inherit; color: var(--fmb-ink); background: rgb(127 127 127 / 0.18); cursor: pointer; }
+.fmb-about { left: 50%; top: 50%; translate: -50% -50%; width: 270px; padding: 22px 20px 18px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.fmb-about img { border-radius: 16px; margin-bottom: 8px; }
+.fmb-about svg { color: var(--fmb-ink); margin-bottom: 6px; }
+.fmb-about b { font-size: 17px; font-weight: 700; }
+.fmb-about span, .fmb-about small { color: var(--fmb-dim); font-size: 12px; }
+.fmb-about dl { display: grid; grid-template-columns: auto auto; gap: 3px 10px; margin: 10px 0 4px; font-size: 12px; }
+.fmb-about dt { text-align: right; font-weight: 600; }
+.fmb-about dd { margin: 0; color: var(--fmb-dim); text-align: left; }
+
+.fmb-spot { width: min(520px, calc(100% - 32px)); padding: 0; border-radius: 26px; overflow: hidden; }
+.fmb-search { display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 18px; color: var(--fmb-dim); }
+.fmb-glass { flex: none; color: var(--fmb-ink); opacity: 0.55; }
+.fmb-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif; font-size: 22px; font-weight: 400; letter-spacing: -0.01em; color: var(--fmb-ink); }
+.fmb-search input::placeholder { color: var(--fmb-dim); }
+.fmb-results { display: grid; padding: 0 8px; }
+.fmb-spot.has-results .fmb-results { padding: 4px 8px 8px; border-top: 1px solid var(--fmb-line); }
+.fmb-result { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 9px; cursor: default; }
+.fmb-result img { border-radius: 5px; }
+.fmb-result.is-on { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+@media (hover: hover) { .fmb-result:hover { background: var(--fmb-accent, #0b7f8f); color: #fff; } }
+
+.fmb-ccp { width: min(316px, calc(100% - 16px)); padding: 12px; border-radius: 26px; }
+.fmb-cc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Tahoe modules: soft glass blocks, no outlines. */
+.fmb-tile { appearance: none; border: 0; outline: 0; display: flex; align-items: center; gap: 10px; padding: 9px 12px 9px 9px; border-radius: 999px; text-align: left; font: inherit; color: var(--fmb-ink); background: rgb(127 127 127 / 0.13); cursor: default; transition: background 0.15s; }
+@media (hover: hover) { .fmb-tile:hover { background: rgb(127 127 127 / 0.2); } }
+.fmb-tile:focus-visible { box-shadow: 0 0 0 2px var(--fmb-accent, #0b7f8f); }
+.fmb-tile--wide { grid-column: 1 / -1; }
+.fmb-tile i { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: rgb(127 127 127 / 0.22); color: var(--fmb-ink); transition: background 0.15s, color 0.15s; }
+.fmb-tile i svg { width: 15px; height: auto; }
+.fmb-tile.is-on i { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+.fmb-tile b { display: block; font-size: 12.5px; font-weight: 600; }
+.fmb-tile small { display: block; font-size: 11px; color: var(--fmb-dim); }
+.fmb-tile--sq { border-radius: 20px; flex-direction: column; align-items: flex-start; gap: 10px; padding: 11px 12px 12px; text-decoration: none; }
+/* Reduce Motion from Control Center: the page's animations stop, like the system setting. */
+.fmb-still *, .fmb-still *::before, .fmb-still *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+/* The family module: Testament Made and its three apps. */
+.fmb-family { grid-column: 1 / -1; padding: 11px 12px 12px; border-radius: 20px; background: rgb(127 127 127 / 0.13); }
+.fmb-family__head { font-size: 12.5px; font-weight: 600; color: var(--fmb-ink); text-decoration: none; }
+.fmb-family__head::after { content: ' \203A'; color: var(--fmb-dim); }
+.fmb-family__apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 9px; }
+.fmb-family__apps a { display: grid; justify-items: center; gap: 5px; padding: 8px 4px 6px; border-radius: 14px; font-size: 11.5px; color: var(--fmb-ink); text-decoration: none; transition: background 0.15s; }
+.fmb-family__apps a:hover { background: rgb(127 127 127 / 0.16); }
+.fmb-family__apps a.is-on { background: rgb(127 127 127 / 0.2); font-weight: 600; }
+.fmb-family__apps img { width: 36px; height: 36px; border-radius: 22.5%; }
+
+.fmb-toast { position: absolute; z-index: 45; top: 34px; right: 10px; width: min(340px, calc(100% - 20px)); display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px 12px 11px; border-radius: 20px; text-align: left;
+  color: rgb(0 0 0 / 0.86); font: 13px/1.3 -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  background: rgb(246 246 248 / 0.8); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.3);
+  opacity: 0; translate: 24px 0; transition: opacity 0.3s ease, translate 0.45s cubic-bezier(.22,1,.36,1); }
+.fmb-toast.is-on { opacity: 1; translate: 0 0; }
+.fmb-toast img { border-radius: 8px; flex: none; margin-top: 1px; }
+.fmb-toast > span { flex: 1; min-width: 0; }
+.fmb-toast b { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+.fmb-toast b time { font-weight: 400; font-size: 12px; color: rgb(0 0 0 / 0.45); }
+.fmb-toast small { display: block; margin-top: 1px; font-size: 13px; line-height: 1.3; color: rgb(0 0 0 / 0.75); }
+@media (prefers-color-scheme: dark) {
+  .fmb-toast { color: rgb(255 255 255 / 0.9); background: rgb(40 40 44 / 0.78); box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.6); }
+  .fmb-toast small { color: rgb(255 255 255 / 0.6); }
+  .fmb-toast b time { color: rgb(255 255 255 / 0.45); }
+}
+
+.fmb-sleep { position: absolute; inset: 0; z-index: 50; background: #000; opacity: 0; transition: opacity 0.6s ease; cursor: pointer; }
+.fmb-sleep.is-on { opacity: 0.92; }
+
+.desktop:fullscreen { border-radius: 0; display: flex; flex-direction: column; }
+.desktop:fullscreen .desktop__stage { flex: 1; }
+
+/* Binky: loose files on the desktop's right edge, and the folders they sort into. */
+.fmb-files { position: absolute; inset: 40px 14px auto auto; z-index: 2; display: grid; gap: 10px; justify-items: center; pointer-events: none;
+  font: 500 10.5px/1.2 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px rgb(0 0 0 / 0.45); }
+.fmb-file, .fmb-folder { display: grid; justify-items: center; gap: 3px; width: 84px; text-align: center; }
+.fmb-file span, .fmb-folder span { max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fmb-folder { display: none; }
+.fmb-files.is-sorting .fmb-folder { display: grid; animation: fmb-in 0.3s ease-out; }
+@media (max-width: 1100px) { .fmb-files { display: none; } }
+
+/* Wi-Fi and Battery menus, and Notification Center from the clock. */
+.fmb-wifi, .fmb-batt { min-width: 260px; padding: 6px; border-radius: 14px; }
+.fmb-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 10px; }
+.fmb-row--head b { font-size: 13px; font-weight: 700; }
+.fmb-dimtext { color: var(--fmb-dim); }
+.fmb-label { margin: 6px 10px 2px; font-size: 11px; font-weight: 600; color: var(--fmb-dim); }
+.fmb-item--plain { cursor: default; }
+.fmb-net { appearance: none; border: 0; background: none; width: 100%; display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 8px; border-radius: 8px; font: inherit; color: var(--fmb-ink); text-align: left; cursor: default; }
+.fmb-net:hover { background: rgb(127 127 127 / 0.14); }
+.fmb-net i { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: rgb(127 127 127 / 0.22); color: var(--fmb-ink); flex: none; }
+.fmb-net.is-joined i { background: var(--fmb-accent, #0b7f8f); color: #fff; }
+.fmb-net span { flex: 1; }
+.fmb-net > svg { color: var(--fmb-dim); }
+.fmb-wifi.is-off .fmb-wifi-body { display: none; }
+.fmb-switch { appearance: none; border: 0; width: 34px; height: 20px; border-radius: 999px; padding: 0; position: relative; background: rgb(127 127 127 / 0.32); cursor: default; transition: background 0.2s; }
+.fmb-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.3); transition: translate 0.2s cubic-bezier(.22,1,.36,1); }
+.fmb-switch.is-on { background: var(--fmb-accent, #0b7f8f); }
+.fmb-switch.is-on::after { translate: 14px 0; }
+.fmb-nc { width: min(340px, calc(100% - 16px)); padding: 8px; border-radius: 22px; display: grid; gap: 6px; background: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.fmb-note { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px 12px 11px; border-radius: 20px; text-align: left;
+  background: rgb(246 246 248 / 0.8); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.3); }
+.fmb-note img { border-radius: 7px; flex: none; }
+.fmb-note > span { flex: 1; min-width: 0; }
+.fmb-note b { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+.fmb-note b time { font-weight: 400; font-size: 12px; color: var(--fmb-dim); }
+.fmb-note small { display: block; margin-top: 1px; font-size: 13px; line-height: 1.3; color: var(--fmb-ink); opacity: 0.8; }
+.fmb-empty { padding: 14px 18px; border-radius: 20px; text-align: center; color: var(--fmb-dim); background: rgb(246 246 248 / 0.8); -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.3); }
+@media (prefers-color-scheme: dark) { .fmb-note, .fmb-empty { background: rgb(40 40 44 / 0.78); box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 12px 30px -10px rgb(0 0 0 / 0.6); } }
+
+.fmb-hog { gap: 9px !important; }
+.fmb-hog img { width: 18px; height: 18px; flex: none; }
+
+/* Spotlight answers: the "Ask" row's orb, the answer under the search field, and the Apple Intelligence-style
+   glow around the desktop's edge while it thinks. */
+@property --fmb-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes fmb-spin { to { --fmb-a: 360deg; } }
+.fmb-orb { flex: none; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.55), 0 0 10px rgb(167 123 255 / 0.45); }
+/* Orbs and the edge glow only move while an answer is being written; idle animation repainted under the Dock's blur and flickered. */
+.fmb-thinking .fmb-orb, .is-thinking .fmb-orb, .fask.is-thinking ~ .fask__answer .fmb-orb { animation: fmb-spin 3s linear infinite; }
+.fmb-result--ask span:last-child { font-weight: 600; }
+.fmb-result--ask.is-on .fmb-orb, .fmb-result--ask:hover .fmb-orb { box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.9); }
+.fmb-answer[hidden] { display: none; }
+.fmb-answer { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px 16px; border-top: 1px solid var(--fmb-line); text-align: left; }
+.fmb-answer .fmb-orb { width: 24px; height: 24px; margin-top: 1px; }
+.fmb-answer__text { margin: 0; font-size: 15px; line-height: 1.45; color: var(--fmb-ink); white-space: pre-wrap; min-height: 22px; }
+.fmb-answer__text:empty::before { content: 'Thinking…'; color: var(--fmb-dim); }
+.fmb-answer__src { margin: 8px 0 0; font-size: 12.5px; color: var(--fmb-dim); }
+.fmb-answer__src a { color: var(--fmb-accent, #0b7f8f); text-decoration: none; }
+.fmb-answer__src a:hover { text-decoration: underline; }
+.fmb-glow { position: absolute; inset: 0; z-index: 39; pointer-events: none; border-radius: inherit; opacity: 0; transition: opacity 0.4s ease; }
+.desktop.fmb-thinking .fmb-glow { opacity: 1; }
+.fmb-glow i { position: absolute; inset: 0; border-radius: inherit; padding: 3px;
+  background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.fmb-thinking .fmb-glow i { animation: fmb-spin 2.2s linear infinite; }
+.fmb-glow i + i { padding: 16px; filter: blur(16px); opacity: 0.7; }
+@media (prefers-reduced-motion: reduce) { .fmb-orb, .fmb-glow i { animation: none; } }
+
+/* The FAQ's ask field (family-ask.js). */
+.fask { position: relative; max-width: 640px; margin: 28px auto 0; }
+.fask__field { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 20px; border-radius: 999px; background: var(--card, #fff); box-shadow: 0 0 0 1px color-mix(in oklch, currentColor 12%, transparent), 0 10px 30px -18px rgb(0 0 0 / 0.35); }
+.fask__field input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 17px; color: inherit; }
+.fask__field input::placeholder { color: color-mix(in oklch, currentColor 45%, transparent); }
+.fask.is-thinking .fask__field::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: inherit; background: conic-gradient(from var(--fmb-a), #ff6ec7, #a77bff, #4fc3ff, #5ef0c8, #ffd36b, #ff8a5b, #ff6ec7); filter: blur(4px); opacity: 0.85; animation: fmb-spin 2.2s linear infinite; }
+.fask__field:focus-within { box-shadow: 0 0 0 2px var(--fmb-accent, #0b7f8f), 0 10px 30px -18px rgb(0 0 0 / 0.35); }
+.fask__answer[hidden] { display: none; }
+.fask__answer { max-width: 640px; margin: 14px auto 0; padding: 16px 20px; border-radius: 22px; display: flex; gap: 12px; align-items: flex-start; text-align: left; background: color-mix(in oklch, currentColor 5%, transparent); }
+.fask__answer .fmb-orb { width: 22px; height: 22px; margin-top: 2px; }
+.fask__answer [data-ask-text] { margin: 0; font-size: 16px; line-height: 1.5; white-space: pre-wrap; }
+.fask__answer [data-ask-text]:empty::before { content: 'Thinking…'; opacity: 0.55; }
+.fask__answer [data-ask-src] { margin: 8px 0 0; font-size: 13px; opacity: 0.75; }
+.fask__answer [data-ask-src] a { color: var(--fmb-accent, #0b7f8f); }
+.fask__field { position: relative; isolation: isolate; }
+@media (prefers-reduced-motion: reduce) { .fask.is-thinking .fask__field::before { animation: none; } }
+
+/* The FAQ's few core questions, and "Show all questions" for the rest (family-ask.js). */
+[data-faq-collapsed] .faq-more { display: none !important; }
+.faq-all { display: block; margin: 18px auto 0; height: 38px; padding: 0 18px; border-radius: 999px; border: 0; font: inherit; font-size: 14.5px; font-weight: 600; color: inherit; background: color-mix(in oklch, currentColor 7%, transparent); cursor: pointer; }
+@media (hover: hover) { .faq-all:hover { background: color-mix(in oklch, currentColor 12%, transparent); } }
+.faq-all:focus-visible { outline: 2px solid var(--fmb-accent, #0b7f8f); outline-offset: 2px; }
+
+/* Spotlight as a sheet over the page, on phones: big field, Cancel, thumb-sized rows. */
+.fmb-scrim { position: fixed; inset: 0; z-index: 999; background: rgb(0 0 0 / 0.22); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: fmb-in 0.2s ease-out; }
+.fmb-panel.fmb-sheet { position: fixed; z-index: 1000; top: max(12px, env(safe-area-inset-top)); left: 50%; translate: -50% 0; width: min(640px, calc(100% - 24px)); border-radius: 24px; }
+.fmb-sheet .fmb-search { height: 56px; padding: 0 8px 0 16px; }
+.fmb-sheet .fmb-search input { font-size: 19px; }
+.fmb-sheet .fmb-search input::-webkit-search-cancel-button { display: none; }
+.fmb-cancel { flex: none; height: 40px; padding: 0 12px; border: 0; background: none; font: inherit; font-size: 16px; font-weight: 500; color: var(--fmb-accent, #0b7f8f); cursor: pointer; }
+.fmb-sheet .fmb-result { height: 46px; font-size: 15px; }
+.fmb-sheet .fmb-answer__text { font-size: 16px; }
+.fmb-sheet .fmb-glow { border-radius: inherit; }
+.fmb-sheet.fmb-thinking .fmb-glow { opacity: 1; }
+html.fmb-sheet-open { overflow: hidden; }
+
+/* Touch: finger-sized targets in the menu bar, its menus and panels, and the FAQ button. */
+@media (pointer: coarse) {
+  .menubar.fmb-live [data-mb] { min-height: 26px; }
+  .fmb-item { height: 36px; }
+  .fmb-net { height: 42px; }
+  .fmb-result { height: 44px; }
+  .faq-all { height: 44px; }
+}
+
+/* The ask field's search button, and email addresses in answers (a mail link plus Copy). */
+.fask__field { padding-right: 8px; }
+.fask__go { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 999px; background: var(--fmb-accent, #0b7f8f); color: #fff; cursor: pointer; transition: transform .15s ease, filter .15s ease; }
+@media (hover: hover) { .fask__go:hover { filter: brightness(1.08); } }
+.fask__go:active { transform: scale(.94); }
+.fask__go:focus-visible { outline: 2px solid var(--fmb-accent, #0b7f8f); outline-offset: 2px; }
+.fask-mail { color: var(--fmb-accent, #0b7f8f); font-weight: 500; text-decoration: none; white-space: nowrap; }
+@media (hover: hover) { .fask-mail:hover { text-decoration: underline; } }
+.fask-copy { display: inline-block; vertical-align: 1px; margin-left: 2px; padding: 2px 9px; border: 0; border-radius: 999px; font: 500 12px/1.5 inherit; font-family: inherit; background: color-mix(in oklch, var(--fmb-accent, #0b7f8f) 14%, transparent); color: var(--fmb-accent, #0b7f8f); cursor: pointer; white-space: nowrap; }
+@media (hover: hover) { .fask-copy:hover { background: color-mix(in oklch, var(--fmb-accent, #0b7f8f) 22%, transparent); } }
+
+/* Phones: the mock menu bar keeps the app's name, Window and Help, without File, Edit and View. */
+@media (max-width: 640px) {
+  .menubar [data-mb="file"], .menubar [data-mb="edit"], .menubar [data-mb="view"] { display: none; }
+}

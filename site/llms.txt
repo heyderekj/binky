@@ -24,7 +24,7 @@
 ## Licensing (planned 2.0)
 
 - **1.x:** Free official builds; **MIT** source on GitHub.
-- **2.0:** One-time license for **official** signed builds; **one year of updates** included; **optional** yearly renewal for more updates (not a subscription). FAQ: https://binkyfiles.com/#faq-licensing
+- **2.0:** One-time license for **official** signed builds; **one year of updates** included; **optional** yearly renewal for more updates (not a subscription).
 
 ## Rough comparison (not legal advice)
 
@@ -50,7 +50,7 @@
 ## Links
 
 - Website: https://binkyfiles.com
-- Support: help@binkyfiles.com
+- Support: derek@testamentmade.com
 - GitHub: https://github.com/heyderekj/binky
 - Latest release: https://github.com/heyderekj/binky/releases/latest
 - Download v1.5.1: https://github.com/heyderekj/binky/releases/download/v1.5.1/Binky-1.5.1.dmg

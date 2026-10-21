@@ -1,0 +1,122 @@
+{
+ "app": "Binky",
+ "line": "Binky sorts your files.",
+ "version": "1.5.1",
+ "email": "derek@testamentmade.com",
+ "voice": "Warm, plain and a bit playful about mess and calm. Keep it light; never oversell.",
+ "faq": [
+  {
+   "id": "faq-do-i-need-to-be-technical-to-use-this",
+   "q": "Do I need to be technical to use this?",
+   "a": "Nope. Open the app, stay on Quick Sort, hit Sort when you want a folder calmed — Downloads stays the polite default. Add Routines when you want the same routing to run on its own. Reach for Describe a rule once you crave specifics."
+  },
+  {
+   "id": "faq-what-s-the-difference-between-quick-sort-and-routines",
+   "q": "What’s the difference between Quick Sort and Routines?",
+   "a": "Quick Sort is a one-shot sweep — pick a folder, hit Sort, done (⌘1 jumps there). Routines are named, persistent watchers: each one has its own source folder, rule stack, and tag defaults that run automatically (⌘2). Start with Quick Sort; graduate to Routines when the same folder keeps yelling."
+  },
+  {
+   "id": "faq-does-binky-upload-my-files",
+   "q": "Does Binky upload my files?",
+   "a": "No. Sorting stays on your Mac — no Binky cloud, no account. Once a day the app checks GitHub for a newer release (that's the only automatic outbound request). Details: Your data, in plain English."
+  },
+  {
+   "id": "faq-does-it-move-originals-or-make-copies",
+   "q": "Does it move originals or make copies?",
+   "a": "Moves originals. Nothing duplicated, nothing left behind in Downloads. That's why the stable-file gate and the Review folder exist — Binky won't touch a file it isn't sure about."
+  },
+  {
+   "id": "faq-macos-says-binky-can-t-be-opened-what-do-i-do",
+   "q": "macOS says Binky can't be opened — what do I do?",
+   "a": "If Binky’s icon in Applications has a line through it, your Mac doesn’t match this build’s CPU (current releases are Apple Silicon only)—see Mac and macOS requirements. Otherwise that’s Gatekeeper."
+  },
+  {
+   "id": "faq-is-binky-notarized-why-isn-t-it-on-the-app-store",
+   "q": "Is Binky notarized? Why isn't it on the App Store?",
+   "a": "It isn't Apple-notarized or Mac App Store today. That's distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read Your data, in plain English. First-launch Gatekeeper pain is separate:"
+  },
+  {
+   "id": "faq-mac-os",
+   "q": "Mac only? Which Mac and macOS?",
+   "a": "Yes. SwiftUI, native frameworks, no cross-platform runtime. Apple Silicon (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. macOS 14 Sonoma or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available."
+  },
+  {
+   "id": "faq-what-about-dinky-compression",
+   "q": "What about Dinky (compression)?",
+   "a": "Dinky shrinks images, video, audio, and PDFs. Its current releases need Apple Silicon and macOS 15 Sequoia or later — see dinkyfiles.com for download and install help."
+  },
+  {
+   "id": "faq-where-do-files-land-after-sorting",
+   "q": "Where do files land after sorting?",
+   "a": "Each routine declares its sorted destinations and downstream actions — rename tokens, archive extraction, Finder-only DMG installs, Finder tag spreads, Trash when warranted."
+  },
+  {
+   "id": "faq-what-file-types-go-in-which-destination",
+   "q": "What file types go in which destination?",
+   "a": "Images (jpg, png, gif, webp, svg, heic…), PDFs, Media (mp4, mov, mp3, m4a…), Documents (doc, txt, md, xls…), Archives (zip, rar, 7z, tar…), Apps (dmg, pkg, app), Screenshots (matched by name pattern), Misc (everything else). Unknowns or ambiguous types go to Review."
+  },
+  {
+   "id": "faq-what-about-watching-downloads-or-synced-folders",
+   "q": "What about watching Downloads or synced folders?",
+   "a": "Binky watches the folder you pick (Downloads by default). For Dropbox, Drive, iCloud, etc., it reacts after the sync client finishes laying bytes on disk — same idea as catching a fussy saver."
+  },
+  {
+   "id": "faq-can-i-set-custom-routing-rules",
+   "q": "Can I set custom routing rules?",
+   "a": "Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it's junk."
+  },
+  {
+   "id": "faq-what-if-binky-isn-t-running-when-files-land",
+   "q": "What if Binky isn't running when files land?",
+   "a": "The watch folder only acts while Binky is running. Files that arrived while it was off sit untouched — run Sort Now when you're ready and it'll sweep them up."
+  },
+  {
+   "id": "faq-who-made-this-and-why",
+   "q": "Who made this and why?",
+   "a": "Derek Castelli builds client sites in Figma and Webflow. He wanted a Downloads workflow that behaved without acting sneaky."
+  }
+ ],
+ "compare": [
+  {
+   "name": "Binky vs CleanMyMac",
+   "url": "/compare/cleanmymac/",
+   "text": "— sorter vs cleaner suite Binky CleanMyMac Price model Free (MIT) Paid (~$40/yr or Setapp) Primary job Sort & route folders Scan & clean system Watch folder Yes No (scan-based) Review folder Yes — Stable-file gate Built in — Sort preview Yes — Open source Yes No App size 13 MB ~50 MB"
+  },
+  {
+   "name": "Binky vs Dropzone 4",
+   "url": "/compare/dropzone/",
+   "text": "— watcher vs drag shelf Binky Dropzone 4 Price model Free (MIT) Paid (~$35 one-time or subscription) Watch folder Yes — automatic No — manual drag to shelf Review folder Yes — Stable-file gate Built in — Sort preview Yes — Custom routing Rules + Describe a rule Actions / integrations Open source Yes No App size 13 MB ~18 MB"
+  },
+  {
+   "name": "Binky vs Folder Actions",
+   "url": "/compare/folder-actions/",
+   "text": "— AppleScript hooks vs pacifier app Binky Folder Actions Price Free (MIT) Free (built into macOS) Setup required Install app, grant folders Attach scripts, debug edge cases Named routines Yes — parallel per-source workflows Script per folder (no named sets) Auto-sort Downloads Yes — typed sorted folders Yes — whatever your script does Sort preview Yes — dry-run before anything moves You script a dry-run pass Stable-file gate Built in You implement waits / polling Review folder Yes You implement quarantine logic Scripting knowledge None required AppleScript / Automator / Shortcuts Open source Yes (MIT) N/A (platform feature)"
+  },
+  {
+   "name": "Binky vs Hazel",
+   "url": "/compare/hazel/",
+   "text": "— Downloads organizer vs rules engine Binky Hazel Price Free (MIT) Paid ($42, one-time) Primary focus Named Routines per fussy folder — sorted destinations + Review Rules engine across all folders on the Mac Named / parallel routines Yes — each with its own source, rules, tag defaults Rules per folder (no named workflow sets) Setup required Pick a template or start blank — nothing to author on day one You design rules per workflow Auto-sort Downloads Yes — default type sorted folders Yes — if your rules say so Stable-file gate Built in Depends how you script rules Sort preview Yes — inline dry-run before anything moves — Natural-language rules Yes — phrase → rule with preview before applying"
+  },
+  {
+   "name": "Binky vs Finder",
+   "url": "/compare/manual/",
+   "text": "— sorting Downloads by hand Binky Finder Price Free (MIT) Free Routine Named Routines + Sort Now You Watch folder Yes No — you watch Consistency Same sorted folders every time Depends on the week Stable-file gate Built in You eyeball it Review folder Yes Whatever pile you invent Time cost Runs while you work Every cleanup session"
+  },
+  {
+   "name": "Binky vs Neatify",
+   "url": "/compare/neatify/",
+   "text": "— MIT folder organizer vs paid Mac App Store Binky Neatify Price Free (MIT) Paid ($31, Mac App Store, one-time) Watch folder Yes Yes (menu bar) Named routines Yes — parallel, each with own source + rules Projects per context Setup required Pick a template or start blank Rules / projects you configure Auto-sort by type Default sorted folders (Images, PDFs, …) Custom rules by type / extension Sort preview Yes — dry-run before anything moves — Natural-language rules Yes — phrase → rule + preview — Stable-file gate Built in — Review folder Yes — Open source Yes No App size 13 MB ~2.4 MB"
+  },
+  {
+   "name": "Binky vs Refolder",
+   "url": "/compare/refolder/",
+   "text": "— MIT organizer vs Setapp AI sorting Binky Refolder Price model Free (MIT) Via Setapp (~$9.99/mo) Named routines Yes — parallel per-source workflows — AI sorting Rules + NL description → rule (no cloud call) Yes — AI-assisted organization Sort preview Yes — dry-run before anything moves — Watch folder Yes Yes (Downloads-focused) Stable-file gate Built in — Review folder Yes — macOS requirement 14+ (26 for Liquid Glass) macOS 15+ (Sequoia) App size 13 MB ~22 MB Open source Yes No"
+  },
+  {
+   "name": "Binky vs Unclutter",
+   "url": "/compare/unclutter/",
+   "text": "— watcher vs desktop drawer Binky Unclutter Price model Free (MIT) Paid (~$20 one-time) Watch folder Yes No Files staging Review folder + destinations Files pane / shelf Stable-file gate Built in — Sort preview Yes — Clipboard / notes — Yes Open source Yes No App size 13 MB ~6 MB"
+  }
+ ],
+ "more": "# Binky Help\n\nBinky keeps your **watched folder** tidy: it watches for finished files, moves them into sensible folders, optionally adds Finder tags, and shows clear **summary + history** so you always know what happened.\n\n## Quick start\n\n1. Leave **Quick Sort** (default window) pointing at Downloads or drag in any fussy inbox. Hit **Sort Now**—no routine setup needed.\n2. Drop files into that folder (or browse with Finder). Binky waits until downloads look **stable**, then sorts top-level items.\n3. Use **Sort Now** (`{{SK_SORT_NOW}}`) anytime to sweep the active folder—or stay in Quick Sort mode for one-shot clears.\n\nWant always-on calming? Switch the window to **Routines** (toolbar segment): each routine pairs a watched folder with its own sort rules.\n\nOptional: After a sort, use **Send to Dinky** on the summary sheet (or **Watch in Dinky** on a sorted folder) to hand off images, PDFs, and videos to [Dinky](https://dinkyapp.com) for compression, or set Dinky to watch those folders so future drops are slimmed automatically.\n\n## Where files go (starter profile)\n\n| Kind | Folder |\n| --- | --- |\n| Images | Images |\n| PDFs & documents | Documents |\n| Video & audio | Media |\n| Archives (zip, etc.) | Archives |\n| Disk images / installers | Apps |\n| Screenshots | Screenshots |\n| Everything else Binky recognizes | Misc |\n| Incomplete downloads / unknown types | Review |\n\n## Keyboard shortcuts\n\n| Action | Shortcut |\n| --- | --- |\n| Open Files… | `{{SK_OPEN_FILES}}` |\n| Sort Now | `{{SK_SORT_NOW}}` |\n| Settings | `{{SK_SETTINGS}}` |\n| Binky Help | `{{SK_HELP}}` |\n| Last Sort Summary… | `{{SK_LAST_SORT}}` |\n\n## Finder & Services\n\n**Sort with Binky** appears in Finder **Services** (and as a **Quick Action**). Turn it on under **System Settings → Keyboard → Keyboard Shortcuts → Services**.\n\n- **Folders:** Right-click a folder and choose **Sort with Binky**. Binky treats that folder as a one-shot source folder. It sorts the **files at the top level** into the usual subfolders (`Images`, `Documents`, etc.) **inside** the folder you picked. Nested subfolders are left alone.\n- **Single files:** Same routing rules as the main window, but the file has to live **inside** the watched folder. Anything outside that folder is ignored.\n\nDropping **folders** or **files** onto Binky's **Dock icon** follows the same rules.\n\n## Routines\n\nA **Routine** pairs a watched folder with its own set of sort rules and optional Finder tags.\n\n- Add routines in **Settings → Routines** (gearshape.2 icon).\n- Each routine watches its own folder independently. Rules in one routine don't affect other folders.\n- With one routine enabled (and a resolved watch path), the menu bar shortcut runs **Sort Now** for that folder. With two or more, shortcuts become **Sort ▶**: pick **Sort All Folders** to sweep everything at once, or pick a specific routine name to sweep just that folder.\n\n## Menu bar mode\n\nIn **Settings → Appearance**, keep **Show menu bar icon** on for quick access even when the window is closed.\n\n- Turn on **Menu bar only (hide Dock icon)** if you want Binky to run from the menu bar.\n- The menu bar lets you sort watched folders, pause/resume watching, open **History**, and jump to **Settings**.\n- Watching continues while Binky is running in menu bar mode.\n\n## History & undo\n\nEvery sort run is saved in **History** (`App menu → History…`).\n\n- Use **Open Summary…** on a history row to reopen that run's move/review summary.\n- In a summary sheet, use **Undo moves** to put files from that run back where they were.\n- Use **Last Sort Summary…** (`{{SK_LAST_SORT}}`) to reopen the most recent summary quickly.\n\n## Shortcuts app\n\nBinky exposes a **Sort files** intent so you can chain sorting from the Shortcuts app, using the same routing rules as the main window.\n\n## Open source\n\nSource code is on [GitHub](https://github.com/heyderekj/binky) under the MIT license.\n\n## Privacy\n\nNothing leaves your Mac unless **you** choose to send diagnostics from the crash reporter or open a feedback email. Learn more at **binkyfiles.com**.\n"
+}
