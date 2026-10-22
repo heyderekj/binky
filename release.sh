@@ -142,7 +142,12 @@ fi
 # ── 3. Build ──────────────────────────────────────────────────────────────────
 
 echo "→ Building Release…"
-xcodebuild -scheme Binky -configuration Release -derivedDataPath build clean build \
+xcodebuild -project Binky.xcodeproj \
+  -scheme Binky \
+  -configuration Release \
+  -destination 'generic/platform=macOS' \
+  -derivedDataPath build \
+  clean build \
   | grep -E "error:|BUILD (SUCCEEDED|FAILED)"
 
 # ── 4. Create DMG ─────────────────────────────────────────────────────────────
