@@ -2,7 +2,7 @@
 
 ## App Size (Non-negotiable)
 
-Binky still ships legacy compression engines from the Dinky era (image/video encoders plus bundled **qpdf** and dylibs). Before adding **anything** — a framework, dependency, asset, font, or feature — mentally check its bundle size impact first.
+Binky is a single native binary with no bundled helper tools. Keep it that way. Before adding **anything** — a framework, dependency, asset, font, or feature — mentally check its bundle size impact first.
 
 **Rules:**
 - Prefer Apple frameworks always: SwiftUI, Foundation, AppKit, UserNotifications, AVFoundation, etc. They're free — already in the OS, zero bundle cost.
@@ -11,7 +11,7 @@ Binky still ships legacy compression engines from the Dinky era (image/video enc
 - No Electron, no web views, no bundled runtimes, no embedded web engines. Ever.
 - Assets (images, fonts) should be SVG/SF Symbols where possible. Raster assets must be justified.
 
-**Current footprint reference:** Keep install weight honest vs Optimage / ImageOptim; slimming dead compression assets from the bundle is an ongoing goal now that v1 is organizer-first.
+**Current footprint reference:** about 22 MB installed (one universal arm64 + x86_64 binary). The old Dinky-era encoders were removed from the repo.
 
 ## Project Context
 

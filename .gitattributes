@@ -1,6 +1,4 @@
 BinkyCoreImage/.build/** linguist-generated=true
-Binky/Resources/bin/** linguist-vendored=true
-Binky/Resources/lib/** linguist-vendored=true
 site/** linguist-documentation=true
 Casks/** linguist-documentation=true
 future-docs/** linguist-documentation=true
