@@ -83,7 +83,6 @@
 		BKEXPRF00000100000001 /* BinkyExportedDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkyExportedDependencies.swift; sourceTree = "<group>"; };
 		4FE17DC818E44D3F88D6F88A /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		56D9DE1C999B470FBB27E454 /* DropZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropZoneView.swift; sourceTree = "<group>"; };
-		5BC7D00FC2B14EF09CB7F833 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		74EE7205601D464484113FEB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		89ED8C350A5D404EA5F1CCF6 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		96F9AD6A1BD04233828DC140 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -246,7 +245,6 @@
 		9C5E5DA78AAF4A25B1599477 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E168EFE304164DA3B71EFE4F /* bin */,
 				HMVGRP00000000000000001 /* Help.md */,
 			);
 			path = Resources;
@@ -260,14 +258,6 @@
 				AI100001000000000000001 /* AppIcon.icon */,
 				3337D9E5CCB647BAA20571DE /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		E168EFE304164DA3B71EFE4F /* bin */ = {
-			isa = PBXGroup;
-			children = (
-				5BC7D00FC2B14EF09CB7F833 /* README.md */,
-			);
-			path = bin;
 			sourceTree = "<group>";
 		};
 		EX100001000000000000001 /* Extensions */ = {
