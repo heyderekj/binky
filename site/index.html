@@ -825,7 +825,7 @@
         GitHub<span id="gh-stars"> <span class="gh-star-anchor" aria-hidden="true">★</span><span id="gh-stars-count" data-gh-stars-count></span></span>
       </a>
     </div>
-    <p class="version">v1.5.1 · macOS 14 Sonoma · Apple silicon<span class="version-sep"> · </span><button type="button" class="faq-inline-link version-install-link" onclick="window.fathom&&window.fathom.trackEvent('install_modal_from_version'); document.getElementById('install-modal').classList.add('install-modal--help','open')" aria-haspopup="dialog" aria-controls="install-modal">How to install</button></p>
+    <p class="version">v1.5.1 · macOS 14 Sonoma · Apple silicon &amp; Intel<span class="version-sep"> · </span><button type="button" class="faq-inline-link version-install-link" onclick="window.fathom&&window.fathom.trackEvent('install_modal_from_version'); document.getElementById('install-modal').classList.add('install-modal--help','open')" aria-haspopup="dialog" aria-controls="install-modal">How to install</button></p>
 
     <!-- Row 1: Sort + sorted folders -->
     <div class="desktop desktop--hero">
@@ -948,7 +948,7 @@
     <div class="modal">
       <button class="modal-close" onclick="document.getElementById('install-modal').classList.remove('open','install-modal--help')" aria-label="Close">✕</button>
       <h2>How to install Binky</h2>
-      <p class="install-modal-lead">Pick the path that fits you — both put Binky in Applications. Current releases need an <strong>Apple Silicon (M-series) Mac</strong>; Intel-based Macs are not supported.</p>
+      <p class="install-modal-lead">Pick the path that fits you — both put Binky in Applications. Runs on <strong>Apple Silicon and Intel</strong> Macs with macOS 14 or later.</p>
       <div class="install-modal-tabstrip">
         <div class="cmp-segmented" role="tablist" aria-label="Install method">
           <button type="button" class="cmp-tab is-active" role="tab" aria-selected="true" aria-controls="install-panel-dmg" id="install-tab-dmg" data-install-tab="dmg">Download &amp; install</button>
@@ -956,7 +956,7 @@
         </div>
       </div>
       <div id="install-panel-dmg" role="tabpanel" aria-labelledby="install-tab-dmg" data-install-panel="dmg">
-        <p class="install-modal-sublead">If Binky’s icon in Applications has a <strong>slash through it</strong>, macOS can’t run this build on your Mac (wrong CPU architecture). Current DMGs are <strong>Apple Silicon only</strong>—Intel Macs need a different machine, not another install step. Otherwise, macOS may say Binky can’t be opened — that’s Gatekeeper, not a virus. The quarantine step below takes less than a minute.</p>
+        <p class="install-modal-sublead">If Binky’s icon in Applications has a <strong>slash through it</strong>, you probably have an old Apple-Silicon-only build on an Intel Mac. Download the latest version. Otherwise, macOS may say Binky can’t be opened — that’s Gatekeeper, not a virus. The quarantine step below takes less than a minute.</p>
         <ol class="install-steps">
           <li>
             <span>
@@ -976,7 +976,7 @@
         </ol>
       </div>
       <div id="install-panel-brew" role="tabpanel" aria-labelledby="install-tab-brew" data-install-panel="brew" hidden>
-        <p class="install-homebrew-note">Requires an <strong>Apple Silicon</strong> Mac, <a href="https://brew.sh" target="_blank" rel="noopener noreferrer">Homebrew</a>, and macOS 14 or later. In Terminal, run once to add this repo as a tap, then install the app:</p>
+        <p class="install-homebrew-note">Requires <a href="https://brew.sh" target="_blank" rel="noopener noreferrer">Homebrew</a>, and macOS 14 or later. In Terminal, run once to add this repo as a tap, then install the app:</p>
         <div class="install-code-stack">
           <div class="code-block">
             <code>brew tap heyderekj/binky https://github.com/heyderekj/binky</code>
@@ -1004,7 +1004,7 @@
     <div class="modal">
       <button class="modal-close" onclick="document.getElementById('gatekeeper-modal').classList.remove('open')" aria-label="Close">✕</button>
       <h2>macOS blocked Binky</h2>
-      <p class="gatekeeper-lead">Because Binky isn’t from the App Store, macOS quarantines it on first run. Paste this into Terminal to remove the flag (this fixes Gatekeeper only — it won’t help if the app icon already has a slash through it on an Intel Mac; those builds need Apple Silicon):</p>
+      <p class="gatekeeper-lead">Because Binky isn’t from the App Store, macOS quarantines it on first run. Paste this into Terminal to remove the flag (this fixes Gatekeeper only — if the app icon has a slash through it, download the latest version instead):</p>
       <div class="code-block">
         <code id="xattr-cmd-gk">xattr -dr com.apple.quarantine /Applications/Binky.app</code>
         <button class="copy-btn" onclick="copyCmd(this)">Copy</button>
@@ -1449,7 +1449,7 @@
           </svg>
           Download for Mac
         </a>
-        <small>v1.5.1 · macOS 14 Sonoma · Apple silicon</small>
+        <small>v1.5.1 · macOS 14 Sonoma · Apple silicon &amp; Intel</small>
       </div>
     </div>
   </section>
@@ -1616,11 +1616,11 @@
       <details class="faq-item" id="faq-does-binky-upload-my-files"><summary class="faq-q">Does Binky upload my files?</summary><p class="faq-a">No. Sorting stays on your Mac — no Binky cloud, no account. Once a day the app checks GitHub for a newer release (that&apos;s the only automatic outbound request). Details: <a href="#data">Your data, in plain English</a>.</p></details>
 
       <details class="faq-item" id="faq-does-it-move-originals-or-make-copies"><summary class="faq-q">Does it move originals or make copies?</summary><p class="faq-a">Moves originals. Nothing duplicated, nothing left behind in Downloads. That's why the stable-file gate and the Review folder exist — Binky won't touch a file it isn't sure about.</p></details>
-      <details class="faq-item faq-more" id="faq-macos-says-binky-can-t-be-opened-what-do-i-do"><summary class="faq-q">macOS says Binky can't be opened — what do I do?</summary><p class="faq-a">If Binky’s icon in Applications has a <strong>line through it</strong>, your Mac doesn’t match this build’s CPU (current releases are Apple Silicon only)—see <a href="#faq-mac-os">Mac and macOS requirements</a>. Otherwise that’s Gatekeeper. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
+      <details class="faq-item faq-more" id="faq-macos-says-binky-can-t-be-opened-what-do-i-do"><summary class="faq-q">macOS says Binky can't be opened — what do I do?</summary><p class="faq-a">If Binky’s icon in Applications has a <strong>line through it</strong>, that copy was built for a different Mac (older releases were Apple Silicon only); download the latest version—see <a href="#faq-mac-os">Mac and macOS requirements</a>. Otherwise that’s Gatekeeper. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
       <details class="faq-item faq-more" id="faq-is-binky-notarized-why-isn-t-it-on-the-app-store"><summary class="faq-q">Is Binky notarized? Why isn&apos;t it on the App Store?</summary><p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
-      <details class="faq-item faq-more" id="faq-mac-os"><summary class="faq-q">Mac only? Which Mac and macOS?</summary><p class="faq-a">Yes. SwiftUI, native frameworks, no cross-platform runtime. <strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 14 Sonoma</strong> or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available.</p></details>
+      <details class="faq-item faq-more" id="faq-mac-os"><summary class="faq-q">Mac only? Which Mac and macOS?</summary><p class="faq-a">Yes. SwiftUI, native frameworks, no cross-platform runtime. <strong>Apple Silicon or Intel</strong>: one universal app for both, from the DMG or the Homebrew cask. <strong>macOS 14 Sonoma</strong> or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available.</p></details>
 
       <details class="faq-item faq-more" id="faq-what-about-dinky-compression"><summary class="faq-q">What about Dinky (compression)?</summary><p class="faq-a"><a href="https://dinkyfiles.com" target="_blank" rel="noopener noreferrer">Dinky</a> shrinks images, video, audio, and PDFs. Its current releases need <strong>Apple Silicon</strong> and <strong>macOS 15 Sequoia</strong> or later — see dinkyfiles.com for download and install help.</p></details>
 

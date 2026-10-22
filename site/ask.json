@@ -28,7 +28,7 @@
   {
    "id": "faq-macos-says-binky-can-t-be-opened-what-do-i-do",
    "q": "macOS says Binky can't be opened — what do I do?",
-   "a": "If Binky’s icon in Applications has a line through it, your Mac doesn’t match this build’s CPU (current releases are Apple Silicon only)—see Mac and macOS requirements. Otherwise that’s Gatekeeper."
+   "a": "If Binky’s icon in Applications has a line through it, that copy was built for a different Mac (older releases were Apple Silicon only); download the latest version—see Mac and macOS requirements. Otherwise that’s Gatekeeper."
   },
   {
    "id": "faq-is-binky-notarized-why-isn-t-it-on-the-app-store",
@@ -38,7 +38,7 @@
   {
    "id": "faq-mac-os",
    "q": "Mac only? Which Mac and macOS?",
-   "a": "Yes. SwiftUI, native frameworks, no cross-platform runtime. Apple Silicon (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. macOS 14 Sonoma or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available."
+   "a": "Yes. SwiftUI, native frameworks, no cross-platform runtime. Apple Silicon or Intel: one universal app for both, from the DMG or the Homebrew cask. macOS 14 Sonoma or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available."
   },
   {
    "id": "faq-what-about-dinky-compression",

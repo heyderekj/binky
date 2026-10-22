@@ -36,7 +36,7 @@
 
 ## Technical
 
-- Apple Silicon (M-series Mac) only for distributed 1.x builds; Intel-based Macs are not supported
+- Universal app: runs on Apple Silicon and Intel Macs
 - Minimum **macOS 14 Sonoma**; Liquid Glass (`.glassEffect`) on **macOS 26 Tahoe** with material fallback on earlier releases
 - Sister app **Dinky** ([dinkyfiles.com](https://dinkyfiles.com)) — media/PDF compression; current distributed builds require Apple Silicon and **macOS 15 Sequoia** or later
 - SwiftUI + AppKit; dependency rules favor Apple frameworks ([project note](https://github.com/heyderekj/binky/blob/main/README.md))

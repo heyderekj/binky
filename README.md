@@ -8,7 +8,7 @@ Unknown or sketchy extensions do not disappear silently: they land in **Review**
 
 ## System requirements
 
-- **Apple Silicon** (M-series Mac). Current **1.x** DMG and Homebrew cask builds are not for Intel-based Macs (Finder may show the app icon with a slash through it on the wrong architecture).
+- **Apple Silicon or Intel** Mac. One universal app for both (older Apple-Silicon-only builds show a slashed icon on Intel; download the latest).
 - **macOS 14** (Sonoma) or later (Liquid Glass UI on macOS 26 Tahoe).
 
 <table>
