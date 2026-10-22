@@ -108,6 +108,7 @@ if [ "$OLD_MARKETING" != "$VERSION" ]; then
   replace_token_if_present site/index.html "v$OLD_MARKETING · Requires" "v$VERSION · Requires"
   # Hero line uses "Apple Silicon" instead of "Requires" (compare pages).
   replace_token_if_present site/index.html "v$OLD_MARKETING · Apple Silicon" "v$VERSION · Apple Silicon"
+  replace_token_if_present site/index.html "v$OLD_MARKETING · macOS" "v$VERSION · macOS"
 
   replace_token_if_present site/llms.txt "Download v$OLD_MARKETING:" "Download v$VERSION:"
   replace_token_if_present site/llms.txt "v$OLD_MARKETING/Binky-$OLD_MARKETING.dmg" "v$VERSION/Binky-$VERSION.dmg"
