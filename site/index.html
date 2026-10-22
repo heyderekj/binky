@@ -184,7 +184,7 @@
     /* ---------- Buttons: 44px pills ---------- */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px;
-      border: 0; border-radius: 999px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1;
+      border: 0; border-radius: 999px; font-size: 16px; font-weight: 600; letter-spacing: -0.01em;
       text-decoration: none; white-space: nowrap; cursor: pointer;
       transition: transform var(--t-ui) var(--ease), background var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease), color var(--t-ui) var(--ease);
     }
@@ -349,7 +349,7 @@
     .g-step__head { display: flex; align-items: center; gap: 12px; }
     .g-step__head .feature-icon { width: 20px; height: 20px; color: var(--muted); transition: color var(--t-ui); }
     .g-step.is-on .g-step__head .feature-icon { color: var(--brand); }
-    .g-step__title { font-size: 16.5px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; color: var(--ink-soft); }
+    .g-step__title { font-size: 16.5px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.55; color: var(--ink-soft); }
     .g-step.is-on .g-step__title { color: var(--ink); }
     .g-step__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease); }
     .g-step__text { display: block; overflow: hidden; padding-left: 32px; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
@@ -514,7 +514,7 @@
     .faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 40px; align-items: start; }
     /* Collapsible questions, like Slinky's: a row with a plus that turns to a cross, and the answer under it. */
     .faq-item { border-radius: 20px; padding: 0; scroll-margin-top: 90px; }
-    .faq-q { list-style: none; cursor: pointer; padding: 18px 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 17px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; border-radius: 20px; }
+    .faq-q { list-style: none; cursor: pointer; padding: 18px 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.55; border-radius: 20px; }
     .faq-q::-webkit-details-marker { display: none; }
     .faq-q::after { content: '+'; flex: none; font-weight: 400; font-size: 22px; line-height: 1; color: var(--muted); transition: rotate var(--t-ui) var(--ease); }
     .faq-item[open] .faq-q::after { rotate: 45deg; }
