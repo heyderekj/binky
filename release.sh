@@ -172,28 +172,6 @@ CASK_SHASUM=$(shasum -a 256 "Binky-$VERSION.zip" | awk '{print $1}')
 echo "→ Updating Casks/binky.rb (version $VERSION, sha256)…"
 sed -i '' "s/version \".*\"/version \"$VERSION\"/" Casks/binky.rb
 sed -i '' "s/sha256 \".*\"/sha256 \"$CASK_SHASUM\"/" Casks/binky.rb
-python3 - <<'PY'
-import pathlib
-import re
-import sys
-
-path = pathlib.Path("Casks/binky.rb")
-text = path.read_text(encoding="utf-8")
-pattern = re.compile(
-    r'url "https://github\.com/heyderekj/binky/releases/download/v#\{version\}/Binky-#\{version\}\.zip"(?:,\n\s*verified: "github\.com/heyderekj/binky/")?'
-)
-replacement = (
-    'url "https://github.com/heyderekj/binky/releases/download/v#{version}/Binky-#{version}.zip",\n'
-    '      verified: "github.com/heyderekj/binky/"'
-)
-
-new_text, count = pattern.subn(replacement, text, count=1)
-if count == 0:
-    print("✗ Could not find cask URL stanza to enforce verified metadata.", file=sys.stderr)
-    sys.exit(1)
-
-path.write_text(new_text, encoding="utf-8")
-PY
 
 # ── 5. Optional bump commit, push, tag, release ─────────────────────────────
 
