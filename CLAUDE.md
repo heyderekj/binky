@@ -43,3 +43,10 @@ Binky is a single native binary with no bundled helper tools. Keep it that way. 
 - Explaining the metaphor (trust the reader).
 - Long sentences — if it doesn't fit on one line in a UI label, cut it.
 - Generic productivity-app language ("Streamline your workflow", "Boost productivity", etc.).
+
+## Releasing
+
+- `./release.sh minor` (or `patch` / `major` / `1.6.0`) from an up-to-date `main`. It bumps the version, updates the site's version lines and `site/ask.json`, builds a universal (Apple Silicon + Intel) app, makes the DMG + zip, updates `Casks/binky.rb`, then commits, tags, pushes and publishes the GitHub release. `--bump-only` stops after the version and site edits.
+- The site deploys from `main` (Cloudflare Pages), so copy for an unreleased change goes live as soon as it merges. Merge site copy with or after the release.
+- The Homebrew cask is read straight from `main` of this repo (`brew tap heyderekj/binky https://github.com/heyderekj/binky`), so cask fixes reach users on merge, without a release.
+- New UI strings: `xcodebuild -exportLocalizations -project Binky.xcodeproj -localizationPath /tmp/loc -exportLanguage en`, then `python3 tools/fill_xcstrings_translations.py` fills only the missing locales. `release.sh` warns about untranslated strings added since the last tag.
