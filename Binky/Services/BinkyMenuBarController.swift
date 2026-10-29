@@ -41,11 +41,8 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         if statusItem == nil {
             let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
             item.button?.toolTip = String(localized: "Binky", comment: "Menu bar status item tooltip (idle).")
-            // Small scale gives about 13 × 12pt of ink, in line with the system's own items (Wi-Fi 15 × 11,
-            // Spotlight 14 × 13). The default size is 14 × 15pt, which reads too big for a filled glyph.
-            item.button?.image = NSImage(systemSymbolName: "tray.and.arrow.down.fill", accessibilityDescription: "Binky")?
-                .withSymbolConfiguration(.init(pointSize: 13, weight: .regular, scale: .small))
-            item.button?.image?.isTemplate = true
+            // The app icon's pacifier, like Dinky's and Slinky's own marks in the menu bar.
+            item.button?.image = BinkyMenuBarIcon.image
             if #available(macOS 27.0, *) {
                 // Glass panel instead of a menu; the system drives open/close and keyboard navigation.
                 item.expandedInterfaceDelegate = self
@@ -391,6 +388,17 @@ extension BinkyMenuBarController {
 
         let host = NSHostingView(rootView: MenuBarPanelView(model: panelModel, actions: panelActions))
         let size = host.fittingSize
+        // Same backing as Slinky's panel: the menu material, 12pt corners.
+        let effect = NSVisualEffectView(frame: NSRect(origin: .zero, size: size))
+        effect.material = .menu
+        effect.state = .active
+        effect.blendingMode = .behindWindow
+        effect.wantsLayer = true
+        effect.layer?.cornerRadius = 12
+        effect.layer?.masksToBounds = true
+        host.frame = effect.bounds
+        host.autoresizingMask = [.width, .height]
+        effect.addSubview(host)
         let panel = panel ?? {
             let p = MenuBarPanelWindow(
                 contentRect: NSRect(origin: .zero, size: size),
@@ -408,7 +416,7 @@ extension BinkyMenuBarController {
             p.onCancel = { [weak self] in self?.dismissPanel() }
             return p
         }()
-        panel.contentView = host
+        panel.contentView = effect
 
         let buttonRect = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
         let visible = (buttonWindow.screen ?? NSScreen.main)?.visibleFrame ?? .zero
@@ -458,4 +466,48 @@ extension BinkyMenuBarController: @MainActor NSStatusItemExpandedInterfaceDelega
     func statusItemDidEndExpandedInterfaceSession(_ statusItem: NSStatusItem, animated: Bool) {
         closePanel()
     }
+}
+
+/// Binky's pacifier as a template glyph: teat, shield and ring, as in the app icon.
+/// About 12.5 × 11pt of ink, in line with Slinky's mark and the system's own items.
+enum BinkyMenuBarIcon {
+    static let image: NSImage = {
+        let image = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { rect in
+            guard let ctx = NSGraphicsContext.current?.cgContext else { return false }
+            func circle(_ x: CGFloat, _ y: CGFloat, _ r: CGFloat) -> CGRect {
+                CGRect(x: rect.minX + x - r, y: rect.minY + y - r, width: 2 * r, height: 2 * r)
+            }
+            let gap: CGFloat = 1.1
+            let teatFrom = CGPoint(x: rect.minX + 4.4, y: rect.minY + 12.6)
+            let teatTo = CGPoint(x: rect.minX + 7.2, y: rect.minY + 10.4)
+            ctx.setFillColor(NSColor.black.cgColor)
+            ctx.setStrokeColor(NSColor.black.cgColor)
+            ctx.setLineCap(.round)
+
+            // Shield.
+            ctx.fillEllipse(in: circle(10.2, 11.0, 3.1))
+            ctx.fillEllipse(in: circle(8.2, 7.4, 3.3))
+            // Ring, cut free of the shield.
+            ctx.setBlendMode(.clear)
+            ctx.fillEllipse(in: circle(12.6, 6.3, 3.0 + gap))
+            ctx.setBlendMode(.normal)
+            ctx.fillEllipse(in: circle(12.6, 6.3, 3.0))
+            ctx.setBlendMode(.clear)
+            ctx.fillEllipse(in: circle(12.6, 6.3, 1.55))
+            // Teat, on top.
+            ctx.setLineWidth(4.4 + 2 * gap)
+            ctx.move(to: teatFrom)
+            ctx.addLine(to: teatTo)
+            ctx.strokePath()
+            ctx.setBlendMode(.normal)
+            ctx.setLineWidth(4.4)
+            ctx.move(to: teatFrom)
+            ctx.addLine(to: teatTo)
+            ctx.strokePath()
+            return true
+        }
+        image.isTemplate = true
+        image.accessibilityDescription = "Binky"
+        return image
+    }()
 }

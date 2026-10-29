@@ -54,8 +54,7 @@ struct MenuBarPanelView: View {
             footer
         }
         .padding(14)
-        .frame(width: 280)
-        .adaptiveGlass(in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .frame(width: 300)
         .tint(binkyTintColor)
     }
 
@@ -63,8 +62,8 @@ struct MenuBarPanelView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            Image(systemName: "tray.and.arrow.down.fill")
-                .font(.system(size: 16))
+            Image(nsImage: BinkyMenuBarIcon.image)
+                .renderingMode(.template)
                 .foregroundStyle(binkyTintColor)
             VStack(alignment: .leading, spacing: 1) {
                 Text(String(localized: "Binky", comment: "Menu bar panel title."))
