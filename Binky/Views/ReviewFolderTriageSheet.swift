@@ -72,7 +72,7 @@ struct ReviewFolderTriageSheet: View {
                                     )) {
                                         moveItem(item, toRelativePath: suggestion.destinationRelativePath)
                                     }
-                                    .buttonStyle(.borderedProminent)
+                                    .glassProminentButton()
                                     .tint(binkyTintColor)
                                     .controlSize(.small)
                                 }
@@ -224,7 +224,7 @@ struct ReviewFolderTriageSheet: View {
             Button(String(localized: "Make it a rule…", comment: "Review triage: turn a repeat move pattern into a rule.")) {
                 Task { await openRuleEditor(for: habit) }
             }
-            .buttonStyle(.borderedProminent)
+            .glassProminentButton()
             .tint(binkyTintColor)
             .controlSize(.small)
             Button(String(localized: "Not now", comment: "Review triage: dismiss the habit suggestion.")) {

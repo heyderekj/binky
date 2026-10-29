@@ -10,7 +10,7 @@ struct SummaryStatRow: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
+                .font(.body.weight(.medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 22, alignment: .center)
             Text(text)
@@ -31,7 +31,7 @@ struct SummaryPolicyGroup: View {
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
+                .font(.body.weight(.medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 22, alignment: .center)
                 .padding(.top, 2)
@@ -57,7 +57,7 @@ struct SummaryMediaCountStrip: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Image(systemName: "square.grid.3x3.fill")
-                .font(.system(size: 14, weight: .medium))
+                .font(.body.weight(.medium))
                 .foregroundStyle(.secondary)
                 .frame(width: 22, alignment: .center)
             HStack(alignment: .firstTextBaseline, spacing: 0) {
@@ -70,7 +70,7 @@ struct SummaryMediaCountStrip: View {
                     }
                     HStack(spacing: 5) {
                         Image(systemName: segment.icon)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.body.weight(.medium))
                             .foregroundStyle(.secondary)
                         Text(verbatim: "\(segment.count)")
                             .font(.subheadline)

@@ -54,7 +54,7 @@ struct CurrentlySortingSheet: View {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 22))
+                        .font(.title)
                         .symbolRenderingMode(.hierarchical)
                 }
                 .buttonStyle(.plain)
@@ -85,7 +85,7 @@ struct CurrentlySortingSheet: View {
                                 systemImage: progress.runState == .paused ? "play.fill" : "pause.fill"
                             )
                         }
-                        .buttonStyle(.bordered)
+                        .glassButton()
                         .controlSize(.small)
                         .disabled(progress.runState == .stopping)
 
@@ -97,7 +97,7 @@ struct CurrentlySortingSheet: View {
                                 systemImage: "stop.fill"
                             )
                         }
-                        .buttonStyle(.bordered)
+                        .glassButton()
                         .controlSize(.small)
                         .disabled(progress.runState == .stopping)
 

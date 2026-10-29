@@ -137,7 +137,7 @@ struct MenuBarPanelView: View {
                 actions.sortAll()
             }
             .menuStyle(.button)
-            .buttonStyle(.borderedProminent)
+            .glassProminentButton()
             .controlSize(.large)
             .disabled(progress.isActive)
         } else {
@@ -145,7 +145,7 @@ struct MenuBarPanelView: View {
                 Text(String(localized: "Sort Now", comment: "Menu bar command."))
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .glassProminentButton()
             .controlSize(.large)
             .disabled(progress.isActive)
         }
@@ -182,7 +182,7 @@ struct MenuBarPanelView: View {
                 action: actions.quit
             )
         }
-        .font(.system(size: 15))
+        .font(.title3)
         .foregroundStyle(.secondary)
     }
 
