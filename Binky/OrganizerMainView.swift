@@ -63,13 +63,15 @@ struct OrganizerMainView: View {
             BinkyMenuBarController.shared.refresh()
             quickSortFolderURL = prefs.downloadsSortRootDirectory()
             expandSidebarIfRoutinesExist()
-            if PendingReviewTriage.consume() { showingReviewTriage = true }
+            if PendingWindowRequest.takeReviewTriage() { showingReviewTriage = true }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .binkyShowReviewTriage)) { _ in
-            if PendingReviewTriage.consume() { showingReviewTriage = true }
+        .onReceive(NotificationCenter.default.publisher(for: .binkyPendingWindowRequest)) { _ in
+            if PendingWindowRequest.takeReviewTriage() { showingReviewTriage = true }
         }
-        .onChange(of: prefs.savedPresets.count) { _, _ in
+        .onChange(of: prefs.savedPresets) { _, _ in
             expandSidebarIfRoutinesExist()
+            // Keeps "Sort <routine> with Binky" phrases in step with renamed or new routines.
+            BinkyAppShortcuts.updateAppShortcutParameters()
         }
         .onChange(of: prefs.showMenuBarIcon) { _, _ in
             BinkyMenuBarController.shared.refresh()

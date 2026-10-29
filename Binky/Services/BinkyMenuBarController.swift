@@ -10,8 +10,6 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     private var menuBarPercentTimer: Timer?
     private var menuBarShownPercent: CGFloat = 0
 
-    /// Shared preferences (set by the app root) for Review counts in the macOS 27 panel.
-    private weak var prefs: BinkyPreferences?
     private var panel: MenuBarPanelWindow?
     private let panelModel = MenuBarPanelModel()
     private var panelClickMonitors: [Any] = []
@@ -26,10 +24,6 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         )
         // Prime idle tooltip/title expectations when the observer fires later.
         menuBarShownPercent = 0
-    }
-
-    func attach(prefs: BinkyPreferences) {
-        self.prefs = prefs
     }
 
     func refresh() {
@@ -291,7 +285,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         )
     }
 
-    private static func enabledRoutinesFromDefaults() -> [CompressionPreset] {
+    nonisolated static func enabledRoutinesFromDefaults() -> [CompressionPreset] {
         guard let data = UserDefaults.standard.data(forKey: "savedPresetsData"),
               let presets = try? JSONDecoder().decode([CompressionPreset].self, from: data) else {
             return []
@@ -301,7 +295,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         }
     }
 
-    private static func menuBarRoutineDisplayTitle(_ preset: CompressionPreset) -> String {
+    nonisolated static func menuBarRoutineDisplayTitle(_ preset: CompressionPreset) -> String {
         let trimmedName = preset.name.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmedName.isEmpty { return trimmedName }
         let path = preset.watchFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -365,7 +359,7 @@ final class MenuBarPanelWindow: NSPanel {
 extension BinkyMenuBarController {
     private func reloadPanelModel() {
         panelModel.watchingPaused = UserDefaults.standard.bool(forKey: "folderWatch.paused")
-        panelModel.reviewCount = prefs?.reviewFolderItemCount() ?? 0
+        panelModel.reviewCount = BinkyPreferences.current?.reviewFolderItemCount() ?? 0
         panelModel.lastSort = BinkyPrefsStore().loadSessionHistory().first
         panelModel.routines = Self.enabledRoutinesFromDefaults()
             .map { MenuBarPanelModel.Routine(id: $0.id, title: Self.menuBarRoutineDisplayTitle($0)) }
@@ -381,7 +375,7 @@ extension BinkyMenuBarController {
             togglePauseWatching: { [weak self] in self?.togglePauseWatching() },
             tidyReview: { [weak self] in
                 self?.dismissPanel()
-                PendingReviewTriage.request()
+                PendingWindowRequest.post(.reviewTriage)
                 self?.showMainWindow()
             },
             showHistory: { [weak self] in self?.dismissPanel(); self?.openHistory() },
@@ -463,23 +457,5 @@ extension BinkyMenuBarController: @MainActor NSStatusItemExpandedInterfaceDelega
 
     func statusItemDidEndExpandedInterfaceSession(_ statusItem: NSStatusItem, animated: Bool) {
         closePanel()
-    }
-}
-
-/// Lets the menu bar panel ask the organizer window for the Review triage sheet,
-/// even when that window has to be created first.
-@MainActor
-enum PendingReviewTriage {
-    private(set) static var isPending = false
-
-    static func request() {
-        isPending = true
-        NotificationCenter.default.post(name: .binkyShowReviewTriage, object: nil)
-    }
-
-    /// Returns true once per request.
-    static func consume() -> Bool {
-        defer { isPending = false }
-        return isPending
     }
 }

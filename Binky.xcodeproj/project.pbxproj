@@ -20,6 +20,7 @@
 		AG000001000000000000001 /* View+AdaptiveGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AG100001000000000000001 /* View+AdaptiveGlass.swift */; };
 		AI000001000000000000001 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = AI100001000000000000001 /* AppIcon.icon */; };
 		ASH00001000000000000001 /* BinkyAppShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ASH10001000000000000001 /* BinkyAppShortcuts.swift */; };
+		BIN00001000000000000001 /* BinkyIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BIN10001000000000000001 /* BinkyIntents.swift */; };
 		DIGEST00001BR000001 /* SortDigestScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DIGEST10001FR000001 /* SortDigestScheduler.swift */; };
 		WKBUD000001BLD00001 /* WeeklyDigestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = WKBUD100001FR00001 /* WeeklyDigestBuilder.swift */; };
 		WKEXP000001BLD00001 /* WeeklyDigestExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = WKEXP100001FR00001 /* WeeklyDigestExporter.swift */; };
@@ -62,6 +63,7 @@
 		FTTST200001BK000001 /* FinderTagCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FTTST100001FR000001 /* FinderTagCompositionTests.swift */; };
 		ATOBKB00000000000000001 /* RoutinesOverhaulTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ATOBKF00000000000000001 /* RoutinesOverhaulTests.swift */; };
 		SPTKR200001BK000002 /* SortProgressTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = SPTKR100001FR000001 /* SortProgressTracker.swift */; };
+		PWR00001000000000000001 /* PendingWindowRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = PWR10001000000000000001 /* PendingWindowRequest.swift */; };
 		BBAR200001BK000002 /* BinkySortProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAR100001FR000001 /* BinkySortProgressBar.swift */; };
 		CURS200001BK000002 /* CurrentlySortingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CURS100001FR000001 /* CurrentlySortingSheet.swift */; };
 		SRTVC00001BR000001 /* SortVoiceCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRTVC10001FR000001 /* SortVoiceCopy.swift */; };
@@ -90,6 +92,7 @@
 		AG100001000000000000001 /* View+AdaptiveGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AdaptiveGlass.swift"; sourceTree = "<group>"; };
 		AI100001000000000000001 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		ASH10001000000000000001 /* BinkyAppShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkyAppShortcuts.swift; sourceTree = "<group>"; };
+		BIN10001000000000000001 /* BinkyIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkyIntents.swift; sourceTree = "<group>"; };
 		DIGEST10001FR000001 /* SortDigestScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortDigestScheduler.swift; sourceTree = "<group>"; };
 		WKBUD100001FR00001 /* WeeklyDigestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyDigestBuilder.swift; sourceTree = "<group>"; };
 		WKEXP100001FR00001 /* WeeklyDigestExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyDigestExporter.swift; sourceTree = "<group>"; };
@@ -153,6 +156,7 @@
 		FTTST100001FR000001 /* FinderTagCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderTagCompositionTests.swift; sourceTree = "<group>"; };
 		ATOBKF00000000000000001 /* RoutinesOverhaulTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutinesOverhaulTests.swift; sourceTree = "<group>"; };
 		SPTKR100001FR000001 /* SortProgressTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortProgressTracker.swift; sourceTree = "<group>"; };
+		PWR10001000000000000001 /* PendingWindowRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingWindowRequest.swift; sourceTree = "<group>"; };
 		BBAR100001FR000001 /* BinkySortProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinkySortProgressBar.swift; sourceTree = "<group>"; };
 		CURS100001FR000001 /* CurrentlySortingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentlySortingSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -276,6 +280,7 @@
 			children = (
 				SRTINT100001000000000001 /* SortFilesWithBinkyIntent.swift */,
 				ASH10001000000000000001 /* BinkyAppShortcuts.swift */,
+				BIN10001000000000000001 /* BinkyIntents.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -290,6 +295,7 @@
 				FILEAG10001FR000001 /* FileAgingService.swift */,
 				RSYNTH10001FR000001 /* RuleSynthesizer.swift */,
 				SPTKR100001FR000001 /* SortProgressTracker.swift */,
+				PWR10001000000000000001 /* PendingWindowRequest.swift */,
 				UC100001000000000000001 /* UpdateChecker.swift */,
 				LL100001000000000000001 /* LaunchAtLoginManager.swift */,
 				BAC00100000000000000001 /* BinkyActivationPolicy.swift */,
@@ -467,6 +473,7 @@
 				BAC00200000000000000001 /* BinkyActivationPolicy.swift in Sources */,
 				BMBC0020000000000000001 /* BinkyMenuBarController.swift in Sources */,
 				SPTKR200001BK000002 /* SortProgressTracker.swift in Sources */,
+				PWR00001000000000000001 /* PendingWindowRequest.swift in Sources */,
 				DST00009900000000000001 /* DownloadSortServices.swift in Sources */,
 				DNKBLD1000010000000001 /* DinkyBridge.swift in Sources */,
 				RVTRI00001BR000001 /* ReviewFolderTriageSheet.swift in Sources */,
@@ -475,6 +482,7 @@
 				HS000001000000000000001 /* HistorySheet.swift in Sources */,
 				SR000001000000000000001 /* SessionRecord.swift in Sources */,
 				ASH00001000000000000001 /* BinkyAppShortcuts.swift in Sources */,
+				BIN00001000000000000001 /* BinkyIntents.swift in Sources */,
 				NTEXP002000000000000001 /* NewTagExpiry.swift in Sources */,
 				WR000001000000000000001 /* WatchRegistry.swift in Sources */,
 				HW000001000000000000001 /* HelpWindow.swift in Sources */,

@@ -5,6 +5,8 @@ import SwiftUI
 private let prefsLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "Binky", category: "BinkyPreferences")
 
 final class BinkyPreferences: ObservableObject {
+    /// The app's one instance, for AppKit and App Intents code outside the SwiftUI environment.
+    nonisolated(unsafe) static weak var current: BinkyPreferences?
 
     init() {
         Self.migrateSortNowShortcutKeyIfNeeded()
