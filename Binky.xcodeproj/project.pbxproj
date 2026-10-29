@@ -48,6 +48,7 @@
 		ORGMAIN001000000000000001 /* OrganizerMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ORGMAIN100001000000000001 /* OrganizerMainView.swift */; };
 		ORGVM00000100000000000001 /* OrganizerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ORGVM10000100000000000001 /* OrganizerViewModel.swift */; };
 		RB000001000000000000001 /* ReviewPromptBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB100001000000000000001 /* ReviewPromptBanner.swift */; };
+		MP000001000000000000001 /* MenuBarPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = MP100001000000000000001 /* MenuBarPanelView.swift */; };
 		RSYNTH00001BR000001 /* RuleSynthesizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = RSYNTH10001FR000001 /* RuleSynthesizer.swift */; };
 		SC000001000000000000001 /* SettingsChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = SC100001000000000000001 /* SettingsChrome.swift */; };
 		SH000001000000000000001 /* ShortcutRecorderField.swift in Sources */ = {isa = PBXBuildFile; fileRef = SH100001000000000000001 /* ShortcutRecorderField.swift */; };
@@ -136,6 +137,7 @@
 		ORGMAIN100001000000000001 /* OrganizerMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizerMainView.swift; sourceTree = "<group>"; };
 		ORGVM10000100000000000001 /* OrganizerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizerViewModel.swift; sourceTree = "<group>"; };
 		RB100001000000000000001 /* ReviewPromptBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPromptBanner.swift; sourceTree = "<group>"; };
+		MP100001000000000000001 /* MenuBarPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPanelView.swift; sourceTree = "<group>"; };
 		RSYNTH10001FR000001 /* RuleSynthesizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleSynthesizer.swift; sourceTree = "<group>"; };
 		SC100001000000000000001 /* SettingsChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsChrome.swift; sourceTree = "<group>"; };
 		SH100001000000000000001 /* ShortcutRecorderField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderField.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				SC100001000000000000001 /* SettingsChrome.swift */,
 				UB100001000000000000001 /* UpdateBanner.swift */,
 				RB100001000000000000001 /* ReviewPromptBanner.swift */,
+				MP100001000000000000001 /* MenuBarPanelView.swift */,
 				RVTRI10001FR000001 /* ReviewFolderTriageSheet.swift */,
 				HS100001000000000000001 /* HistorySheet.swift */,
 				HW100001000000000000001 /* HelpWindow.swift */,
@@ -456,6 +459,7 @@
 				UC000001000000000000001 /* UpdateChecker.swift in Sources */,
 				UB000001000000000000001 /* UpdateBanner.swift in Sources */,
 				RB000001000000000000001 /* ReviewPromptBanner.swift in Sources */,
+				MP000001000000000000001 /* MenuBarPanelView.swift in Sources */,
 				RSYNTH00001BR000001 /* RuleSynthesizer.swift in Sources */,
 				AG000001000000000000001 /* View+AdaptiveGlass.swift in Sources */,
 				LL000001000000000000001 /* LaunchAtLoginManager.swift in Sources */,

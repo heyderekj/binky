@@ -149,16 +149,14 @@ public enum SortPreviewPlanner {
                     for: standardized,
                     signals: signals,
                     snapshot: snapshot,
-                    contentIdentitySHA256: pendingDigestSHA
+                    contentIdentitySHA256: pendingDigestSHA,
+                    wantsVisualTraits: SortRulesEvaluator.anyRuleRequiresVisualCategory(activeRules)
                 )
             } else {
                 inspection = ContentInspector.emptyInspection
             }
 
-            let contentInput = SortRulesEvaluator.ContentRuleMatchInput(
-                hasSignificantOCR: inspection.hasSignificantOCR,
-                isReceiptLike: inspection.isReceiptLike
-            )
+            let contentInput = inspection.ruleMatchInput
             let matchedRule = SortRulesEvaluator.firstMatchingRule(in: activeRules, signals: signals, content: contentInput, fileTags: fileTags)
             let originHost = signals.originHosts.first
 

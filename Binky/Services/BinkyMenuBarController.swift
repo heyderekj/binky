@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 
 /// Minimal menu bar controls: sort, pause/resume watch, show main window, Settings.
 @MainActor
@@ -8,6 +9,12 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var menuBarPercentTimer: Timer?
     private var menuBarShownPercent: CGFloat = 0
+
+    /// Shared preferences (set by the app root) for Review counts in the macOS 27 panel.
+    private weak var prefs: BinkyPreferences?
+    private var panel: MenuBarPanelWindow?
+    private let panelModel = MenuBarPanelModel()
+    private var panelClickMonitors: [Any] = []
 
     private override init() {
         super.init()
@@ -19,6 +26,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         )
         // Prime idle tooltip/title expectations when the observer fires later.
         menuBarShownPercent = 0
+    }
+
+    func attach(prefs: BinkyPreferences) {
+        self.prefs = prefs
     }
 
     func refresh() {
@@ -41,9 +52,14 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
             item.button?.image = NSImage(systemSymbolName: "tray.and.arrow.down.fill", accessibilityDescription: "Binky")?
                 .withSymbolConfiguration(.init(pointSize: 13, weight: .regular, scale: .small))
             item.button?.image?.isTemplate = true
-            let menu = NSMenu()
-            menu.delegate = self
-            item.menu = menu
+            if #available(macOS 27.0, *) {
+                // Glass panel instead of a menu; the system drives open/close and keyboard navigation.
+                item.expandedInterfaceDelegate = self
+            } else {
+                let menu = NSMenu()
+                menu.delegate = self
+                item.menu = menu
+            }
             statusItem = item
         }
         if let menu = statusItem?.menu {
@@ -53,6 +69,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     }
 
     private func tearDown() {
+        closePanel()
         invalidateMenuBarPercentTimer()
         menuBarShownPercent = 0
         if let item = statusItem {
@@ -63,6 +80,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func sortProgressDidChange() {
         refreshMenuBarProgressChrome()
+        if panel != nil { reloadPanelModel() }
     }
 
     /// Eased `%` beside the tray icon while sorting — reads live state from ``SortProgressTracker``.
@@ -262,6 +280,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     @objc private func sortRoutineNow(_ sender: NSMenuItem) {
         guard let idString = sender.representedObject as? String,
               let uuid = UUID(uuidString: idString) else { return }
+        sortRoutine(id: uuid)
+    }
+
+    private func sortRoutine(id uuid: UUID) {
         NotificationCenter.default.post(
             name: .binkyStartSortForRoutine,
             object: nil,
@@ -304,6 +326,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         let next = !UserDefaults.standard.bool(forKey: key)
         UserDefaults.standard.set(next, forKey: key)
         NotificationCenter.default.post(name: .binkyFolderWatchPauseChanged, object: nil)
+        if panel != nil { reloadPanelModel() }
     }
 
     @objc private func showMainWindow() {
@@ -323,5 +346,140 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         // `BinkyShortcutCommands` listens for this and calls `openWindow(id:)` — works even when
         // the organizer window (and `ContentView`) isn’t mounted.
         NotificationCenter.default.post(name: .binkyOpenMacPreferences, object: nil)
+    }
+}
+
+// MARK: - macOS 27 glass panel
+
+/// Borderless panel that can take key focus (arrow keys, Esc) without activating Binky.
+final class MenuBarPanelWindow: NSPanel {
+    var onCancel: (() -> Void)?
+
+    override var canBecomeKey: Bool { true }
+
+    override func cancelOperation(_ sender: Any?) {
+        onCancel?()
+    }
+}
+
+extension BinkyMenuBarController {
+    private func reloadPanelModel() {
+        panelModel.watchingPaused = UserDefaults.standard.bool(forKey: "folderWatch.paused")
+        panelModel.reviewCount = prefs?.reviewFolderItemCount() ?? 0
+        panelModel.lastSort = BinkyPrefsStore().loadSessionHistory().first
+        panelModel.routines = Self.enabledRoutinesFromDefaults()
+            .map { MenuBarPanelModel.Routine(id: $0.id, title: Self.menuBarRoutineDisplayTitle($0)) }
+            .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
+
+    private var panelActions: MenuBarPanelActions {
+        MenuBarPanelActions(
+            sortAll: { [weak self] in self?.sortNow() },
+            sortRoutine: { [weak self] id in self?.sortRoutine(id: id) },
+            togglePauseSorting: { [weak self] in self?.togglePauseSorting() },
+            stopSorting: { [weak self] in self?.stopSortingNow() },
+            togglePauseWatching: { [weak self] in self?.togglePauseWatching() },
+            tidyReview: { [weak self] in
+                self?.dismissPanel()
+                PendingReviewTriage.request()
+                self?.showMainWindow()
+            },
+            showHistory: { [weak self] in self?.dismissPanel(); self?.openHistory() },
+            showMainWindow: { [weak self] in self?.dismissPanel(); self?.showMainWindow() },
+            openSettings: { [weak self] in self?.dismissPanel(); self?.openSettings() },
+            quit: { [weak self] in self?.dismissPanel(); self?.terminateApp() }
+        )
+    }
+
+    fileprivate func showPanel(below item: NSStatusItem) {
+        guard let button = item.button, let buttonWindow = button.window else { return }
+        reloadPanelModel()
+
+        let host = NSHostingView(rootView: MenuBarPanelView(model: panelModel, actions: panelActions))
+        let size = host.fittingSize
+        let panel = panel ?? {
+            let p = MenuBarPanelWindow(
+                contentRect: NSRect(origin: .zero, size: size),
+                styleMask: [.borderless, .nonactivatingPanel],
+                backing: .buffered,
+                defer: true
+            )
+            p.isFloatingPanel = true
+            p.level = .popUpMenu
+            p.backgroundColor = .clear
+            p.isOpaque = false
+            p.hasShadow = true
+            p.hidesOnDeactivate = false
+            p.collectionBehavior = [.canJoinAllSpaces, .transient, .ignoresCycle]
+            p.onCancel = { [weak self] in self?.dismissPanel() }
+            return p
+        }()
+        panel.contentView = host
+
+        let buttonRect = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
+        let visible = (buttonWindow.screen ?? NSScreen.main)?.visibleFrame ?? .zero
+        var x = buttonRect.midX - size.width / 2
+        x = min(max(x, visible.minX + 8), visible.maxX - size.width - 8)
+        let y = buttonRect.minY - size.height - 6
+        panel.setFrame(NSRect(x: x, y: y, width: size.width, height: size.height), display: true)
+        panel.makeKeyAndOrderFront(nil)
+        self.panel = panel
+
+        // Clicks anywhere else end the session, like a menu.
+        let outside = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            Task { @MainActor in self?.dismissPanel() }
+        }
+        let inside = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            if let self, event.window !== self.panel, event.window !== buttonWindow {
+                self.dismissPanel()
+            }
+            return event
+        }
+        panelClickMonitors = [outside, inside].compactMap { $0 }
+    }
+
+    /// Ends the expanded-interface session; AppKit then calls back to close the panel.
+    private func dismissPanel() {
+        if #available(macOS 27.0, *), let session = statusItem?.expandedInterfaceSession {
+            session.cancel()
+        } else {
+            closePanel()
+        }
+    }
+
+    fileprivate func closePanel() {
+        panelClickMonitors.forEach(NSEvent.removeMonitor)
+        panelClickMonitors = []
+        panel?.orderOut(nil)
+        panel?.contentView = nil
+    }
+}
+
+@available(macOS 27.0, *)
+extension BinkyMenuBarController: @MainActor NSStatusItemExpandedInterfaceDelegate {
+    func statusItem(_ statusItem: NSStatusItem, didBegin expandedInterfaceSession: NSStatusItemExpandedInterfaceSession) {
+        showPanel(below: statusItem)
+    }
+
+    func statusItemDidEndExpandedInterfaceSession(_ statusItem: NSStatusItem, animated: Bool) {
+        closePanel()
+    }
+}
+
+/// Lets the menu bar panel ask the organizer window for the Review triage sheet,
+/// even when that window has to be created first.
+@MainActor
+enum PendingReviewTriage {
+    private(set) static var isPending = false
+
+    static func request() {
+        isPending = true
+        NotificationCenter.default.post(name: .binkyShowReviewTriage, object: nil)
+    }
+
+    /// Returns true once per request.
+    static func consume() -> Bool {
+        defer { isPending = false }
+        return isPending
     }
 }

@@ -15,6 +15,7 @@ private final class BinkyRootModel: ObservableObject {
         let vm = OrganizerViewModel()
         self.organizerVM = vm
         self.watchLease = WatchSortCoordinator(prefs: p, viewModel: vm)
+        BinkyMenuBarController.shared.attach(prefs: p)
     }
 }
 

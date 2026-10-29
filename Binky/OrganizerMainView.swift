@@ -63,6 +63,10 @@ struct OrganizerMainView: View {
             BinkyMenuBarController.shared.refresh()
             quickSortFolderURL = prefs.downloadsSortRootDirectory()
             expandSidebarIfRoutinesExist()
+            if PendingReviewTriage.consume() { showingReviewTriage = true }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .binkyShowReviewTriage)) { _ in
+            if PendingReviewTriage.consume() { showingReviewTriage = true }
         }
         .onChange(of: prefs.savedPresets.count) { _, _ in
             expandSidebarIfRoutinesExist()
@@ -1045,18 +1049,7 @@ struct OrganizerMainView: View {
             Image(systemName: "folder.badge.questionmark")
         }
         .help(String(localized: "Pending review", comment: "Toolbar button tooltip: pending review files."))
-        .overlay(alignment: .topLeading) {
-            if reviewBannerCount > 0 {
-                Text("\(min(reviewBannerCount, 99))")
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(Capsule().fill(binkyTintColor))
-                    .offset(x: -8, y: -6)
-                    .allowsHitTesting(false)
-            }
-        }
+        .adaptiveToolbarBadge(Int(min(reviewBannerCount, 99)), tint: binkyTintColor)
         .popover(isPresented: $showReviewPopover, arrowEdge: .top) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
@@ -1403,14 +1396,7 @@ struct OrganizerMainView: View {
     }
 
     private var reviewFolderItemCount: Int {
-        let root = prefs.activeSortSweepRootDirectory()
-        let reviewURL = root.appendingPathComponent(FileSortCategory.review.downloadsSubfolder, isDirectory: true)
-        guard let contents = try? FileManager.default.contentsOfDirectory(at: reviewURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
-            return 0
-        }
-        return contents.filter { url in
-            (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == false
-        }.count
+        prefs.reviewFolderItemCount()
     }
 
     private func countSummary(for outcome: SortBatchOutcome) -> String {

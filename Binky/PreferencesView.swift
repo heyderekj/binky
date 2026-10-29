@@ -244,28 +244,22 @@ struct PreferencesView: View {
                     .frame(minWidth: 480, maxWidth: .infinity, maxHeight: .infinity)
                     .navigationTitle(selectedTab.sidebarLabel)
                     .toolbar {
-                        ToolbarItem(placement: .navigation) {
-                            Button {
-                                goBack()
-                            } label: {
-                                Image(systemName: "chevron.backward")
-                            }
-                            .buttonStyle(.bordered)
-                            .help(String(localized: "Back", comment: "Preferences toolbar."))
-                            .disabled(historyIndex == 0)
-                        }
-                        ToolbarItem(placement: .navigation) {
-                            Button {
-                                goForward()
-                            } label: {
-                                Image(systemName: "chevron.forward")
-                            }
-                            .buttonStyle(.bordered)
-                            .help(String(localized: "Forward", comment: "Preferences toolbar."))
-                            .disabled(historyIndex >= history.count - 1)
-                        }
                         if #available(macOS 26.0, *) {
+                            // One shared glass capsule, like Finder; bordered buttons inside glass read as double chrome.
+                            ToolbarItem(placement: .navigation) {
+                                ControlGroup {
+                                    backButton
+                                    forwardButton
+                                }
+                            }
                             ToolbarSpacer(.flexible)
+                        } else {
+                            ToolbarItem(placement: .navigation) {
+                                backButton.buttonStyle(.bordered)
+                            }
+                            ToolbarItem(placement: .navigation) {
+                                forwardButton.buttonStyle(.bordered)
+                            }
                         }
                     }
             }
@@ -306,6 +300,26 @@ struct PreferencesView: View {
     private func goForward() {
         guard historyIndex < history.count - 1 else { return }
         historyIndex += 1
+    }
+
+    private var backButton: some View {
+        Button {
+            goBack()
+        } label: {
+            Image(systemName: "chevron.backward")
+        }
+        .help(String(localized: "Back", comment: "Preferences toolbar."))
+        .disabled(historyIndex == 0)
+    }
+
+    private var forwardButton: some View {
+        Button {
+            goForward()
+        } label: {
+            Image(systemName: "chevron.forward")
+        }
+        .help(String(localized: "Forward", comment: "Preferences toolbar."))
+        .disabled(historyIndex >= history.count - 1)
     }
 
     @ViewBuilder
@@ -1733,6 +1747,12 @@ struct RuleEditorSheet: View {
         )
     }
 
+    /// Scan and ticket need the macOS 27 vision model; hide them on older releases unless this rule already uses one.
+    private var offeredContentMatchKinds: [SortContentMatchKind] {
+        if #available(macOS 27.0, *) { return SortContentMatchKind.allCases }
+        return SortContentMatchKind.allCases.filter { !$0.requiresVisionModel || $0 == draft.contentMatch.kind }
+    }
+
     private func binding<T>(_ keyPath: WritableKeyPath<SortRule, T>) -> Binding<T> {
         Binding(
             get: { draft[keyPath: keyPath] },
@@ -1842,7 +1862,7 @@ struct RuleEditorSheet: View {
                             .frame(minHeight: 52)
                             .font(.system(.body, design: .monospaced))
                         Picker(String(localized: "Content match", comment: "Rule editor."), selection: contentMatchKindBinding) {
-                            ForEach(SortContentMatchKind.allCases) { kind in
+                            ForEach(offeredContentMatchKinds) { kind in
                                 Text(kind.localizedTitle).tag(kind)
                             }
                         }

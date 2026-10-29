@@ -29,6 +29,8 @@ enum ContentInspector {
         var dominantOCRLine: String?
         var vendorSlug: String?
         var amountSlug: String?
+        /// Only filled when a rule asked (``SortRulesEvaluator/anyRuleRequiresVisualCategory(_:)``).
+        var visualTraits: Set<SortVisualCategory> = []
     }
 
     static let emptyInspection = ContentInspectionResult(
@@ -47,10 +49,7 @@ enum ContentInspector {
         snapshot: SortPreferencesSnapshot
     ) async -> SortRulesEvaluator.ContentRuleMatchInput {
         let r = await inspect(url: url, signals: signals, snapshot: snapshot)
-        return SortRulesEvaluator.ContentRuleMatchInput(
-            hasSignificantOCR: r.hasSignificantOCR,
-            isReceiptLike: r.isReceiptLike
-        )
+        return r.ruleMatchInput
     }
 
     /// Full inspection for smart rename + receipt routing.
@@ -59,35 +58,48 @@ enum ContentInspector {
         for url: URL,
         signals: SortRulesEvaluator.FileSignals,
         snapshot: SortPreferencesSnapshot,
-        contentIdentitySHA256: String? = nil
+        contentIdentitySHA256: String? = nil,
+        wantsVisualTraits: Bool = false
     ) async -> ContentInspectionResult {
-        await inspect(url: url, signals: signals, snapshot: snapshot, contentIdentitySHA256: contentIdentitySHA256)
+        await inspect(
+            url: url,
+            signals: signals,
+            snapshot: snapshot,
+            contentIdentitySHA256: contentIdentitySHA256,
+            wantsVisualTraits: wantsVisualTraits
+        )
     }
 
     private static func inspect(
         url: URL,
         signals: SortRulesEvaluator.FileSignals,
         snapshot: SortPreferencesSnapshot,
-        contentIdentitySHA256: String? = nil
+        contentIdentitySHA256: String? = nil,
+        wantsVisualTraits: Bool = false
     ) async -> ContentInspectionResult {
         if EnergyConditions.shared.shouldPauseFully {
             return emptyInspection
         }
 
-        let cacheKeyNSString = (cacheKeyString(path: url.path, signals: signals, contentIdentitySHA256: contentIdentitySHA256) as NSString)
+        var cacheKey = cacheKeyString(path: url.path, signals: signals, contentIdentitySHA256: contentIdentitySHA256)
+        if wantsVisualTraits { cacheKey += "|visual" }
+        let cacheKeyNSString = cacheKey as NSString
         if let hit = cachedResult(for: cacheKeyNSString) {
             return hit
         }
 
         let ext = signals.ext
         let originHosts = signals.originHosts
-        let result: ContentInspectionResult
+        var result: ContentInspectionResult
         if ext == "pdf" {
             result = inspectPDF(at: url, snapshot: snapshot, originHosts: originHosts)
         } else if isImageExtension(ext) {
             result = await inspectImage(at: url, snapshot: snapshot, originHosts: originHosts)
         } else {
             result = emptyInspection
+        }
+        if wantsVisualTraits, ext == "pdf" || isImageExtension(ext) {
+            result.visualTraits = await VisualClassifier.traits(for: url, isPDF: ext == "pdf")
         }
 
         cacheResult(result, for: cacheKeyNSString)
@@ -321,5 +333,15 @@ enum ContentInspector {
         cacheLock.lock()
         cache.setObject(CacheEntry(result: result), forKey: key)
         cacheLock.unlock()
+    }
+}
+
+extension ContentInspector.ContentInspectionResult {
+    var ruleMatchInput: SortRulesEvaluator.ContentRuleMatchInput {
+        SortRulesEvaluator.ContentRuleMatchInput(
+            hasSignificantOCR: hasSignificantOCR,
+            isReceiptLike: isReceiptLike,
+            visualTraits: visualTraits
+        )
     }
 }

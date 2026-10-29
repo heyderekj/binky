@@ -4,6 +4,61 @@ import XCTest
 
 final class RoutinesOverhaulTests: XCTestCase {
 
+    // MARK: - "Looks like…" content kinds
+
+    private func imageSignals() -> SortRulesEvaluator.FileSignals {
+        SortRulesEvaluator.FileSignals(
+            ext: "png",
+            baseName: "img.png",
+            byteSize: 100,
+            addedToDirectoryDate: nil,
+            creationDate: nil,
+            modificationDate: nil,
+            originHosts: []
+        )
+    }
+
+    func testVisualContentKindsMatchOnlyTheirTrait() {
+        let kinds: [(SortContentMatchKind, SortVisualCategory)] = [
+            (.screenshot, .screenshot), (.photo, .photo), (.documentScan, .documentScan), (.ticket, .ticket),
+        ]
+        for (kind, trait) in kinds {
+            var rule = SortRule.fresh(order: 1)
+            rule.contentMatch = SortContentMatch(kind: kind)
+            let hit = SortRulesEvaluator.ContentRuleMatchInput(hasSignificantOCR: true, isReceiptLike: false, visualTraits: [trait])
+            let miss = SortRulesEvaluator.ContentRuleMatchInput(hasSignificantOCR: true, isReceiptLike: true, visualTraits: [])
+            XCTAssertTrue(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: hit), "\(kind)")
+            XCTAssertFalse(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: miss), "\(kind)")
+            XCTAssertFalse(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: nil), "\(kind)")
+        }
+    }
+
+    func testReceiptRuleAlsoMatchesVisualReceipt() {
+        var rule = SortRule.fresh(order: 1)
+        rule.contentMatch = SortContentMatch(kind: .receipt)
+        let seen = SortRulesEvaluator.ContentRuleMatchInput(hasSignificantOCR: false, isReceiptLike: false, visualTraits: [.receipt, .photo])
+        XCTAssertTrue(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: seen))
+    }
+
+    func testVisualTraitsOnlyRequestedForVisualRules() {
+        var receipt = SortRule.fresh(order: 1)
+        receipt.contentMatch = SortContentMatch(kind: .receipt)
+        var ticket = SortRule.fresh(order: 2)
+        ticket.contentMatch = SortContentMatch(kind: .ticket)
+        XCTAssertFalse(SortRulesEvaluator.anyRuleRequiresVisualCategory([receipt]))
+        XCTAssertTrue(SortRulesEvaluator.anyRuleRequiresVisualCategory([receipt, ticket]))
+        ticket.isEnabled = false
+        XCTAssertFalse(SortRulesEvaluator.anyRuleRequiresVisualCategory([receipt, ticket]))
+    }
+
+    func testUnknownContentKindDecodesAsNone() throws {
+        let data = Data(#"{"kind":"somethingFromTheFuture"}"#.utf8)
+        let decoded = try JSONDecoder().decode(SortContentMatch.self, from: data)
+        XCTAssertEqual(decoded.kind, SortContentMatchKind.none)
+        let roundTrip = try JSONDecoder().decode(SortContentMatch.self, from: JSONEncoder().encode(SortContentMatch(kind: .ticket)))
+        XCTAssertEqual(roundTrip.kind, .ticket)
+    }
+
     func testRuleMatchesRequiresFinderTag() {
         var rule = SortRule.fresh(order: 1)
         rule.matchTags = ["Work"]

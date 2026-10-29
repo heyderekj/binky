@@ -528,6 +528,18 @@ extension BinkyPreferences {
         return savedPresets.first { $0.id == uuid }
     }
 
+    /// Files waiting in the active folder's Review subfolder (organizer toolbar, menu bar panel).
+    func reviewFolderItemCount() -> Int {
+        let reviewURL = activeSortSweepRootDirectory()
+            .appendingPathComponent(FileSortCategory.review.downloadsSubfolder, isDirectory: true)
+        guard let contents = try? FileManager.default.contentsOfDirectory(at: reviewURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+            return 0
+        }
+        return contents.filter { url in
+            (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == false
+        }.count
+    }
+
     /// Default watched folder used for interactive **Sort Now**, drop routing, preview, Review counts, etc. Uses the active automation’s folder when set.
     func activeSortSweepRootDirectory() -> URL {
         reconcileFolderBookmarksIfNeeded()
