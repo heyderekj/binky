@@ -250,6 +250,8 @@ final class BinkyPreferences: ObservableObject {
 
     /// Vision OCR renames default screenshot filenames using the strongest text line.
     @AppStorage("sort.smartScreenshotNames") var sortSmartScreenshotNamesEnabled: Bool = false
+    /// Apple Intelligence names for PDFs and images that arrive with generic names.
+    @AppStorage("sort.smartDocumentNames") var sortSmartDocumentNamesEnabled: Bool = false
 
     /// Heuristic receipt / invoice detection for PDFs and images (routes to Receipts when enabled).
     @AppStorage("sort.detectReceipts") var sortDetectReceiptsEnabled: Bool = false
@@ -509,7 +511,8 @@ extension BinkyPreferences {
             ),
             slowMode: sortSlowModeEnabled,
             sortMoveLooseFoldersEnabled: sortMoveLooseFoldersEnabled,
-            sortLooseFoldersDestinationRelative: sortLooseFoldersDestinationRelative
+            sortLooseFoldersDestinationRelative: sortLooseFoldersDestinationRelative,
+            sortSmartDocumentNamesEnabled: sortSmartDocumentNamesEnabled
         )
     }
 

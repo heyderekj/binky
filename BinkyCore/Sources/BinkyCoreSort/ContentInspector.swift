@@ -153,6 +153,42 @@ enum ContentInspector {
         return "\(dateStr) \(slug)\(dotExt)"
     }
 
+    // MARK: - Text sample (for the language model)
+
+    /// Up to `maxChars` of readable text: the PDF text layer (OCR when it has none), OCR for images,
+    /// or the start of a plain-text file. Empty when there's nothing to read.
+    static func textSample(for url: URL, maxChars: Int) async -> String {
+        let ext = url.pathExtension.lowercased()
+        var text = ""
+        if ext == "pdf" {
+            if let doc = PDFDocument(url: url), doc.pageCount > 0 {
+                text = (0..<min(doc.pageCount, 2)).compactMap { doc.page(at: $0)?.string }.joined(separator: "\n")
+                if text.trimmingCharacters(in: .whitespacesAndNewlines).count < 40, let page = doc.page(at: 0) {
+                    let thumb = page.thumbnail(of: CGSize(width: 1024, height: 1024), for: .mediaBox)
+                    var rect = CGRect(origin: .zero, size: thumb.size)
+                    if let cg = thumb.cgImage(forProposedRect: &rect, context: nil, hints: nil) {
+                        text = await recognizeText(on: cg, accurate: false)
+                    }
+                }
+            }
+        } else if isImageExtension(ext) {
+            if let cg = cgImageThumbnailForVision(fromFile: url, maxPixelSize: 1600) {
+                text = await recognizeText(on: cg, accurate: false)
+            }
+        } else if UTType(filenameExtension: ext)?.conforms(to: .plainText) == true,
+                  let handle = try? FileHandle(forReadingFrom: url) {
+            defer { try? handle.close() }
+            let data = (try? handle.read(upToCount: maxChars * 4)) ?? Data()
+            text = String(decoding: data, as: UTF8.self)
+        }
+        let collapsed = text
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: "\n")
+        return String(collapsed.prefix(maxChars))
+    }
+
     // MARK: - Image + PDF
 
     private static func inspectImage(

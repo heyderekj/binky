@@ -122,7 +122,8 @@ public struct BinkyPrefsStore: Sendable {
             ),
             slowMode: defaults.object(forKey: "sort.slowModeEnabled") as? Bool ?? false,
             sortMoveLooseFoldersEnabled: defaults.object(forKey: "sort.moveLooseFolders.enabled") as? Bool ?? false,
-            sortLooseFoldersDestinationRelative: defaults.string(forKey: "sort.moveLooseFolders.relativePath") ?? ""
+            sortLooseFoldersDestinationRelative: defaults.string(forKey: "sort.moveLooseFolders.relativePath") ?? "",
+            sortSmartDocumentNamesEnabled: defaults.object(forKey: "sort.smartDocumentNames") as? Bool ?? false
         )
     }
 

@@ -66,7 +66,7 @@ enum VisualClassifier {
         return traits
     }
 
-    private static func thumbnail(for url: URL, isPDF: Bool, maxPixelSize: Int) -> CGImage? {
+    static func thumbnail(for url: URL, isPDF: Bool, maxPixelSize: Int) -> CGImage? {
         if isPDF {
             guard let doc = PDFDocument(url: url), doc.pageCount > 0, let page = doc.page(at: 0) else { return nil }
             let thumb = page.thumbnail(of: CGSize(width: maxPixelSize, height: maxPixelSize), for: .mediaBox)

@@ -4,6 +4,52 @@ import XCTest
 
 final class RoutinesOverhaulTests: XCTestCase {
 
+    // MARK: - Apple Intelligence helpers
+
+    func testGenericNamesAreRenameable() {
+        for name in ["IMG_2041.HEIC", "document (3).pdf", "Scan 2026-10-02 at 9.14.pdf", "download.pdf",
+                     "3F2504E0-4F89-11D3-9A0C-0305E82C3301.png", "PXL_20261002_101112.jpg", "a1b2c3d4e5f6a7b8c9d0.pdf"] {
+            XCTAssertTrue(FileUnderstanding.looksLikeGenericName(name), name)
+        }
+        for name in ["Lease agreement.pdf", "stripe-invoice-oct.pdf", "Mom birthday.jpg", "W-2 2025.pdf"] {
+            XCTAssertFalse(FileUnderstanding.looksLikeGenericName(name), name)
+        }
+    }
+
+    func testSuggestedPathsAreSanitized() {
+        XCTAssertEqual(FileUnderstanding.sanitizedRelativePath("Finance/Taxes"), "Finance/Taxes")
+        XCTAssertEqual(FileUnderstanding.sanitizedRelativePath("/../Finance//Taxes/2025/Q1"), "Finance/Taxes/2025")
+        XCTAssertEqual(FileUnderstanding.sanitizedRelativePath("Work: Clients"), "Work Clients")
+        XCTAssertNil(FileUnderstanding.sanitizedRelativePath("../.."))
+        XCTAssertNil(FileUnderstanding.sanitizedRelativePath("  "))
+    }
+
+    func testReviewHabitNeedsRepeatsAndSkipsCoveredOnes() {
+        let defaults = UserDefaults.standard
+        let saved = (defaults.data(forKey: "review.habitLog"), defaults.stringArray(forKey: "review.habitDismissed"))
+        defer {
+            defaults.set(saved.0, forKey: "review.habitLog")
+            defaults.set(saved.1, forKey: "review.habitDismissed")
+        }
+        defaults.removeObject(forKey: "review.habitLog")
+        defaults.removeObject(forKey: "review.habitDismissed")
+
+        ReviewHabits.record(originHost: "figma.com", ext: "png", destination: "Work/Figma")
+        XCTAssertNil(ReviewHabits.strongestHabit(existingRules: []))
+        ReviewHabits.record(originHost: "Figma.com", ext: "fig", destination: "Work/Figma")
+        let habit = ReviewHabits.strongestHabit(existingRules: [])
+        XCTAssertEqual(habit?.originHost, "figma.com")
+        XCTAssertEqual(habit?.destination, "Work/Figma")
+
+        var rule = SortRule.fresh(order: 1)
+        rule.originDomains = ["figma.com"]
+        rule.destinationRelativePath = "Work/Figma"
+        XCTAssertNil(ReviewHabits.strongestHabit(existingRules: [rule]))
+
+        ReviewHabits.dismiss(habit!)
+        XCTAssertNil(ReviewHabits.strongestHabit(existingRules: []))
+    }
+
     // MARK: - "Looks like…" content kinds
 
     private func imageSignals() -> SortRulesEvaluator.FileSignals {

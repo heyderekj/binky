@@ -1202,6 +1202,13 @@ public enum SortWork {
                     contentIdentitySHA256: pendingFileDigest?.sha256
                    ) {
                     preferredFilename = smart
+                } else if snapshot.sortSmartDocumentNamesEnabled, ext == "pdf" || isImageFile,
+                          let smart = await FileUnderstanding.preferredSmartDocumentName(
+                              fileURL: standardized,
+                              category: category,
+                              originHost: signals.originHosts.first
+                          ) {
+                    preferredFilename = smart
                 }
                 ruleName = nil
                 naturalCategoryForTags = taxonomyCategory
