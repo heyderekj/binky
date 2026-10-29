@@ -276,7 +276,7 @@ private struct HelpMenuCommands: View {
 /// Opens a standard macOS About window with a custom credits block underneath
 /// the app name and version. We show the live bundle size so marketing stays aligned
 /// with reality as the bundle evolves, plus clickable links to the site and repo.
-private func showAboutPanel() {
+func showAboutPanel() {
     let credits = NSMutableAttributedString()
 
     let paragraph = NSMutableParagraphStyle()

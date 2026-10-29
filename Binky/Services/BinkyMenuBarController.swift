@@ -11,6 +11,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     private var menuBarShownPercent: CGFloat = 0
 
     private var panel: MenuBarPanelWindow?
+    private var panelHost: NSView?
     private let panelModel = MenuBarPanelModel()
     private var panelClickMonitors: [Any] = []
 
@@ -71,7 +72,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func sortProgressDidChange() {
         refreshMenuBarProgressChrome()
-        if panel != nil { reloadPanelModel() }
+        if panel != nil {
+            reloadPanelModel()
+            resizePanelToFit()
+        }
     }
 
     /// Eased `%` beside the tray icon while sorting — reads live state from ``SortProgressTracker``.
@@ -317,7 +321,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         let next = !UserDefaults.standard.bool(forKey: key)
         UserDefaults.standard.set(next, forKey: key)
         NotificationCenter.default.post(name: .binkyFolderWatchPauseChanged, object: nil)
-        if panel != nil { reloadPanelModel() }
+        if panel != nil {
+            reloadPanelModel()
+            resizePanelToFit()
+        }
     }
 
     @objc private func showMainWindow() {
@@ -378,6 +385,11 @@ extension BinkyMenuBarController {
             showHistory: { [weak self] in self?.dismissPanel(); self?.openHistory() },
             showMainWindow: { [weak self] in self?.dismissPanel(); self?.showMainWindow() },
             openSettings: { [weak self] in self?.dismissPanel(); self?.openSettings() },
+            about: { [weak self] in
+                self?.dismissPanel()
+                NSApp.activate()
+                showAboutPanel()
+            },
             quit: { [weak self] in self?.dismissPanel(); self?.terminateApp() }
         )
     }
@@ -426,6 +438,7 @@ extension BinkyMenuBarController {
         panel.setFrame(NSRect(x: x, y: y, width: size.width, height: size.height), display: true)
         panel.makeKeyAndOrderFront(nil)
         self.panel = panel
+        panelHost = host
 
         // Clicks anywhere else end the session, like a menu.
         let outside = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
@@ -438,6 +451,17 @@ extension BinkyMenuBarController {
             return event
         }
         panelClickMonitors = [outside, inside].compactMap { $0 }
+    }
+
+    /// Rows come and go (sorting, Review); grow or shrink downward and keep the top under the menu bar.
+    private func resizePanelToFit() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let panel = self.panel, panel.isVisible, let host = self.panelHost else { return }
+            let size = host.fittingSize
+            let frame = panel.frame
+            guard abs(frame.height - size.height) > 0.5 else { return }
+            panel.setFrame(NSRect(x: frame.minX, y: frame.maxY - size.height, width: frame.width, height: size.height), display: true, animate: false)
+        }
     }
 
     /// Ends the expanded-interface session; AppKit then calls back to close the panel.
@@ -454,6 +478,7 @@ extension BinkyMenuBarController {
         panelClickMonitors = []
         panel?.orderOut(nil)
         panel?.contentView = nil
+        panelHost = nil
     }
 }
 

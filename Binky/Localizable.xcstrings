@@ -11209,9 +11209,6 @@
         }
       }
     },
-    "Nothing sorted yet.": {
-      "comment": "Menu bar panel status: no sort history."
-    },
     "Nothing to paste": {
       "comment": "Alert title when clipboard has no compressible item.",
       "localizations": {
@@ -16203,6 +16200,9 @@
         }
       }
     },
+    "Sort %@": {
+      "comment": "Menu bar panel: sort one routine's folder; routine name."
+    },
     "Sort ${files} with Binky": {
       "localizations": {
         "zh-Hans": {
@@ -18882,6 +18882,9 @@
     },
     "Watching paused.": {
       "comment": "Menu bar panel status: folder watching is paused."
+    },
+    "Watching. Nothing sorted yet.": {
+      "comment": "Menu bar panel status: watching, no sort history."
     },
     "Weekly digest reminder": {
       "comment": "Settings: weekly rollup notification.",
