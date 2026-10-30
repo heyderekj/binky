@@ -8,12 +8,10 @@ struct OrganizerMainView: View {
     @EnvironmentObject var updater: UpdateChecker
     @ObservedObject var vm: OrganizerViewModel
     @ObservedObject private var sortProgress = SortProgressTracker.shared
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var isDropTargeted = false
     @State private var showingCurrentlySortingSheet = false
-    @State private var showingSortPreview = false
-    @State private var sortPreviewRows: [SortPreviewEntry] = []
-    @State private var showInlineSortPreview = false
     @State private var showingReviewTriage = false
 
     /// Same persistence key as Dinky below-update review strip.
@@ -43,6 +41,7 @@ struct OrganizerMainView: View {
         NavigationSplitView {
             slimOrganizerSidebar
                 .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 320)
+                .safeAreaInset(edge: .bottom, spacing: 0) { sidebarFooter }
         } detail: {
             activityMainPane
                 .frame(minWidth: 440, minHeight: 440)
@@ -63,18 +62,21 @@ struct OrganizerMainView: View {
             BinkyMenuBarController.shared.refresh()
             quickSortFolderURL = prefs.downloadsSortRootDirectory()
             expandSidebarIfRoutinesExist()
+            if PendingWindowRequest.takeReviewTriage() { showingReviewTriage = true }
         }
-        .onChange(of: prefs.savedPresets.count) { _, _ in
+        .onReceive(NotificationCenter.default.publisher(for: .binkyPendingWindowRequest)) { _ in
+            if PendingWindowRequest.takeReviewTriage() { showingReviewTriage = true }
+        }
+        .onChange(of: prefs.savedPresets) { _, _ in
             expandSidebarIfRoutinesExist()
+            // Keeps "Sort <routine> with Binky" phrases in step with renamed or new routines.
+            BinkyAppShortcuts.updateAppShortcutParameters()
         }
         .onChange(of: prefs.showMenuBarIcon) { _, _ in
             BinkyMenuBarController.shared.refresh()
         }
         .sheet(isPresented: $showingCurrentlySortingSheet) {
             CurrentlySortingSheet()
-        }
-        .sheet(isPresented: $showingSortPreview) {
-            SortPreviewSheet(rows: sortPreviewRows)
         }
         .sheet(isPresented: $showingReviewTriage) {
             ReviewFolderTriageSheet()
@@ -87,9 +89,7 @@ struct OrganizerMainView: View {
             quickSortFolderURL = prefs.downloadsSortRootDirectory()
         }
         .onReceive(NotificationCenter.default.publisher(for: .binkyPrepareQuit)) { _ in
-            showingSortPreview = false
             showingCurrentlySortingSheet = false
-            showInlineSortPreview = false
             showingReviewTriage = false
         }
     }
@@ -103,9 +103,6 @@ struct OrganizerMainView: View {
                 if !prefs.sidebarSimpleMode {
                     routinesSidebarScrollContent
                 }
-                sidebarSettingsCard
-                sidebarAdditionalSettingsCard
-                sidebarStyleFooterCard
             }
             .padding(10)
         }
@@ -130,11 +127,11 @@ struct OrganizerMainView: View {
                     Task { await vm.runInteractiveSweep(in: quickSortFolderURL, prefs: prefs) }
                 } label: {
                     Text(String(localized: "Sort Now", comment: "Quick Sort primary button."))
-                        .font(.system(size: 12, weight: .semibold))
+                        .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.regular)
+                .glassProminentButton()
+                .controlSize(.large)
                 .keyboardShortcut(KeyEquivalent.return, modifiers: [])
                 .tint(binkyTintColor)
 
@@ -158,18 +155,16 @@ struct OrganizerMainView: View {
                     .foregroundStyle(binkyTintColor)
                 }
 
-                Text(
-                    prefs.sidebarSimpleMode
-                        ? String(localized: "Need routine controls too? Switch Sidebar style to Expanded in Appearance.", comment: "Quick Sort sidebar: hint about enabling expanded mode.")
-                        : String(localized: "Expanded mode keeps both Quick Sort and Routines controls in one sidebar.", comment: "Quick Sort sidebar: hint while expanded mode is active.")
-                )
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                if prefs.sidebarSimpleMode {
+                    Text(String(localized: "Need routine controls too? Switch Sidebar style to Expanded in Appearance.", comment: "Quick Sort sidebar: hint about enabling expanded mode."))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.primary.opacity(0.03)))
+            .card()
         }
     }
 
@@ -184,12 +179,12 @@ struct OrganizerMainView: View {
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(quickSortFolderURL.lastPathComponent)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.primary)
                         .lineLimit(1)
                         .truncationMode(.middle)
                     Text(tildeShorten(quickSortFolderURL.path))
-                        .font(.system(size: 10))
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -267,7 +262,7 @@ struct OrganizerMainView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(10)
-            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.primary.opacity(0.035)))
+            .card(cornerRadius: 10)
         }
         .buttonStyle(.plain)
     }
@@ -282,7 +277,7 @@ struct OrganizerMainView: View {
                     )
                     Spacer(minLength: 0)
                     Text(routinesCountLabel)
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
@@ -293,90 +288,61 @@ struct OrganizerMainView: View {
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.primary.opacity(0.03)))
-
+            .card()
         }
     }
 
-    private var sidebarSettingsCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            settingsSectionHeading(
-                icon: "slider.horizontal.3",
-                title: String(localized: "Settings", comment: "Organizer sidebar settings header.")
-            )
+    // MARK: - Sidebar footer
 
-            Toggle(String(localized: "Slow mode", comment: "Settings UI."), isOn: $prefs.sortSlowModeEnabled)
-                .font(.system(size: 11))
-
-            Toggle(String(localized: "Notify when done", comment: "Settings UI."), isOn: Binding(
-                get: { prefs.notifyWhenDone },
-                set: { prefs.notifyWhenDone = $0 }
-            ))
-            .font(.system(size: 11))
-
-            Toggle(String(localized: "Show summaries after sorting", comment: "Settings UI."), isOn: Binding(
-                get: { prefs.showBatchSummaryDialog },
-                set: { prefs.showBatchSummaryDialog = $0 }
-            ))
-            .font(.system(size: 11))
-
-            Toggle(String(localized: "Open watch folder in Finder when done", comment: "Settings UI."), isOn: Binding(
-                get: { prefs.openFolderWhenDone },
-                set: { prefs.openFolderWhenDone = $0 }
-            ))
-            .font(.system(size: 11))
-
-            sidebarShortcutRow(
-                title: String(localized: "Open full history…", comment: ""),
-                systemImage: "clock"
-            ) {
-                NotificationCenter.default.post(name: .binkyShowHistory, object: nil)
+    /// Update card, then quiet footer actions, pinned under the sidebar like Slinky's and Dinky's.
+    private var sidebarFooter: some View {
+        VStack(spacing: 8) {
+            if showUpdateBanner {
+                VStack(alignment: .leading, spacing: 8) {
+                    UpdateBanner(updater: updater, itemCount: updateBannerItemCount)
+                    if !reviewPromptBelowUpdateDismissed {
+                        ReviewPromptBanner {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                reviewPromptBelowUpdateDismissed = true
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.top, 8)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.primary.opacity(0.03)))
-    }
 
-    private var sidebarAdditionalSettingsCard: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            settingsSectionHeading(
-                icon: "arrow.up.right.square",
-                title: String(localized: "Additional settings", comment: "Organizer sidebar extra settings header.")
-            )
-            organizerSettingsSidebarLink(
-                tab: .routines,
-                title: String(localized: "Routines", comment: "Organizer sidebar shortcut to routines."),
-                systemImage: "repeat.circle"
-            )
-            organizerSettingsSidebarLink(
-                tab: .generalBehavior,
-                title: String(localized: "All settings", comment: "Organizer sidebar shortcut to general settings tab."),
-                systemImage: "gearshape"
-            )
+            HStack(spacing: 14) {
+                Button {
+                    PreferencesTab.openPreferencesWindow(selecting: .routines)
+                } label: {
+                    Label(String(localized: "New Routine", comment: "Sidebar footer: opens Settings to add a routine."), systemImage: "plus.circle")
+                }
+                .help(String(localized: "Add a routine in Settings", comment: "Sidebar footer tooltip."))
+                Spacer(minLength: 0)
+                Button {
+                    NotificationCenter.default.post(name: .binkyShowHistory, object: nil)
+                } label: {
+                    Label(String(localized: "History", comment: "Sidebar footer: sort history."), systemImage: "clock.arrow.circlepath")
+                        .labelStyle(.iconOnly)
+                }
+                .help(String(localized: "History", comment: "Sidebar footer: sort history."))
+                Button {
+                    PreferencesTab.openPreferencesWindow(selecting: .generalBehavior)
+                } label: {
+                    Label(String(localized: "Settings", comment: "Sidebar footer: open Settings."), systemImage: "gearshape")
+                        .labelStyle(.iconOnly)
+                }
+                .help(String(localized: "Settings", comment: "Sidebar footer: open Settings."))
+            }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.primary.opacity(0.03)))
+        .animation(.smooth, value: showUpdateBanner)
     }
-
-    /// Footer card that points to Appearance where sidebar style is configured.
-    private var sidebarStyleFooterCard: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(String(localized: "Want to change this layout?", comment: "Sidebar footer heading for style setting link."))
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            organizerSettingsSidebarLink(
-                tab: .appearance,
-                title: String(localized: "Sidebar style in Appearance…", comment: "Sidebar footer link to appearance tab."),
-                systemImage: "sidebar.left"
-            )
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.primary.opacity(0.03)))
-    }
-
 
     // MARK: - Routines watch status row (inside Routines card)
 
@@ -389,17 +355,17 @@ struct OrganizerMainView: View {
                 .animation(.easeInOut(duration: 0.3), value: watchStatusColor)
 
             Text(watchStatusLabel)
-                .font(.system(size: 11, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.primary)
                 .animation(.none, value: watchStatusLabel)
                 .lineLimit(1)
 
             if !watchStatusFolderName.isEmpty {
                 Text("·")
-                    .font(.system(size: 11))
+                    .font(.subheadline)
                     .foregroundStyle(.tertiary)
                 Text(watchStatusFolderName)
-                    .font(.system(size: 11))
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
@@ -415,7 +381,7 @@ struct OrganizerMainView: View {
                     }
                 } label: {
                     Image(systemName: prefs.folderWatchPaused ? "play.circle.fill" : "pause.circle.fill")
-                        .font(.system(size: 18))
+                        .font(.title3)
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(prefs.folderWatchPaused ? Color.green : binkyTintColor)
                         .contentTransition(.symbolEffect(.replace))
@@ -562,12 +528,12 @@ struct OrganizerMainView: View {
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(preset.name)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.callout.weight(.medium))
                         .foregroundStyle(preset.isEnabled ? .primary : .secondary)
                         .lineLimit(1)
                         .truncationMode(.tail)
                     Text(presetPathSubtitle(preset))
-                        .font(.system(size: 10))
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                         .truncationMode(.middle)
@@ -581,7 +547,7 @@ struct OrganizerMainView: View {
                     prefs.savedPresets = copy
                 } label: {
                     Image(systemName: preset.isEnabled ? "eye.fill" : "eye.slash")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(preset.isEnabled ? binkyTintColor : Color.secondary)
                         .frame(width: 22, height: 22)
                         .contentShape(Rectangle())
@@ -606,48 +572,6 @@ struct OrganizerMainView: View {
             )
         }
         .buttonStyle(.plain)
-    }
-
-    /// Opens the preferences window and matches the row styling of legacy sidebar links.
-    private func organizerSettingsSidebarLink(tab: PreferencesTab, title: String, systemImage: String) -> some View {
-        Button {
-            PreferencesTab.openPreferencesWindow(selecting: tab)
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 12, weight: .medium))
-                Text(title)
-                    .font(.system(size: 11, weight: .medium))
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(.vertical, 1)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(binkyTintColor)
-    }
-
-    /// Dinky-style sidebar row: leading SF Symbol, accent label, trailing chevron, plain hit area.
-    private func sidebarShortcutRow(title: String, systemImage: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 12, weight: .medium))
-                Text(title)
-                    .font(.system(size: 11, weight: .medium))
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.tertiary)
-            }
-            .padding(.vertical, 1)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(binkyTintColor)
     }
 
     // MARK: - Main: activity feed
@@ -680,7 +604,7 @@ struct OrganizerMainView: View {
                             } label: {
                                 Image(systemName: sortProgress.runState == .paused ? "play.fill" : "pause.fill")
                                     .symbolRenderingMode(.hierarchical)
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.body.weight(.semibold))
                             }
                             .buttonStyle(.plain)
                             .foregroundStyle(binkyTintColor.opacity(sortProgress.runState == .stopping ? 0.5 : 0.9))
@@ -696,7 +620,7 @@ struct OrganizerMainView: View {
                             } label: {
                                 Image(systemName: "stop.fill")
                                     .symbolRenderingMode(.hierarchical)
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.body.weight(.semibold))
                             }
                             .buttonStyle(.plain)
                             .foregroundStyle(.red.opacity(sortProgress.runState == .stopping ? 0.4 : 0.8))
@@ -708,7 +632,7 @@ struct OrganizerMainView: View {
                         } label: {
                             Image(systemName: "chevron.down.circle.fill")
                                 .symbolRenderingMode(.hierarchical)
-                                .font(.system(size: 24))
+                                .font(.title2)
                                 .foregroundStyle(binkyTintColor.opacity(0.85))
                                 .accessibilityLabel(String(localized: "Show sort details", comment: "Opens per-file sorting sheet."))
                                 .accessibilityHint(String(localized: "Shows filenames and activity for this sort.", comment: "VoiceOver hint for sort details button."))
@@ -725,7 +649,7 @@ struct OrganizerMainView: View {
                     .animation(.easeInOut(duration: 0.42), value: sortProgress.fraction)
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, (showCalmDesktopBanner || showUpdateBanner) ? 10 : 16)
+                .padding(.top, showCalmDesktopBanner ? 10 : 16)
                 .padding(.bottom, 14)
                 .background(Color.primary.opacity(0.035))
                 .overlay(alignment: .bottom) {
@@ -738,23 +662,6 @@ struct OrganizerMainView: View {
     private var activityMainPane: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 0) {
-                if showUpdateBanner {
-                    VStack(spacing: 8) {
-                        UpdateBanner(updater: updater, itemCount: updateBannerItemCount)
-                            .environmentObject(prefs)
-                        if !reviewPromptBelowUpdateDismissed {
-                            ReviewPromptBanner {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    reviewPromptBelowUpdateDismissed = true
-                                }
-                            }
-                        }
-                    }
-                    .animation(.easeInOut(duration: 0.25), value: updater.availableVersion)
-                    Divider()
-                        .opacity(0.35)
-                }
-
                 if showCalmDesktopBanner {
                     calmDesktopBanner
                         .padding(.horizontal, 20)
@@ -768,9 +675,10 @@ struct OrganizerMainView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .animation(.easeOut(duration: 0.26), value: sortProgress.isActive)
 
-                transientNoticeBanner
-
                 activitySection
+            }
+            .overlay(alignment: .bottom) {
+                noticeToast
             }
 
             if isDropTargeted {
@@ -782,199 +690,28 @@ struct OrganizerMainView: View {
         }
     }
 
-    /// The path the active routine sorts. Falls back to the global default when no preset is selected.
-    private var activeFolderURL: URL {
-        prefs.activeSortSweepRootDirectory()
-    }
-
-    /// macOS uses special icons for `~/Downloads`, `~/Desktop`, etc. — fetching the live Finder icon makes the card unmistakable.
-    private var activeFolderIcon: NSImage {
-        let path = activeFolderURL.path
-        if FileManager.default.fileExists(atPath: path) {
-            return NSWorkspace.shared.icon(forFile: path)
-        }
-        return NSWorkspace.shared.icon(for: .folder)
-    }
-
-    private var activeFolderName: String {
-        let name = activeFolderURL.lastPathComponent
-        return name.isEmpty ? String(localized: "Folder", comment: "Fallback folder name.") : name
-    }
-
-    private var activeFolderShortPath: String {
-        tildeShorten(activeFolderURL.path)
-    }
-
-    private var activeFolderCard: some View {
-        Button {
-            openInboxInFinder()
-        } label: {
-            HStack(spacing: 10) {
-                Image(nsImage: activeFolderIcon)
-                    .resizable()
-                    .interpolation(.high)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 32, height: 32)
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(activeFolderName)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                    Text(activeFolderShortPath)
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Image(systemName: "arrow.up.forward.app")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(binkyTintColor.opacity(0.7))
-            }
-            .padding(.horizontal, 9)
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(.background.opacity(0.6))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(Color.primary.opacity(0.07), lineWidth: 1)
-            )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(String(localized: "Reveal \(activeFolderName) in Finder", comment: "VoiceOver: active folder card opens Finder."))
-        .help(String(localized: "Reveal in Finder", comment: "Tooltip for active folder card."))
-    }
-
-    private var quickActionsCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            settingsSectionHeading(
-                icon: "bolt.fill",
-                title: String(localized: "Quick actions", comment: "Organizer sidebar: ad-hoc sort/preview controls.")
-            )
-
-            activeFolderCard
-
-            HStack(spacing: 10) {
-                Button {
-                    Task {
-                        let rows = await vm.inboxPreviewEntries(prefs: prefs)
-                        await MainActor.run {
-                            sortPreviewRows = rows
-                            showInlineSortPreview = true
-                        }
-                    }
-                } label: {
-                    Text(String(localized: "Preview…", comment: "Dry-run sort sorted folders."))
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
-                Spacer(minLength: 0)
-
-                Button {
-                    Task {
-                        if enabledRoutineCount > 1 {
-                            await vm.runInteractiveSweepAllRoutines(prefs: prefs)
-                        } else {
-                            await vm.runInteractiveDownloadsSweep(prefs: prefs)
-                        }
-                    }
-                } label: {
-                    Text(enabledRoutineCount > 1
-                         ? String(localized: "Sort All", comment: "Primary sort button: sort all enabled routines.")
-                         : String(localized: "Sort Now", comment: "Primary sort button."))
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-            }
-
-            if sortProgress.isActive {
-                BinkySortProgressBar(
-                    fraction: sortProgress.fraction,
-                    caption: nil,
-                    compact: true,
-                    showsCaption: false
-                )
-                .transition(.opacity)
-            }
-
-            if showInlineSortPreview, !sortPreviewRows.isEmpty {
-                Divider().opacity(0.4)
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(sortPreviewRows.prefix(5)) { row in
-                        HStack(spacing: 6) {
-                            Text(row.sourceLastPathComponent)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                            Image(systemName: "arrow.right")
-                                .font(.caption2)
-                                .foregroundStyle(.tertiary)
-                            Text(inlinePreviewDestinationLabel(for: row))
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                                .foregroundStyle(.secondary)
-                        }
-                        .font(.caption2)
-                    }
-                    if sortPreviewRows.count > 5 {
-                        Text(String.localizedStringWithFormat(
-                            String(localized: "+%lld more in full preview", comment: "Inline sort preview overflow count."),
-                            Int64(sortPreviewRows.count - 5)
-                        ))
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                    }
-                    Button(String(localized: "Open full preview…", comment: "Expand sort preview sheet.")) {
-                        showingSortPreview = true
-                    }
-                    .buttonStyle(.plain)
-                    .font(.caption)
-                    .foregroundStyle(binkyTintColor)
-                }
-            }
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.primary.opacity(0.03)))
-    }
-
-    private func inlinePreviewDestinationLabel(for row: SortPreviewEntry) -> String {
-        let p = row.proposedDestinationPath
-        if p == "—" { return p }
-        let trash = String(localized: "Trash", comment: "Sort preview duplicate / trash label.")
-        if p.caseInsensitiveCompare(trash) == .orderedSame || p == trash {
-            return trash
-        }
-        return URL(fileURLWithPath: p).lastPathComponent
-    }
-
-    private var transientNoticeBanner: some View {
-        Group {
+    /// Short notices float up from the bottom as a glass capsule and leave on their own, like Slinky's toasts.
+    private var noticeToast: some View {
+        ZStack {
             if let msg = vm.transientBannerMessage, !sortProgress.isActive {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "ellipsis.bubble")
-                        .font(.caption)
+                HStack(spacing: 10) {
+                    Image(systemName: "info.circle.fill")
                         .foregroundStyle(.secondary)
                     Text(msg)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.callout)
+                        .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
-                    Spacer(minLength: 0)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .frame(maxWidth: 560)
+                .adaptiveGlass(in: RoundedRectangle(cornerRadius: 19, style: .continuous))
+                .padding(.bottom, 22)
                 .padding(.horizontal, 20)
-                .padding(.vertical, 8)
-                .background(Color.primary.opacity(0.04))
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 18)))
             }
         }
-        .animation(.easeOut(duration: 0.2), value: vm.transientBannerMessage)
+        .animation(reduceMotion ? .easeOut(duration: 0.2) : .smooth(duration: 0.32), value: vm.transientBannerMessage)
     }
 
     private var showCalmDesktopBanner: Bool {
@@ -989,54 +726,7 @@ struct OrganizerMainView: View {
         }
     }
 
-    @State private var showCalmDesktopPopover = false
     @State private var showReviewPopover = false
-
-    private var calmDesktopToolbarButton: some View {
-        Button {
-            showCalmDesktopPopover.toggle()
-        } label: {
-            Image(systemName: "desktopcomputer")
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(binkyTintColor)
-        }
-        .buttonStyle(.plain)
-        .help(String(localized: "Desktop also loud?", comment: "Toolbar button tooltip: Desktop onboarding."))
-        .popover(isPresented: $showCalmDesktopPopover, arrowEdge: .top) {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) {
-                    Image(systemName: "desktopcomputer")
-                        .foregroundStyle(binkyTintColor)
-                        .font(.system(size: 15))
-                    Text(String(localized: "Desktop also loud?", comment: "Onboarding popover title."))
-                        .font(.headline)
-                }
-                Text(String(localized: "Same pacifier, different crib.", comment: "Onboarding popover subtitle."))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                HStack(spacing: 10) {
-                    Button {
-                        showCalmDesktopPopover = false
-                        PreferencesTab.stageRoutinesWithCalmDesktopTemplate()
-                        PreferencesTab.openPreferencesWindow()
-                    } label: {
-                        Text(String(localized: "Calm my Desktop…", comment: "Opens Settings to add Desktop routine."))
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(binkyTintColor)
-                    .controlSize(.regular)
-                    Button(String(localized: "Dismiss", comment: "Dismiss Desktop onboarding popover.")) {
-                        withAnimation { calmDesktopOnboardingDismissed = true }
-                        showCalmDesktopPopover = false
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                }
-            }
-            .padding(16)
-            .frame(minWidth: 240)
-        }
-    }
 
     private var reviewToolbarButton: some View {
         Button {
@@ -1045,24 +735,13 @@ struct OrganizerMainView: View {
             Image(systemName: "folder.badge.questionmark")
         }
         .help(String(localized: "Pending review", comment: "Toolbar button tooltip: pending review files."))
-        .overlay(alignment: .topLeading) {
-            if reviewBannerCount > 0 {
-                Text("\(min(reviewBannerCount, 99))")
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(Capsule().fill(binkyTintColor))
-                    .offset(x: -8, y: -6)
-                    .allowsHitTesting(false)
-            }
-        }
+        .adaptiveToolbarBadge(Int(min(reviewBannerCount, 99)), tint: binkyTintColor)
         .popover(isPresented: $showReviewPopover, arrowEdge: .top) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     Image(systemName: "folder.badge.questionmark")
                         .foregroundStyle(binkyTintColor)
-                        .font(.system(size: 15))
+                        .font(.title3)
                     Text(String(localized: "Pending review", comment: "Review popover title."))
                         .font(.headline)
                 }
@@ -1074,7 +753,7 @@ struct OrganizerMainView: View {
                         showReviewPopover = false
                         showingReviewTriage = true
                     }
-                    .buttonStyle(.borderedProminent)
+                    .glassProminentButton()
                     .tint(binkyTintColor)
                     .controlSize(.regular)
                     Button(String(localized: "Open in Finder", comment: "Reveal Review folder in Finder.")) {
@@ -1094,7 +773,7 @@ struct OrganizerMainView: View {
         HStack(spacing: 12) {
             Image(systemName: "desktopcomputer")
                 .foregroundStyle(.tint)
-                .font(.system(size: 16))
+                .font(.title3)
             VStack(alignment: .leading, spacing: 2) {
                 Text(String(localized: "Desktop also loud?", comment: "Onboarding banner: suggest Calm my Desktop routine."))
                     .font(.subheadline.weight(.semibold))
@@ -1109,7 +788,7 @@ struct OrganizerMainView: View {
             } label: {
                 Text(String(localized: "Calm my Desktop…", comment: "Opens Settings to add Desktop routine."))
             }
-            .buttonStyle(.borderedProminent)
+            .glassProminentButton()
             .tint(binkyTintColor)
             .controlSize(.small)
 
@@ -1123,7 +802,7 @@ struct OrganizerMainView: View {
             .foregroundStyle(binkyTintColor)
         }
         .padding(12)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.primary.opacity(0.06)))
+        .card(cornerRadius: 10)
     }
 
     private var reviewBanner: some View {
@@ -1143,7 +822,7 @@ struct OrganizerMainView: View {
             Button(String(localized: "Tidy here…", comment: "Open in-app Review triage sheet.")) {
                 showingReviewTriage = true
             }
-            .buttonStyle(.borderedProminent)
+            .glassProminentButton()
             .tint(binkyTintColor)
             .controlSize(.small)
 
@@ -1155,7 +834,7 @@ struct OrganizerMainView: View {
             .foregroundStyle(binkyTintColor)
         }
         .padding(12)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.primary.opacity(0.06)))
+        .card(cornerRadius: 10)
     }
 
     @ViewBuilder
@@ -1223,7 +902,7 @@ struct OrganizerMainView: View {
                 Button(String(localized: "Open Summary…", comment: "History row: reopen stored batch completion dialog.")) {
                     vm.presentHistoricalSortOutcome(row.outcome)
                 }
-                .buttonStyle(.borderedProminent)
+                .glassProminentButton()
                 .tint(binkyTintColor)
                 .controlSize(.small)
 
@@ -1403,14 +1082,7 @@ struct OrganizerMainView: View {
     }
 
     private var reviewFolderItemCount: Int {
-        let root = prefs.activeSortSweepRootDirectory()
-        let reviewURL = root.appendingPathComponent(FileSortCategory.review.downloadsSubfolder, isDirectory: true)
-        guard let contents = try? FileManager.default.contentsOfDirectory(at: reviewURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
-            return 0
-        }
-        return contents.filter { url in
-            (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == false
-        }.count
+        prefs.reviewFolderItemCount()
     }
 
     private func countSummary(for outcome: SortBatchOutcome) -> String {

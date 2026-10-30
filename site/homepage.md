@@ -29,7 +29,7 @@ A native macOS sorter that follows your rules — no cloud, no guessing. **Quick
 
 ## Install
 
-**Download:** [Binky for macOS (DMG)](https://github.com/heyderekj/binky/releases/download/v1.6.0/Binky-1.6.0.dmg) — or install with [Homebrew](https://brew.sh): `brew tap heyderekj/binky https://github.com/heyderekj/binky` then `brew install --cask binky`
+**Download:** [Binky for macOS (DMG)](https://github.com/heyderekj/binky/releases/download/v1.7.0/Binky-1.7.0.dmg) — or install with [Homebrew](https://brew.sh): `brew tap heyderekj/binky https://github.com/heyderekj/binky` then `brew install --cask binky`
 
 **GitHub:** Latest release and DMG/ZIP: [github.com/heyderekj/binky/releases/latest](https://github.com/heyderekj/binky/releases/latest)
 

@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added — macOS 27 and Apple Intelligence
+
+- **Review toolbar badge** no longer clipped by Liquid Glass (system badge on macOS 26+). Settings back/forward share one glass capsule.
+- **Menu bar panel** (macOS 27): the icon opens a glass panel with status, live progress, Review count and **Sort Now**. Earlier releases keep the menu.
+- **“Looks like…” rules**: screenshot, photo, scanned page, ticket or pass. macOS 27 asks the on-device model what an image or PDF page shows; screenshot and photo use file metadata on older releases. Rules using these kinds can’t be read by older Binky builds; unknown kinds now decode as “Any content” going forward.
+- **Review suggestions**: the triage sheet suggests a folder for each file (“Looks like a tax form → Finance/Taxes”) with one-click move, and offers a rule when the same site or file type keeps landing in the same folder.
+- **Smart names for PDFs and photos** (opt-in): renames generic names like `IMG_2041` or `document (3)`; names you typed stay put.
+- **Siri, Spotlight and Shortcuts**: Sort Now (per routine), Undo Last Sort (asks first), Check Review, Tidy Review.
+- **Phrase → rule** uses guided generation instead of parsing model JSON.
+- **Family look**: menu bar shows Binky’s pacifier (like Dinky’s and Slinky’s marks). The sidebar keeps Quick Sort and Routines, with the update card and New Routine / History / Settings pinned at the bottom like Slinky’s. Notices are glass toasts. Buttons, cards and text styles match Slinky’s helpers.
+
 ### Added — free-launch refresh
 
 - **Quick Sort** mode: default toolbar segment for one-shot folder sweeps; segmented **Routines** mode keeps the power-user split view.

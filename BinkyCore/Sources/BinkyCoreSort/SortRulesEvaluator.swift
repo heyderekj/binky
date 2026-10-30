@@ -49,6 +49,8 @@ enum SortRulesEvaluator {
     struct ContentRuleMatchInput: Equatable, Sendable {
         var hasSignificantOCR: Bool
         var isReceiptLike: Bool
+        /// What the picture shows; empty when nobody asked or nothing could tell.
+        var visualTraits: Set<SortVisualCategory> = []
 
         static let unknown = ContentRuleMatchInput(hasSignificantOCR: false, isReceiptLike: false)
     }
@@ -153,8 +155,21 @@ enum SortRulesEvaluator {
         case .ocrText:
             return content?.hasSignificantOCR == true
         case .receipt:
-            return content?.isReceiptLike == true
+            return content?.isReceiptLike == true || content?.visualTraits.contains(.receipt) == true
+        case .screenshot:
+            return content?.visualTraits.contains(.screenshot) == true
+        case .photo:
+            return content?.visualTraits.contains(.photo) == true
+        case .documentScan:
+            return content?.visualTraits.contains(.documentScan) == true
+        case .ticket:
+            return content?.visualTraits.contains(.ticket) == true
         }
+    }
+
+    /// True when any enabled rule needs to know what a picture shows (screenshot, photo, scan, ticket).
+    static func anyRuleRequiresVisualCategory(_ rules: [SortRule]) -> Bool {
+        rules.contains { $0.isEnabled && $0.contentMatch.kind.isVisual }
     }
 
     private static func matchesDatePredicate(_ raw: SortDateAddedPredicate?, signals: FileSignals) -> Bool {

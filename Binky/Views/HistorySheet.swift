@@ -99,17 +99,17 @@ struct HistorySheet: View {
                         }
                     }
                     Text(record.formats.joined(separator: ", "))
-                        .font(.system(size: 10))
+                        .font(.caption)
                         .foregroundStyle(.tertiary)
                     if let statsLine = Self.sessionVoiceStatsLine(for: record), !statsLine.isEmpty {
                         Text(statsLine)
-                            .font(.system(size: 10))
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     if let originLine = Self.originHostsSummary(for: record), !originLine.isEmpty {
                         Text(originLine)
-                            .font(.system(size: 10))
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }

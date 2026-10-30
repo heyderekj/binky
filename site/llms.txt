@@ -56,7 +56,7 @@
 - Support: derek@testamentmade.com
 - GitHub: https://github.com/heyderekj/binky
 - Latest release: https://github.com/heyderekj/binky/releases/latest
-- Download v1.6.0: https://github.com/heyderekj/binky/releases/download/v1.6.0/Binky-1.6.0.dmg
+- Download v1.7.0: https://github.com/heyderekj/binky/releases/download/v1.7.0/Binky-1.7.0.dmg
 - Homebrew: `brew tap heyderekj/binky https://github.com/heyderekj/binky` then `brew install --cask binky`
 
 ## Author

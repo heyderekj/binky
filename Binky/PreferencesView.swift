@@ -244,28 +244,22 @@ struct PreferencesView: View {
                     .frame(minWidth: 480, maxWidth: .infinity, maxHeight: .infinity)
                     .navigationTitle(selectedTab.sidebarLabel)
                     .toolbar {
-                        ToolbarItem(placement: .navigation) {
-                            Button {
-                                goBack()
-                            } label: {
-                                Image(systemName: "chevron.backward")
-                            }
-                            .buttonStyle(.bordered)
-                            .help(String(localized: "Back", comment: "Preferences toolbar."))
-                            .disabled(historyIndex == 0)
-                        }
-                        ToolbarItem(placement: .navigation) {
-                            Button {
-                                goForward()
-                            } label: {
-                                Image(systemName: "chevron.forward")
-                            }
-                            .buttonStyle(.bordered)
-                            .help(String(localized: "Forward", comment: "Preferences toolbar."))
-                            .disabled(historyIndex >= history.count - 1)
-                        }
                         if #available(macOS 26.0, *) {
+                            // One shared glass capsule, like Finder; bordered buttons inside glass read as double chrome.
+                            ToolbarItem(placement: .navigation) {
+                                ControlGroup {
+                                    backButton
+                                    forwardButton
+                                }
+                            }
                             ToolbarSpacer(.flexible)
+                        } else {
+                            ToolbarItem(placement: .navigation) {
+                                backButton.buttonStyle(.bordered)
+                            }
+                            ToolbarItem(placement: .navigation) {
+                                forwardButton.buttonStyle(.bordered)
+                            }
                         }
                     }
             }
@@ -306,6 +300,26 @@ struct PreferencesView: View {
     private func goForward() {
         guard historyIndex < history.count - 1 else { return }
         historyIndex += 1
+    }
+
+    private var backButton: some View {
+        Button {
+            goBack()
+        } label: {
+            Image(systemName: "chevron.backward")
+        }
+        .help(String(localized: "Back", comment: "Preferences toolbar."))
+        .disabled(historyIndex == 0)
+    }
+
+    private var forwardButton: some View {
+        Button {
+            goForward()
+        } label: {
+            Image(systemName: "chevron.forward")
+        }
+        .help(String(localized: "Forward", comment: "Preferences toolbar."))
+        .disabled(historyIndex >= history.count - 1)
     }
 
     @ViewBuilder
@@ -767,6 +781,15 @@ private struct SortSmartAndPaceTab: View {
         Form {
             Section {
                 Toggle(String(localized: "Smart screenshot names (OCR)", comment: "Settings."), isOn: $prefs.sortSmartScreenshotNamesEnabled)
+                if FileUnderstanding.isModelAvailable {
+                    Toggle(isOn: $prefs.sortSmartDocumentNamesEnabled) {
+                        Text(String(localized: "Smart names for PDFs and photos", comment: "Settings: Apple Intelligence rename toggle."))
+                        Text(String(
+                            localized: "Apple Intelligence renames “IMG_2041” and “document (3)” to what they actually are. Names you typed stay put.",
+                            comment: "Settings: smart names toggle subtitle."
+                        ))
+                    }
+                }
                 Toggle(String(localized: "Detect receipts and invoices", comment: "Settings."), isOn: $prefs.sortDetectReceiptsEnabled)
                 Text(String(localized: "Receipts use on-device text heuristics. Pauses when Low Power Mode pauses sorting.", comment: "Settings smart sort footer."))
                     .font(.caption)
@@ -1733,6 +1756,12 @@ struct RuleEditorSheet: View {
         )
     }
 
+    /// Scan and ticket need the macOS 27 vision model; hide them on older releases unless this rule already uses one.
+    private var offeredContentMatchKinds: [SortContentMatchKind] {
+        if #available(macOS 27.0, *) { return SortContentMatchKind.allCases }
+        return SortContentMatchKind.allCases.filter { !$0.requiresVisionModel || $0 == draft.contentMatch.kind }
+    }
+
     private func binding<T>(_ keyPath: WritableKeyPath<SortRule, T>) -> Binding<T> {
         Binding(
             get: { draft[keyPath: keyPath] },
@@ -1842,7 +1871,7 @@ struct RuleEditorSheet: View {
                             .frame(minHeight: 52)
                             .font(.system(.body, design: .monospaced))
                         Picker(String(localized: "Content match", comment: "Rule editor."), selection: contentMatchKindBinding) {
-                            ForEach(SortContentMatchKind.allCases) { kind in
+                            ForEach(offeredContentMatchKinds) { kind in
                                 Text(kind.localizedTitle).tag(kind)
                             }
                         }
@@ -2068,7 +2097,7 @@ struct RuleEditorSheet: View {
         isScanningFolderDestinations = true
         let root = prefs.activeSortSweepRootDirectory().standardizedFileURL
         let paths = await Task.detached {
-            Self.enumerateRelativeDirectoryPaths(under: root, maxDepth: 4, maxItems: 220)
+            FileUnderstanding.relativeDirectoryPaths(under: root, maxDepth: 4, maxItems: 220)
         }.value
         scannedFolderDestinations = paths
         isScanningFolderDestinations = false
@@ -2108,32 +2137,6 @@ struct RuleEditorSheet: View {
         let prefix = r.hasSuffix("/") ? r : r + "/"
         guard f.hasPrefix(prefix) else { return nil }
         return String(f.dropFirst(prefix.count))
-    }
-
-    private nonisolated static func enumerateRelativeDirectoryPaths(under root: URL, maxDepth: Int, maxItems: Int) -> [String] {
-        let fm = FileManager.default
-        var collected: [String] = []
-        func visit(_ url: URL, depth: Int) {
-            guard collected.count < maxItems else { return }
-            if depth > 0 {
-                if let rel = relativePath(under: root, for: url), !rel.isEmpty {
-                    collected.append(rel)
-                }
-            }
-            guard depth < maxDepth else { return }
-            guard collected.count < maxItems else { return }
-            guard let kids = try? fm.contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else { return }
-            let dirs = kids.filter { u in
-                (try? u.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
-            }.sorted {
-                $0.lastPathComponent.localizedCaseInsensitiveCompare($1.lastPathComponent) == .orderedAscending
-            }
-            for u in dirs {
-                visit(u, depth: depth + 1)
-            }
-        }
-        visit(root, depth: 0)
-        return collected.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
     }
 
     private static func collectTopicHintPaths(draft: SortRule, otherRules: [SortRule]) -> [String] {

@@ -120,8 +120,18 @@ public enum SortContentMatchKind: String, Codable, CaseIterable, Identifiable, H
     case none
     case ocrText
     case receipt
+    case screenshot
+    case photo
+    case documentScan
+    case ticket
 
     public var id: String { rawValue }
+
+    /// Unknown raw values (a kind from a newer Binky) decode as `.none` instead of failing the whole rule list.
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = SortContentMatchKind(rawValue: raw) ?? .none
+    }
 
     public var localizedTitle: String {
         switch self {
@@ -131,7 +141,29 @@ public enum SortContentMatchKind: String, Codable, CaseIterable, Identifiable, H
             return String(localized: "Has readable text (OCR)", comment: "Sort rule content kind.")
         case .receipt:
             return String(localized: "Looks like receipt / invoice", comment: "Sort rule content kind.")
+        case .screenshot:
+            return String(localized: "Looks like a screenshot", comment: "Sort rule content kind.")
+        case .photo:
+            return String(localized: "Looks like a photo", comment: "Sort rule content kind: camera photo.")
+        case .documentScan:
+            return String(localized: "Looks like a scanned page", comment: "Sort rule content kind.")
+        case .ticket:
+            return String(localized: "Looks like a ticket or pass", comment: "Sort rule content kind: boarding pass, event ticket.")
         }
+    }
+
+    /// Kinds answered by looking at the picture rather than reading its text.
+    public var isVisual: Bool {
+        switch self {
+        case .screenshot, .photo, .documentScan, .ticket: return true
+        case .none, .ocrText, .receipt: return false
+        }
+    }
+
+    /// Kinds that only match when the on-device model can see images (macOS 27+).
+    /// Screenshots and photos fall back to file metadata on older releases.
+    public var requiresVisionModel: Bool {
+        self == .documentScan || self == .ticket
     }
 }
 

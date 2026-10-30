@@ -5,14 +5,14 @@ let binkyTintColor = Color(red: 227 / 255, green: 54 / 255, blue: 110 / 255)
 
 // MARK: - Section chrome (sidebar + Settings)
 
-/// Matches grouped settings subsection titles: icon + 13pt semibold.
+/// Matches grouped settings subsection titles: icon + semibold body, in text styles so they scale.
 func settingsSectionHeading(icon: String, title: String) -> some View {
     HStack(spacing: 6) {
         Image(systemName: icon)
-            .font(.system(size: 14, weight: .medium))
+            .font(.body.weight(.medium))
             .foregroundStyle(.secondary)
         Text(title)
-            .font(.system(size: 13, weight: .semibold))
+            .font(.body.weight(.semibold))
             .foregroundStyle(.secondary)
         Spacer(minLength: 0)
     }
@@ -32,7 +32,7 @@ struct SettingsSectionDivider: View {
 
 func settingsHelperText(_ text: String) -> some View {
     Text(text)
-        .font(.system(size: 10))
+        .font(.caption)
         .foregroundStyle(.tertiary)
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)

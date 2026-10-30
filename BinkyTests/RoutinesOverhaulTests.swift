@@ -4,6 +4,107 @@ import XCTest
 
 final class RoutinesOverhaulTests: XCTestCase {
 
+    // MARK: - Apple Intelligence helpers
+
+    func testGenericNamesAreRenameable() {
+        for name in ["IMG_2041.HEIC", "document (3).pdf", "Scan 2026-10-02 at 9.14.pdf", "download.pdf",
+                     "3F2504E0-4F89-11D3-9A0C-0305E82C3301.png", "PXL_20261002_101112.jpg", "a1b2c3d4e5f6a7b8c9d0.pdf"] {
+            XCTAssertTrue(FileUnderstanding.looksLikeGenericName(name), name)
+        }
+        for name in ["Lease agreement.pdf", "stripe-invoice-oct.pdf", "Mom birthday.jpg", "W-2 2025.pdf"] {
+            XCTAssertFalse(FileUnderstanding.looksLikeGenericName(name), name)
+        }
+    }
+
+    func testSuggestedPathsAreSanitized() {
+        XCTAssertEqual(FileUnderstanding.sanitizedRelativePath("Finance/Taxes"), "Finance/Taxes")
+        XCTAssertEqual(FileUnderstanding.sanitizedRelativePath("/../Finance//Taxes/2025/Q1"), "Finance/Taxes/2025")
+        XCTAssertEqual(FileUnderstanding.sanitizedRelativePath("Work: Clients"), "Work Clients")
+        XCTAssertNil(FileUnderstanding.sanitizedRelativePath("../.."))
+        XCTAssertNil(FileUnderstanding.sanitizedRelativePath("  "))
+    }
+
+    func testReviewHabitNeedsRepeatsAndSkipsCoveredOnes() {
+        let defaults = UserDefaults.standard
+        let saved = (defaults.data(forKey: "review.habitLog"), defaults.stringArray(forKey: "review.habitDismissed"))
+        defer {
+            defaults.set(saved.0, forKey: "review.habitLog")
+            defaults.set(saved.1, forKey: "review.habitDismissed")
+        }
+        defaults.removeObject(forKey: "review.habitLog")
+        defaults.removeObject(forKey: "review.habitDismissed")
+
+        ReviewHabits.record(originHost: "figma.com", ext: "png", destination: "Work/Figma")
+        XCTAssertNil(ReviewHabits.strongestHabit(existingRules: []))
+        ReviewHabits.record(originHost: "Figma.com", ext: "fig", destination: "Work/Figma")
+        let habit = ReviewHabits.strongestHabit(existingRules: [])
+        XCTAssertEqual(habit?.originHost, "figma.com")
+        XCTAssertEqual(habit?.destination, "Work/Figma")
+
+        var rule = SortRule.fresh(order: 1)
+        rule.originDomains = ["figma.com"]
+        rule.destinationRelativePath = "Work/Figma"
+        XCTAssertNil(ReviewHabits.strongestHabit(existingRules: [rule]))
+
+        ReviewHabits.dismiss(habit!)
+        XCTAssertNil(ReviewHabits.strongestHabit(existingRules: []))
+    }
+
+    // MARK: - "Looks like…" content kinds
+
+    private func imageSignals() -> SortRulesEvaluator.FileSignals {
+        SortRulesEvaluator.FileSignals(
+            ext: "png",
+            baseName: "img.png",
+            byteSize: 100,
+            addedToDirectoryDate: nil,
+            creationDate: nil,
+            modificationDate: nil,
+            originHosts: []
+        )
+    }
+
+    func testVisualContentKindsMatchOnlyTheirTrait() {
+        let kinds: [(SortContentMatchKind, SortVisualCategory)] = [
+            (.screenshot, .screenshot), (.photo, .photo), (.documentScan, .documentScan), (.ticket, .ticket),
+        ]
+        for (kind, trait) in kinds {
+            var rule = SortRule.fresh(order: 1)
+            rule.contentMatch = SortContentMatch(kind: kind)
+            let hit = SortRulesEvaluator.ContentRuleMatchInput(hasSignificantOCR: true, isReceiptLike: false, visualTraits: [trait])
+            let miss = SortRulesEvaluator.ContentRuleMatchInput(hasSignificantOCR: true, isReceiptLike: true, visualTraits: [])
+            XCTAssertTrue(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: hit), "\(kind)")
+            XCTAssertFalse(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: miss), "\(kind)")
+            XCTAssertFalse(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: nil), "\(kind)")
+        }
+    }
+
+    func testReceiptRuleAlsoMatchesVisualReceipt() {
+        var rule = SortRule.fresh(order: 1)
+        rule.contentMatch = SortContentMatch(kind: .receipt)
+        let seen = SortRulesEvaluator.ContentRuleMatchInput(hasSignificantOCR: false, isReceiptLike: false, visualTraits: [.receipt, .photo])
+        XCTAssertTrue(SortRulesEvaluator.ruleMatches(rule, signals: imageSignals(), content: seen))
+    }
+
+    func testVisualTraitsOnlyRequestedForVisualRules() {
+        var receipt = SortRule.fresh(order: 1)
+        receipt.contentMatch = SortContentMatch(kind: .receipt)
+        var ticket = SortRule.fresh(order: 2)
+        ticket.contentMatch = SortContentMatch(kind: .ticket)
+        XCTAssertFalse(SortRulesEvaluator.anyRuleRequiresVisualCategory([receipt]))
+        XCTAssertTrue(SortRulesEvaluator.anyRuleRequiresVisualCategory([receipt, ticket]))
+        ticket.isEnabled = false
+        XCTAssertFalse(SortRulesEvaluator.anyRuleRequiresVisualCategory([receipt, ticket]))
+    }
+
+    func testUnknownContentKindDecodesAsNone() throws {
+        let data = Data(#"{"kind":"somethingFromTheFuture"}"#.utf8)
+        let decoded = try JSONDecoder().decode(SortContentMatch.self, from: data)
+        XCTAssertEqual(decoded.kind, SortContentMatchKind.none)
+        let roundTrip = try JSONDecoder().decode(SortContentMatch.self, from: JSONEncoder().encode(SortContentMatch(kind: .ticket)))
+        XCTAssertEqual(roundTrip.kind, .ticket)
+    }
+
     func testRuleMatchesRequiresFinderTag() {
         var rule = SortRule.fresh(order: 1)
         rule.matchTags = ["Work"]
