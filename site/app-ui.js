@@ -1,8 +1,8 @@
 /*
  * The recreated Binky windows on the homepage (app-ui.css): the organizer counts through a Quick Sort
- * when it scrolls into view, the watch status pauses and resumes, the Routines pane picks and switches
- * routines, and the Currently sorting sheet counts up and pauses. Guided feature rows open a scene per
- * step. Every file name is made up. Everything honors Reduced Motion.
+ * when it scrolls into view and ends with a toast, the watch status pauses and resumes, the Routines
+ * pane picks and switches routines, and the Review sheet moves files to their suggested folders.
+ * Guided feature rows open a scene per step. Every file name is made up. Everything honors Reduced Motion.
  */
 (function () {
   'use strict';
@@ -50,6 +50,9 @@
     var badge = $('[data-review-count]', win);
     var hint = $('[data-sort-hint]', win);
     var latest = $('[data-sort-latest]', win);
+    var digest = $('[data-sort-digest]', win);
+    var sortNow = $('[data-sort-now]', win);
+    var toast = $('[data-sort-toast]', win);
     var tagline = $('[data-sort-tagline]', win);
     var replay = stage && $('[data-sort-replay]', stage);
     var buckets = {};
@@ -99,23 +102,40 @@
       }, 8000);
     }
 
+    // After the run, Sort Now again: nothing left, so the app says so in a toast that leaves on its own (3 s).
+    function sortAgain(me) {
+      wait(1800).then(function () {
+        if (me !== run || !toast) return;
+        if (sortNow) { sortNow.classList.add('is-press'); setTimeout(function () { sortNow.classList.remove('is-press'); }, 180); }
+        return wait(260).then(function () {
+          if (me !== run) return;
+          toast.classList.add('is-on');
+          return wait(3000).then(function () { if (me === run) toast.classList.remove('is-on'); });
+        });
+      });
+    }
+
     function reset() {
       win.classList.remove('is-done');
+      if (toast) toast.classList.remove('is-on');
       if (replay) replay.hidden = true;
       if (hint) hint.hidden = false;
       if (latest) latest.hidden = true;
+      if (digest) digest.hidden = true;
       if (badge) badge.textContent = '91';
       if (card) { card.getAnimations && card.getAnimations().forEach(function (a) { a.cancel(); }); card.style.opacity = '0'; }
       show(0);
     }
 
-    function finish() {
+    function finish(me) {
       win.classList.add('is-done');
       clearInterval(tagTimer);
       if (hint) hint.hidden = true;
       if (latest) latest.hidden = false;
+      if (digest) digest.hidden = false;
       if (badge) badge.textContent = '99';
       if (replay) replay.hidden = false;
+      sortAgain(me);
     }
 
     function play() {
@@ -137,7 +157,7 @@
           }
           if (t < 1) { requestAnimationFrame(frame); return; }
           caption.textContent = TOTAL + ' of ' + TOTAL + ' — ' + FILES[(TOTAL - 1) % FILES.length];
-          wait(800).then(function () { if (me === run) finish(); });
+          wait(800).then(function () { if (me === run) finish(me); });
         });
       });
     }
@@ -295,66 +315,39 @@
     }, { threshold: 0.45 }).observe(row);
   }
 
-  /* ---------- Currently sorting: the count climbs, Pause holds it ---------- */
-  function sheetDemo(scene) {
-    var sheet = $('[data-sheet]', scene);
-    var caption = $('[data-sheet-caption]', scene);
-    var fill = $('[data-sheet-fill]', scene);
-    var pct = $('[data-sheet-pct]', scene);
-    var pause = $('[data-sheet-pause]', scene);
-    var items = $$('[data-sheet-list] b', scene);
-    var TOTAL = 650, TARGET = 96, done = still() ? TARGET - 1 : 0, paused = false, ticker = 0, offset = 0;
-
-    // The caption names the first file in Working on, as the app does.
-    function name() { return FILES[(offset + 1) % FILES.length]; }
-    function render() {
-      var base = (done + 1) + ' of ' + TOTAL;
-      caption.textContent = paused ? 'Paused — ' + base : base + ' — ' + name();
-      fill.style.width = (done / TOTAL * 100) + '%';
-      pct.textContent = Math.floor(done / TOTAL * 100) + '%';
+  /* ---------- Review: move a file to its suggested folder, or wave off the habit ---------- */
+  function triageDemo(scene) {
+    var list = $('[data-triage-list]', scene);
+    var empty = $('[data-triage-empty]', scene);
+    var badge = $('[data-triage-badge]', scene);
+    var habit = $('[data-triage-habit]', scene);
+    var dismiss = $('[data-triage-dismiss]', scene);
+    function left() { return $$('[data-triage-row]', list).length; }
+    function settle() {
+      var n = left();
+      if (badge) { badge.textContent = String(n); badge.hidden = n === 0; }
+      if (!n) { list.hidden = true; if (empty) empty.hidden = false; }
     }
-    function shiftRows() {
-      offset++;
-      items.forEach(function (b, i) { b.textContent = FILES[(offset + i + 1) % FILES.length]; });
-    }
-    function tick() {
-      if (paused || done >= TOTAL - 1) return;
-      done++;
-      render();
-      shiftRows();
-    }
-    function countUp() {
-      var start = 0, from = done;
-      requestAnimationFrame(function frame(now) {
-        if (!start) start = now;
-        var t = Math.min(1, (now - start) / 1600);
-        if (!paused) { done = Math.round(from + (TARGET - 1 - from) * (1 - Math.pow(1 - t, 3))); render(); }
-        if (t < 1) { requestAnimationFrame(frame); return; }
-        ticker = setInterval(tick, 1400);
+    // The app reloads the list after a move; here the row fades and closes up.
+    $$('[data-triage-move]', scene).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var row = btn.closest('[data-triage-row]');
+        if (!row || row.classList.contains('is-gone')) return;
+        if (still() || !row.animate) { row.remove(); settle(); return; }
+        row.classList.add('is-gone');
+        var h = row.offsetHeight;
+        row.animate([{ height: h + 'px', paddingTop: '12px', paddingBottom: '12px' }, { height: '0px', paddingTop: '0px', paddingBottom: '0px' }],
+          { duration: 300, delay: 120, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' })
+          .finished.then(function () { row.remove(); settle(); });
       });
-    }
-
-    if (pause) pause.addEventListener('click', function () {
-      paused = !paused;
-      sheet.classList.toggle('is-paused', paused);
-      pause.querySelector('span').textContent = paused ? 'Resume' : 'Pause';
-      pause.querySelector('use').setAttribute('href', paused ? '#sf-play' : '#sf-pause');
-      render();
     });
-
-    render();
-    if (still()) return;
-    onVisible(scene, countUp, 0.4);
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) { clearInterval(ticker); ticker = 0; }
-      else if (!ticker && done >= TARGET - 1) ticker = setInterval(tick, 1400);
-    });
+    if (dismiss && habit) dismiss.addEventListener('click', function () { habit.hidden = true; });
   }
 
   function init() {
     $$('[data-bk-sort]').forEach(sortDemo);
     $$('[data-bk-routines]').forEach(routinesDemo);
-    $$('[data-bk-sheet]').forEach(sheetDemo);
+    $$('[data-bk-triage]').forEach(triageDemo);
     $$('[data-bk-watch]').forEach(watchDemo);
     $$('[data-guided]').forEach(guided);
   }
