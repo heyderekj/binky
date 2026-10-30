@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" />
-  <link rel="stylesheet" href="/family-menubar.css?v=01f52f40" />
+  <link rel="stylesheet" href="/family-menubar.css?v=8d81144a" />
   <link rel="stylesheet" href="/site-tabs.css?v=1590a16d" />
   <link rel="stylesheet" href="/app-ui.css" />
   <!-- Faster hop to sibling product site (dns + connection + idle document prefetch). -->
@@ -41,7 +41,7 @@
     "name": "Binky",
     "operatingSystem": "macOS",
     "applicationCategory": "UtilitiesApplication",
-    "description": "Keeps Downloads tidy: Quick Sort for one-shot sweeps plus Routines for named always-on watchers; stable-file detection, source-aware routing, plain-English rule building, receipt detection, duplicate hashing, smart screenshot names, optional stale-file aging, daily digest and optional weekly reminder with shareable digest card (PNG) from history, sorted folders for Images PDFs Media Documents Archives Apps Screenshots Misc, optional Finder tags, sort preview, Review for unknowns, history with undo where possible. Menu bar mode. Native SwiftUI.",
+    "description": "Keeps Downloads tidy: Quick Sort for one-shot sweeps plus Routines for named always-on watchers; stable-file detection, source-aware routing, plain-English rule building, receipt detection, duplicate hashing, smart screenshot names, optional Apple Intelligence smart names for PDFs and photos and folder suggestions in Review, Siri and Shortcuts actions, optional stale-file aging, daily digest and optional weekly reminder with shareable digest card (PNG) from history, sorted folders for Images PDFs Media Documents Archives Apps Screenshots Misc, optional Finder tags, sort preview, Review for unknowns, history with undo where possible. Menu bar mode. Native SwiftUI.",
     "url": "https://binkyfiles.com",
     "downloadUrl": "https://github.com/heyderekj/binky/releases/download/v1.6.0/Binky-1.6.0.dmg",
     "softwareVersion": "1.6.0",
@@ -777,6 +777,13 @@
     <symbol id="sf-plus" viewBox="0 0 24 24"><path d="M12 4.4v15.2M4.4 12h15.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
     <symbol id="sf-docs" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M8.6 6.6V4.4a1.8 1.8 0 0 1 1.8-1.8h5.2l4.6 4.6v9.2a1.8 1.8 0 0 1-1.8 1.8h-2.6"/><path d="M15.4 2.8v3.4c0 .6.4 1 1 1h3.6"/><path d="M5.6 6.6h5.4l4.4 4.4v8.6a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8V8.4a1.8 1.8 0 0 1 1.8-1.8Z"/><path d="M10.6 6.8v3.4c0 .6.4 1 1 1h3.6M6.6 14.2h5.6M6.6 17h4" stroke-linecap="round"/></g></symbol>
     <symbol id="sf-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 6.2h16.4M9.2 6.2V4.4c0-.6.4-1 1-1h3.6c.6 0 1 .4 1 1v1.8M5.8 6.2l1 13.2c.1 1 .9 1.8 1.9 1.8h6.6c1 0 1.8-.8 1.9-1.8l1-13.2M10 9.8v8M14 9.8v8"/></g></symbol>
+    <!-- The sidebar footer (plus.circle, clock.arrow.circlepath, gearshape), toasts (info.circle.fill), Review suggestions (sparkles) -->
+    <symbol id="sf-plus-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9.6"/><path d="M12 7.6v8.8M7.6 12h8.8"/></g></symbol>
+    <symbol id="sf-clock-arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.3 13.4A8.2 8.2 0 1 0 6.1 6.3"/><path d="M3.2 6.4l2.9 2.6 2.4-3.1"/><path d="M12.4 7.8v4.6l3 1.8"/></g></symbol>
+    <symbol id="sf-gear" viewBox="0 0 24 24"><g fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8.4" stroke-width="2.6" stroke-dasharray="2.6 3.997"/><circle cx="12" cy="12" r="6.4" stroke-width="1.6"/><circle cx="12" cy="12" r="2.5" stroke-width="1.6"/></g></symbol>
+    <symbol id="sf-info-fill" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.15 8.4h2.3v7.4h-2.3ZM12 5.7a1.45 1.45 0 1 1 0 2.9 1.45 1.45 0 0 1 0-2.9Z"/></symbol>
+    <symbol id="sf-sparkles" viewBox="0 0 24 24"><path fill="currentColor" d="M10 3.5c.3 0 .5.2.6.5l.9 3.3a4.6 4.6 0 0 0 3.2 3.2l3.3.9c.6.2.6 1 0 1.2l-3.3.9a4.6 4.6 0 0 0-3.2 3.2l-.9 3.3c-.2.6-1 .6-1.2 0l-.9-3.3a4.6 4.6 0 0 0-3.2-3.2l-3.3-.9c-.6-.2-.6-1 0-1.2l3.3-.9a4.6 4.6 0 0 0 3.2-3.2l.9-3.3c.1-.3.3-.5.6-.5Zm8.4-2.2c.2 0 .3.1.4.3l.4 1.4c.2.6.6 1 1.2 1.2l1.4.4c.3.1.3.6 0 .7l-1.4.4c-.6.2-1 .6-1.2 1.2l-.4 1.4c-.1.3-.6.3-.7 0l-.4-1.4a1.8 1.8 0 0 0-1.2-1.2l-1.4-.4c-.3-.1-.3-.6 0-.7l1.4-.4c.6-.2 1-.6 1.2-1.2l.4-1.4c0-.2.2-.3.3-.3Z"/></symbol>
+    <symbol id="sf-xmark" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
     <!-- Finder's Downloads folder (Tahoe blue) -->
     <symbol id="bk-folder-dl" viewBox="0 0 64 56"><path fill="url(#bk-fold-back)" d="M4 9a4.5 4.5 0 0 1 4.5-4.5h13.6c1.3 0 2.5.5 3.3 1.5l2.6 3h27.5A4.5 4.5 0 0 1 60 13.5v33a4.5 4.5 0 0 1-4.5 4.5h-47A4.5 4.5 0 0 1 4 46.5Z"/><path fill="url(#bk-fold-front)" d="M4 17.5A4.5 4.5 0 0 1 8.5 13h47a4.5 4.5 0 0 1 4.5 4.5v29a4.5 4.5 0 0 1-4.5 4.5h-47A4.5 4.5 0 0 1 4 46.5Z"/><path d="M4.5 16.2A4.5 4.5 0 0 1 8.5 13.6h47a4.5 4.5 0 0 1 4 2.6" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1"/><g fill="none" stroke="#2b78bd" stroke-opacity=".7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32.5" r="9.6"/><path d="M32 27v11m-4.4-4.4L32 38l4.4-4.4"/></g></symbol>
     <!-- Finder document icons for the card that flies into the buckets -->
@@ -791,7 +798,7 @@
   </nav>
   <script src="/family-dock.js?v=0df45895" defer></script>
   <script src="/family-ask.js?v=4f426407" defer></script>
-  <script src="/family-menubar.js?v=f52333a4" defer></script>
+  <script src="/family-menubar.js?v=e32ed2af" defer></script>
   <script src="/app-ui.js" defer></script>
   <nav class="nav float-glass is-tucked" aria-label="Binky">
     <a class="nav__home" href="#top"><img src="/app-icon.webp" alt="" width="26" height="26" /><span class="nav__home-name">Binky</span></a>
@@ -832,7 +839,8 @@
       <div class="menubar" aria-hidden="true" data-menubar="Binky">
         <span class="mb-item mb-apple" data-mb="apple"><svg viewBox="0 0 520 640" width="13" height="16" aria-hidden="true"><path fill="currentColor" transform="translate(0 640) scale(1 -1)" d="M356 599 c-27 -3 -61 -24 -79 -47 -17 -23 -28 -55 -25 -75 l0 -6 6 0 c45 0 91 41 103 92 2 10 4 34 2 36 0 0 -3 0 -7 0z M345 464 c-16 -2 -31 -6 -53 -14 -37 -14 -35 -14 -74 0 -10 4 -23 8 -28 10 -63 15 -132 -27 -154 -96 -15 -45 -13 -108 6 -164 7 -20 25 -61 31 -70 1 -1 7 -10 12 -19 46 -69 76 -83 129 -58 20 9 33 11 55 11 17 -1 22 -2 42 -11 20 -9 27 -10 42 -10 19 -1 29 3 45 16 12 9 15 13 32 35 19 26 37 58 46 84 l4 12 -9 4 c-14 7 -35 26 -45 40 -14 21 -21 43 -20 70 0 40 19 77 53 101 4 3 6 5 5 6 -5 9 -24 27 -37 34 -23 14 -59 22 -82 19z"/></svg></span><span class="mb-item mb-app" data-mb="app">Binky</span><span class="mb-item" data-mb="file">File</span><span class="mb-item" data-mb="edit">Edit</span><span class="mb-item mb-narrow" data-mb="view">View</span><span class="mb-item mb-more" data-mb="window">Window</span><span class="mb-item mb-more" data-mb="help">Help</span>
         <span class="mb-right">
-          <span class="mb-item mb-icon" title="Binky" data-mb="extra"><svg viewBox="45 21 470 462" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M50 330Q50 296 84 296H220Q231 296 233 307A47 47 0 0 0 327 307Q329 296 340 296H476Q510 296 510 330V426Q510 478 458 478H102Q50 478 50 426Z"/><path fill="currentColor" d="M50 330V300Q50 286 60 272L136 166Q155 143 190 143H227V171H192Q174 171 163 187L88 285Q84 292 92 296V330ZM510 330V300Q510 286 500 272L424 166Q405 143 370 143H333V171H368Q386 171 397 187L472 285Q476 292 468 296V330Z"/><path d="M280 41V272M210 211 280 281 350 211" fill="none" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <!-- Binky's pacifier (teat, shield, ring), drawn like BinkyMenuBarIcon: each piece cut free of the one below -->
+          <span class="mb-item mb-icon" title="Binky" data-mb="extra"><svg viewBox="2 2.8 14 12.4" width="15" height="13" aria-hidden="true"><mask id="bk-pacifier-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="18" height="18"><circle cx="10.2" cy="7" r="3.1" fill="#fff"/><circle cx="8.2" cy="10.6" r="3.3" fill="#fff"/><circle cx="12.6" cy="11.7" r="4.1" fill="#000"/><circle cx="12.6" cy="11.7" r="3" fill="#fff"/><circle cx="12.6" cy="11.7" r="1.55" fill="#000"/><path d="M4.4 5.4 7.2 7.6" stroke="#000" stroke-width="6.6" stroke-linecap="round"/><path d="M4.4 5.4 7.2 7.6" stroke="#fff" stroke-width="4.4" stroke-linecap="round"/></mask><rect width="18" height="18" fill="currentColor" mask="url(#bk-pacifier-cut)"/></svg></span>
           <span class="mb-item mb-icon mb-more" data-mb="battery"><svg viewBox="0 0 880 440" width="22" height="11" aria-hidden="true"><path fill="currentColor" transform="translate(0 440) scale(1 -1)" d="M187 399 c-68 -3 -101 -33 -108 -98 -2 -16 -2 -149 0 -162 8 -61 35 -90 91 -97 14 -2 447 -2 462 0 53 7 81 35 90 91 2 14 3 135 1 158 -5 67 -32 98 -91 107 -10 1 -30 1 -220 2 -115 0 -216 -1 -225 -1z m440 -44 c38 -6 53 -24 57 -68 2 -20 1 -136 -1 -147 -7 -34 -21 -48 -52 -55 -8 -1 -21 -1 -231 -1 l-222 0 -10 2 c-32 7 -46 24 -50 65 -3 19 -3 117 0 137 5 47 21 64 65 68 16 1 435 1 444 -1z M171 325 c-15 -4 -23 -14 -25 -33 -1 -12 -1 -133 0 -145 2 -21 12 -31 32 -33 11 -1 434 -1 445 0 20 2 29 11 32 32 2 14 1 149 -1 156 -4 13 -12 20 -25 23 -9 2 -451 1 -458 0z M758 220 l0 -69 3 1 c13 2 29 18 36 36 12 30 6 65 -15 87 -5 6 -17 13 -22 13 l-2 0 0 -68z"/></svg></span><span class="mb-item mb-icon" data-mb="wifi"><svg viewBox="0 0 680 520" width="17" height="13" aria-hidden="true"><path fill="currentColor" transform="translate(0 520) scale(1 -1)" d="M310 479 c-35 -3 -69 -10 -106 -23 -54 -19 -107 -52 -145 -92 -17 -17 -20 -22 -17 -28 1 -3 38 -42 41 -44 6 -3 10 -1 16 5 57 59 123 92 202 102 29 3 74 2 101 -4 52 -11 90 -27 130 -55 14 -10 22 -17 40 -35 15 -14 17 -15 22 -13 4 1 42 40 44 44 2 5 0 9 -7 17 -42 48 -104 88 -170 108 -8 2 -16 5 -17 5 -28 10 -94 16 -134 13z M318 325 c-28 -2 -66 -12 -90 -23 -32 -16 -66 -41 -81 -62 -6 -8 -6 -8 21 -35 28 -30 28 -30 45 -13 29 29 64 46 105 52 14 2 43 1 57 -2 36 -8 65 -24 91 -50 18 -17 17 -17 43 10 27 27 26 26 26 31 0 3 -1 5 -6 11 -24 29 -61 53 -100 66 -38 13 -74 18 -111 15z M333 170 c-32 -3 -54 -14 -73 -35 -7 -8 -9 -12 -7 -16 1 -3 14 -15 51 -52 29 -28 33 -31 44 -25 7 4 76 73 78 77 2 6 0 10 -9 19 -19 19 -40 29 -67 32 -10 1 -12 1 -17 0z"/></svg></span><span class="mb-item mb-icon mb-more" data-mb="spotlight"><svg viewBox="0 0 640 600" width="16" height="15" aria-hidden="true"><path fill="currentColor" transform="translate(0 600) scale(1 -1)" d="M250 559 c-93 -7 -174 -69 -200 -155 -10 -35 -8 -92 4 -119 1 -3 3 -9 5 -13 22 -53 75 -101 133 -120 44 -14 94 -16 139 -4 21 5 49 17 66 28 l3 3 4 -3 c2 -2 8 -8 14 -13 6 -6 19 -18 30 -28 10 -10 23 -22 28 -26 5 -5 18 -17 28 -27 11 -10 24 -22 29 -27 13 -12 18 -14 31 -14 8 0 10 0 15 2 14 7 21 23 16 39 -2 5 -4 7 -22 24 -7 7 -22 20 -32 30 -10 10 -24 23 -31 29 -8 7 -18 17 -23 22 -5 4 -13 11 -16 15 -12 11 -22 20 -22 21 0 0 1 2 3 4 9 10 26 40 32 58 17 52 14 106 -11 154 -5 11 -17 30 -20 33 -1 1 -5 6 -10 12 -21 23 -49 44 -78 56 -6 2 -12 5 -13 5 -23 10 -69 17 -102 14z m47 -46 c47 -8 89 -31 116 -67 32 -41 42 -95 26 -145 -24 -73 -105 -124 -187 -116 -78 8 -141 60 -157 133 -10 43 2 93 31 129 40 51 105 75 171 66z"/></svg></span><span class="mb-item mb-icon mb-more" data-mb="cc"><svg viewBox="0 0 640 560" width="16" height="14" aria-hidden="true"><path fill="currentColor" transform="translate(0 560) scale(1 -1)" d="M176 518 c-60 -9 -101 -56 -101 -115 0 -14 3 -32 8 -41 1 -3 3 -8 4 -10 13 -31 49 -56 88 -62 16 -3 285 -2 296 0 43 11 71 35 86 73 5 12 6 19 7 36 1 24 -2 35 -12 57 -16 33 -47 55 -86 61 -10 2 -279 3 -290 1z m290 -40 c28 -8 48 -27 55 -53 11 -44 -12 -84 -56 -96 l-8 -2 -137 0 -137 0 -9 2 c-37 10 -58 37 -58 74 0 40 25 70 66 77 2 0 66 1 141 1 135 -1 136 -1 143 -3z M184 463 c-30 -5 -50 -29 -50 -58 -1 -34 21 -57 55 -61 16 -2 91 -1 99 1 33 9 52 41 43 75 -5 22 -24 38 -46 43 -9 1 -92 2 -101 0z M175 248 c-50 -5 -88 -36 -98 -80 -2 -11 -2 -36 0 -47 9 -39 40 -69 83 -79 13 -2 306 -3 319 0 52 12 85 51 85 103 0 51 -33 90 -86 102 -7 1 -21 1 -153 2 -81 0 -148 0 -150 -1z m298 -39 c33 -7 53 -31 53 -64 0 -31 -16 -53 -45 -63 l-7 -2 -51 -1 c-58 0 -60 0 -75 7 -16 8 -28 22 -33 37 -4 11 -4 33 0 43 7 22 27 38 51 43 8 1 99 1 107 0z"/></svg></span>
           <span class="mb-item mb-clock" data-clock data-mb="clock"><span class="mb-day">Fri Oct 17&nbsp;&nbsp;</span>9:41 AM</span>
         </span>
@@ -848,14 +856,14 @@
                   <div class="bk-head"><svg class="bk-i"><use href="#sf-bolt"/></svg>Quick Sort</div>
                   <div class="bk-cap">Sort this folder:</div>
                   <div class="bk-well"><svg class="bk-well__icon"><use href="#bk-folder-dl"/></svg><div class="bk-well__text"><b>Downloads</b><span>~/Downloads</span></div><span class="bk-link">Choose Folder…</span></div>
-                  <span class="bk-btn bk-btn--prominent bk-btn--block">Sort Now</span>
+                  <span class="bk-btn bk-btn--prominent bk-btn--block" data-sort-now>Sort Now</span>
                   <div class="bk-hint" data-sort-hint>Runs show up here after your first sweep.</div>
                   <div class="bk-latest" data-sort-latest hidden>
                     <div class="bk-cap">Latest run</div>
                     <div class="bk-latest__row"><div><b>10/17/26, 9:41 AM</b><small>apps, archives, documents, images, pdf, review, screenshots, video</small></div><span>215 files</span></div>
                   </div>
                   <hr class="bk-div" />
-                  <p class="bk-cap2">Expanded mode keeps both Quick Sort and Routines controls in one sidebar.</p>
+                  <span class="bk-link bk-link--line" data-sort-digest hidden>This week’s digest card…</span>
                 </div>
                 <div class="bk-card">
                   <div class="bk-head"><svg class="bk-i"><use href="#sf-repeat"/></svg>Routines<span class="bk-head__aside">2 of 2 on</span></div>
@@ -865,13 +873,8 @@
                     <div class="bk-rrow"><span class="bk-dot"></span><div class="bk-rrow__text"><b>Auto-install DMGs</b><span>~/Downloads</span></div><svg class="bk-i"><use href="#sf-eye-fill"/></svg></div>
                   </div>
                 </div>
-                <div class="bk-card">
-                  <div class="bk-head"><svg class="bk-i"><use href="#sf-slider"/></svg>Settings</div>
-                  <div class="bk-check is-on"><i><svg class="bk-i"><use href="#sf-check"/></svg></i>Slow mode</div>
-                  <div class="bk-check"><i></i>Notify when done</div>
-                  <div class="bk-check is-on"><i><svg class="bk-i"><use href="#sf-check"/></svg></i>Show summaries after sorting</div>
-                </div>
               </div>
+              <div class="bk-sfoot"><span class="bk-sfoot__new"><svg class="bk-i"><use href="#sf-plus-circle"/></svg>New Routine</span><svg class="bk-i"><use href="#sf-clock-arrow"/></svg><svg class="bk-i"><use href="#sf-gear"/></svg></div>
             </aside>
             <div class="bk-main">
               <div class="bk-tb"><span class="bk-lights bk-lights--narrow"><i></i><i></i><i></i></span><span class="bk-tb__title">Binky</span><span class="bk-tb__btn"><svg class="bk-i"><use href="#sf-folder-q"/></svg><span class="bk-badge" data-review-count>91</span></span></div>
@@ -916,6 +919,8 @@
                   </div>
                 </div>
               </div>
+              <!-- Notices float up as a glass toast and leave on their own (OrganizerMainView noticeToast) -->
+              <div class="bk-toast" data-sort-toast><svg class="bk-i"><use href="#sf-info-fill"/></svg><span>Binky'd. Already handled.</span></div>
             </div>
           </div>
         </div>
@@ -938,7 +943,7 @@
               <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd"/>
             </svg>
             <h3>Menu bar mode</h3>
-            <p>Hide the Dock icon and run Binky quietly from the menu bar. Sort Now, pause watching, open History — no window needed.</p>
+            <p>Hide the Dock icon and run Binky from the menu bar. On macOS 27 the pacifier opens a glass panel: status, Sort Now, pause watching, and what&apos;s waiting in Review.</p>
       </div>
     </div>
   </section>
@@ -1026,7 +1031,7 @@
           </button>
           <button class="g-step" role="tab" type="button" id="routines-tab-1" aria-selected="false" aria-controls="routines-scene-1" tabindex="-1" data-step>
             <span class="g-step__head"><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3.792 2.938A49.069 49.069 0 0 1 12 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 0 1 1.541 1.836v1.044a3 3 0 0 1-.879 2.121l-6.182 6.182a1.5 1.5 0 0 0-.439 1.061v2.927a3 3 0 0 1-1.658 2.684l-1.757.878A.75.75 0 0 1 9.75 21v-5.818a1.5 1.5 0 0 0-.44-1.06L3.13 7.938a3 3 0 0 1-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836Z" clip-rule="evenodd"/></svg><span class="g-step__title">Rules with teeth</span></span>
-            <span class="g-step__body"><span class="g-step__text">Predicates across name, kind, origins, OCR hints, Finder tags. Rename tokens, extras like extract-then-trash archives, DMG-to-Applications installs, fan-out-by-tag folders.</span></span>
+            <span class="g-step__body"><span class="g-step__text">Match by name, kind, site, Finder tag, or what a file looks like: a screenshot, a photo, a scanned page, a ticket. Rename tokens, extract-then-trash archives, DMG-to-Applications installs, fan-out-by-tag folders.</span></span>
             <i class="g-step__bar" aria-hidden="true"></i>
           </button>
           <button class="g-step" role="tab" type="button" id="routines-tab-2" aria-selected="false" aria-controls="routines-scene-2" tabindex="-1" data-step>
@@ -1042,7 +1047,7 @@
             <div class="g-scene is-on" id="routines-scene-0" role="tabpanel" aria-labelledby="routines-tab-0" data-scene>
               <div class="bk-fit">
                 <!-- The organizer between sorts, with two routines watching Downloads (OrganizerMainView.swift) -->
-                <div class="bk bk-win bk-org bk-org--side bk-scale is-done" role="group" aria-label="Binky's organizer between sorts: Sort Now for a one-pass Quick Sort, and two routines watching Downloads. Pause or resume watching to try it." data-bk-watch>
+                <div class="bk bk-win bk-org bk-org--side bk-scale is-done" role="group" aria-label="Binky's organizer between sorts: Sort Now for a one-pass Quick Sort, two routines watching Downloads, and New Routine, History and Settings pinned at the bottom of the sidebar. Pause or resume watching to try it." data-bk-watch>
                   <aside class="bk-side bk-glass">
                     <div class="bk-side__bar"><span class="bk-lights"><i></i><i></i><i></i></span><svg class="bk-i bk-side__toggle"><use href="#sf-sidebar"/></svg></div>
                     <div class="bk-side__scroll">
@@ -1057,7 +1062,7 @@
                           <div class="bk-latest__row"><div><b>10/17/26, 9:41 AM</b><small>apps, archives, documents, images, pdf, review, screenshots, video</small></div><span>215 files</span></div>
                         </div>
                         <hr class="bk-div" />
-                        <p class="bk-cap2">Expanded mode keeps both Quick Sort and Routines controls in one sidebar.</p>
+                        <span class="bk-link bk-link--line">This week’s digest card…</span>
                       </div>
                       <div class="bk-card">
                         <div class="bk-head"><svg class="bk-i"><use href="#sf-repeat"/></svg>Routines<span class="bk-head__aside">2 of 2 on</span></div>
@@ -1067,13 +1072,8 @@
                           <div class="bk-rrow"><span class="bk-dot"></span><div class="bk-rrow__text"><b>Auto-install DMGs</b><span>~/Downloads</span></div><svg class="bk-i"><use href="#sf-eye-fill"/></svg></div>
                         </div>
                       </div>
-                      <div class="bk-card">
-                        <div class="bk-head"><svg class="bk-i"><use href="#sf-slider"/></svg>Settings</div>
-                        <div class="bk-check is-on"><i><svg class="bk-i"><use href="#sf-check"/></svg></i>Slow mode</div>
-                        <div class="bk-check"><i></i>Notify when done</div>
-                        <div class="bk-check is-on"><i><svg class="bk-i"><use href="#sf-check"/></svg></i>Show summaries after sorting</div>
-                      </div>
                     </div>
+                    <div class="bk-sfoot" aria-hidden="true"><span class="bk-sfoot__new"><svg class="bk-i"><use href="#sf-plus-circle"/></svg>New Routine</span><svg class="bk-i"><use href="#sf-clock-arrow"/></svg><svg class="bk-i"><use href="#sf-gear"/></svg></div>
                   </aside>
                   <div class="bk-main">
                     <div class="bk-tb"><span class="bk-lights bk-lights--narrow"><i></i><i></i><i></i></span><span class="bk-tb__title">Binky</span><span class="bk-tb__btn"><svg class="bk-i"><use href="#sf-folder-q"/></svg><span class="bk-badge">91</span></span></div>
@@ -1124,28 +1124,41 @@
             </div>
             <div class="g-scene" id="routines-scene-1" role="tabpanel" aria-labelledby="routines-tab-1" data-scene hidden>
               <div class="bk-fit">
-                <!-- The rule editor sheet (PreferencesView.swift, RuleEditorSheet), scrolled to the conditions and actions -->
-                <div class="bk bk-editor bk-scale" role="img" aria-label="Binky's rule editor: a rule named Design downloads that takes archives downloaded from dribbble.com or figma.com, extracts them into Design/Assets and trashes the archive, and renames each file with the site it came from">
+                <!-- The rule editor sheet (PreferencesView.swift, RuleEditorSheet), More conditions open, the Content match menu showing the "Looks like…" kinds -->
+                <div class="bk bk-editor bk-scale" role="img" aria-label="Binky's rule editor: a rule named Boarding passes that takes files downloaded from united.com or delta.com that look like a ticket or pass, moves them to Travel/Passes and renames each with the site it came from. The Content match menu is open: Any content, Has readable text (OCR), Looks like receipt / invoice, Looks like a screenshot, Looks like a photo, Looks like a scanned page, Looks like a ticket or pass.">
                   <div class="bk-editor__bar"><span class="bk-btn bk-btn--cap bk-btn--bordered">Cancel</span><b>Edit rule</b><span class="bk-btn bk-btn--cap bk-btn--prominent">Save</span></div>
                   <div class="bk-form">
                     <h4 class="bk-form__h">Rule</h4>
                     <div class="bk-group">
-                      <div class="bk-frow"><span>Rule name</span><span class="bk-field">Design downloads</span></div>
+                      <div class="bk-frow"><span>Rule name</span><span class="bk-field">Boarding passes</span></div>
                     </div>
                     <h4 class="bk-form__h">When</h4>
                     <div class="bk-group">
-                      <div class="bk-frow"><span>File kind</span><span class="bk-pop">Archives<svg class="bk-i"><use href="#sf-updown"/></svg></span></div>
+                      <div class="bk-frow"><span>File kind</span><span class="bk-pop">Any kind<svg class="bk-i"><use href="#sf-updown"/></svg></span></div>
                       <div class="bk-frow bk-disc"><svg class="bk-i"><use href="#sf-chev-down"/></svg><span>More conditions</span></div>
                       <div class="bk-frow bk-frow--stack">
                         <span class="bk-capline">Downloaded from — one host per line (*.stripe.com, figma.com)</span>
-                        <span class="bk-field bk-field--block bk-field--mono">dribbble.com<br />figma.com</span>
+                        <span class="bk-field bk-field--block bk-field--mono">*.united.com<br />delta.com</span>
+                      </div>
+                      <div class="bk-frow bk-frow--menu"><span>Content match</span>
+                        <span class="bk-pop bk-pop--open">Looks like a ticket or pass<svg class="bk-i"><use href="#sf-updown"/></svg>
+                          <span class="bk-menu">
+                            <span>Any content</span>
+                            <span>Has readable text (OCR)</span>
+                            <span>Looks like receipt / invoice</span>
+                            <span>Looks like a screenshot</span>
+                            <span>Looks like a photo</span>
+                            <span>Looks like a scanned page</span>
+                            <span class="is-on"><svg class="bk-i"><use href="#sf-check"/></svg>Looks like a ticket or pass</span>
+                          </span>
+                        </span>
                       </div>
                     </div>
                     <p class="bk-form__foot">Runs before automatic destinations. Add extensions, sites, or size rules only if you need them.</p>
                     <h4 class="bk-form__h">Then</h4>
                     <div class="bk-group">
-                      <div class="bk-frow"><span>Action</span><span class="bk-pop">Extract archive then trash<svg class="bk-i"><use href="#sf-updown"/></svg></span></div>
-                      <div class="bk-frow"><span class="bk-field bk-field--block">Design/Assets</span><span class="bk-btn bk-btn--bordered">Choose…</span></div>
+                      <div class="bk-frow"><span>Action</span><span class="bk-pop">Move to folder<svg class="bk-i"><use href="#sf-updown"/></svg></span></div>
+                      <div class="bk-frow"><span class="bk-field bk-field--block">Travel/Passes</span><span class="bk-btn bk-btn--bordered">Choose…</span></div>
                     </div>
                     <h4 class="bk-form__h">Rename</h4>
                     <div class="bk-group">
@@ -1225,23 +1238,24 @@
       </div>
     </div>
 
-    <!-- Feature row: rules, as an editorial list beside the Currently sorting sheet, desktop on the left -->
+    <!-- Feature row: rules and Review, as an editorial list beside the Review sheet, desktop on the left -->
     <div class="g-row e-row is-flip">
       <div class="g-copy">
         <p class="eyebrow">Rules</p>
         <h2 class="g-title">Know where it goes<br />before it moves.</h2>
         <ul class="e-list">
-          <li><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd"/></svg><div><h3>Sort preview</h3><p>Inline dry-run beside the source card mirrors the live path; confirm tidy only when calm.</p></div></li>
+          <li><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 2.25a.75.75 0 0 1 .75.75v.54l1.838-.46a9.75 9.75 0 0 1 6.725.738l.108.054A8.25 8.25 0 0 0 18 4.524l3.11-.732a.75.75 0 0 1 .917.81 47.784 47.784 0 0 0 .005 10.337.75.75 0 0 1-.574.812l-3.114.733a9.75 9.75 0 0 1-6.594-.77l-.108-.054a8.25 8.25 0 0 0-5.69-.625l-2.202.55V21a.75.75 0 0 1-1.5 0V3A.75.75 0 0 1 3 2.25Z" clip-rule="evenodd"/></svg><div><h3>Review suggestions</h3><p>Apple Intelligence suggests a folder for each file in Review. One click moves it. When the same site keeps landing in one folder, Binky offers a rule.</p></div></li>
           <li><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12 5.25c1.213 0 2.415.046 3.605.135a3.256 3.256 0 0 1 3.01 3.01c.044.583.077 1.17.1 1.759L17.03 8.47a.75.75 0 1 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 0 0-1.06-1.06l-1.752 1.751c-.023-.65-.06-1.296-.108-1.939a4.756 4.756 0 0 0-4.392-4.392 49.422 49.422 0 0 0-7.436 0A4.756 4.756 0 0 0 3.89 8.282c-.017.224-.033.447-.046.672a.75.75 0 1 0 1.497.092c.013-.217.028-.434.044-.651a3.256 3.256 0 0 1 3.01-3.01c1.19-.09 2.392-.135 3.605-.135Zm-6.97 6.22a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.752-1.751c.023.65.06 1.296.108 1.939a4.756 4.756 0 0 0 4.392 4.392 49.413 49.413 0 0 0 7.436 0 4.756 4.756 0 0 0 4.392-4.392c.017-.223.032-.447.046-.672a.75.75 0 0 0-1.497-.092c-.013.217-.028.434-.044.651a3.256 3.256 0 0 1-3.01 3.01 47.953 47.953 0 0 1-7.21 0 3.256 3.256 0 0 1-3.01-3.01 47.759 47.759 0 0 1-.1-1.759L6.97 15.53a.75.75 0 0 0 1.06-1.06l-3-3Z" clip-rule="evenodd"/></svg><div><h3>Source-aware routing</h3><p>Routes files by where they came from. A Dribbble download goes to Design. A bank email attachment goes to Finance. Done before you touch it.</p></div></li>
-          <li><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z" clip-rule="evenodd"/></svg><div><h3>Describe a rule</h3><p>Speak loosely — preview what Binky heard before the rule snaps in. On macOS 26 Tahoe, Foundation Models lend a sharper pass when Apple exposes them.</p></div></li>
+          <li><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z" clip-rule="evenodd"/></svg><div><h3>Describe a rule</h3><p>Speak loosely, then check what Binky heard before the rule snaps in. With Apple Intelligence on, the on-device model fills in the rule.</p></div></li>
+          <li><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd"/></svg><div><h3>Sort preview</h3><p>A dry run in Settings shows where each file would land. Nothing moves until you sort.</p></div></li>
         </ul>
       </div>
       <div class="desktop g-desk">
         <div class="desktop__stage">
           <div class="bk-fit">
-            <!-- The Currently sorting sheet over the organizer (CurrentlySortingSheet.swift) -->
-            <div class="bk bk-scene bk-scale" role="group" aria-label="Binky's Currently sorting sheet: the batch count and progress bar, Pause and Stop, and the files it is working on right now" data-bk-sheet>
-              <div class="bk-win bk-org bk-behind" aria-hidden="true">
+            <!-- The Review sheet over the organizer (ReviewFolderTriageSheet.swift): a suggested folder per file, and a habit that could be a rule -->
+            <div class="bk bk-scene bk-scale" role="group" aria-label="Binky's Review sheet: a suggested folder for each file with a one-click Move button, and an offer to turn a habit into a rule. Move a file, or dismiss the offer, to try it." data-bk-triage>
+              <div class="bk-win bk-org bk-behind is-done" aria-hidden="true">
                 <aside class="bk-side bk-glass">
                   <div class="bk-side__bar"><span class="bk-lights"><i></i><i></i><i></i></span><svg class="bk-i bk-side__toggle"><use href="#sf-sidebar"/></svg></div>
                   <div class="bk-side__scroll">
@@ -1250,70 +1264,64 @@
                       <div class="bk-cap">Sort this folder:</div>
                       <div class="bk-well"><svg class="bk-well__icon"><use href="#bk-folder-dl"/></svg><div class="bk-well__text"><b>Downloads</b><span>~/Downloads</span></div><span class="bk-link">Choose Folder…</span></div>
                       <span class="bk-btn bk-btn--prominent bk-btn--block">Sort Now</span>
-                      <div class="bk-hint">Runs show up here after your first sweep.</div>
+                      <div class="bk-latest">
+                        <div class="bk-cap">Latest run</div>
+                        <div class="bk-latest__row"><div><b>10/17/26, 9:41 AM</b><small>archives, documents, pdf, review</small></div><span>12 files</span></div>
+                      </div>
                     </div>
                     <div class="bk-card">
                       <div class="bk-head"><svg class="bk-i"><use href="#sf-repeat"/></svg>Routines<span class="bk-head__aside">2 of 2 on</span></div>
-                      <div class="bk-watch"><span class="bk-dot bk-dot--glow"></span><b>Paused</b><span class="bk-mid">·</span><span class="bk-sub">Sort my D…nstall DMGs</span><svg class="bk-i"><use href="#sf-play-circle"/></svg></div>
-                      <div class="bk-routines">
-                        <div class="bk-rrow is-on"><span class="bk-dot"></span><div class="bk-rrow__text"><b>Sort my Downloads</b><span>~/Downloads</span></div><svg class="bk-i"><use href="#sf-eye-fill"/></svg></div>
-                        <div class="bk-rrow"><span class="bk-dot"></span><div class="bk-rrow__text"><b>Auto-install DMGs</b><span>~/Downloads</span></div><svg class="bk-i"><use href="#sf-eye-fill"/></svg></div>
-                      </div>
-                    </div>
-                    <div class="bk-card">
-                      <div class="bk-head"><svg class="bk-i"><use href="#sf-slider"/></svg>Settings</div>
-                      <div class="bk-check is-on"><i><svg class="bk-i"><use href="#sf-check"/></svg></i>Slow mode</div>
+                      <div class="bk-watch is-watching"><span class="bk-dot bk-dot--glow"></span><b>Watching 2 folders</b><span class="bk-mid">·</span><span class="bk-sub">Sort my D…nstall DMGs</span><svg class="bk-i"><use href="#sf-pause-circle"/></svg></div>
                     </div>
                   </div>
+                  <div class="bk-sfoot"><span class="bk-sfoot__new"><svg class="bk-i"><use href="#sf-plus-circle"/></svg>New Routine</span><svg class="bk-i"><use href="#sf-clock-arrow"/></svg><svg class="bk-i"><use href="#sf-gear"/></svg></div>
                 </aside>
                 <div class="bk-main">
-                  <div class="bk-tb"><span class="bk-lights bk-lights--narrow"><i></i><i></i><i></i></span><span class="bk-tb__title">Binky</span><span class="bk-tb__btn"><svg class="bk-i"><use href="#sf-folder-q"/></svg><span class="bk-badge">91</span></span></div>
+                  <div class="bk-tb"><span class="bk-lights bk-lights--narrow"><i></i><i></i><i></i></span><span class="bk-tb__title">Binky</span><span class="bk-tb__btn"><svg class="bk-i"><use href="#sf-folder-q"/></svg><span class="bk-badge" data-triage-badge>3</span></span></div>
                   <div class="bk-calm"><svg class="bk-i"><use href="#sf-desktop"/></svg><div class="bk-calm__text"><b>Desktop also loud?</b><span>Same pacifier, different crib.</span></div><span class="bk-btn bk-btn--prominent bk-btn--sm">Calm my Desktop…</span><span class="bk-plainlink">Dismiss</span></div>
                   <div class="bk-hr"></div>
-                  <div class="bk-sorting">
-                    <div class="bk-sorting__top">
-                      <div class="bk-sorting__text"><b>Sorting</b><span>96 of 650 — Invoice-0423.pdf</span></div>
-                      <span class="bk-sorting__ctl"><svg class="bk-i"><use href="#sf-pause"/></svg><svg class="bk-i"><use href="#sf-stop"/></svg></span>
-                      <svg class="bk-i bk-sorting__more"><use href="#sf-chevdown-circle"/></svg>
-                    </div>
-                    <div class="bk-bar"><span class="bk-bar__track"><i class="bk-bar__fill" style="width: 14%"></i></span><b class="bk-bar__pct">14%</b></div>
-                  </div>
                   <div class="bk-area">
-                    <div class="bk-empty">
-                      <div class="bk-stage">
-                        <div class="bk-buckets">
-                          <div class="bk-bucket"><span class="bk-bucket__box"><svg class="bk-i"><use href="#sf-photos"/></svg></span><span>Images</span></div>
-                          <div class="bk-bucket"><span class="bk-bucket__box"><svg class="bk-i"><use href="#sf-play-rect"/></svg></span><span>Videos</span></div>
-                          <div class="bk-bucket"><span class="bk-bucket__box"><svg class="bk-i"><use href="#sf-doc-fill"/></svg></span><span>Docs</span></div>
+                    <div class="bk-activity">
+                      <div class="bk-activity__head"><b>Recent activity</b><span>Clear</span></div>
+                      <div class="bk-arow">
+                        <div class="bk-arow__main">
+                          <div class="bk-arow__when">Oct 17, 2026 at 9:41 AM</div>
+                          <div class="bk-arow__sum">9 moved · 0 kept · 0 skipped · 3 review</div>
+                          <div class="bk-chips"><span class="bk-chip">1 receipt filed</span><span class="bk-chip">3 in review</span></div>
                         </div>
+                        <div class="bk-arow__acts"><span class="bk-btn bk-btn--prominent bk-btn--sm">Open Summary…</span><span class="bk-plainlink">Show in Finder</span></div>
                       </div>
-                      <p class="bk-empty__hint">Turn on Watch to tidy new files, or run Sort Now. You can also drop files from your watch folder here.</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="bk-sheet" data-sheet>
-                <div class="bk-sheet__head">
-                  <div><h4>Currently sorting</h4><p data-sheet-caption>96 of 650 — IMG_2041.HEIC</p></div>
-                  <svg class="bk-i bk-sheet__close" aria-hidden="true"><use href="#sf-xmark-circle"/></svg>
+              <div class="bk-sheet bk-triage">
+                <div class="bk-triage__head"><h4>Still figuring these out.</h4><span class="bk-btn bk-btn--prominent bk-btn--cap" aria-hidden="true">Done</span></div>
+                <p class="bk-triage__sub">Files in Review didn’t match a rule. Move them, teach Binky a new rule, or trash.</p>
+                <div class="bk-habit" data-triage-habit>
+                  <svg class="bk-i" aria-hidden="true"><use href="#sf-sparkles"/></svg>
+                  <div class="bk-habit__text"><b>Noticed a habit.</b><span>Files from dribbble.com keep going to Design/Assets.</span></div>
+                  <span class="bk-btn bk-btn--prominent bk-btn--sm" aria-hidden="true">Make it a rule…</span>
+                  <button class="bk-habit__no" type="button" data-triage-dismiss>Not now</button>
                 </div>
-                <div class="bk-sheet__body">
-                  <div class="bk-bar" aria-hidden="true"><span class="bk-bar__track"><i class="bk-bar__fill" data-sheet-fill style="width: 14%"></i></span><b class="bk-bar__pct" data-sheet-pct>14%</b></div>
-                  <div class="bk-sheet__btns">
-                    <button class="bk-btn bk-btn--tinted" type="button" data-sheet-pause><svg class="bk-i" aria-hidden="true"><use href="#sf-pause"/></svg><span>Pause</span></button>
-                    <span class="bk-btn bk-btn--tinted" aria-hidden="true"><svg class="bk-i"><use href="#sf-stop"/></svg>Stop</span>
-                  </div>
-                  <hr class="bk-div" />
-                  <div class="bk-cap3">Working on</div>
-                  <ul class="bk-working" data-sheet-list>
-                    <li><b>IMG_2041.HEIC</b><span class="bk-pulse"></span></li>
-                    <li><b>Invoice-0423.pdf</b><span class="bk-pulse"></span></li>
-                    <li><b>design-assets.zip</b><span class="bk-pulse"></span></li>
-                    <li><b>Screen Recording 2026-10-16 at 4.12.08 PM.mov</b><span class="bk-pulse"></span></li>
-                    <li><b>Synth-Installer-2.4.dmg</b><span class="bk-pulse"></span></li>
-                  </ul>
-                </div>
-                <p class="bk-sheet__foot">You can dismiss this sheet — sorting continues in the background.</p>
+                <ul class="bk-tlist" data-triage-list>
+                    <li class="bk-trow" data-triage-row>
+                      <b>1099-INT-2025.pdf</b><small>From chase.com.</small>
+                      <span class="bk-suggest"><svg class="bk-i" aria-hidden="true"><use href="#sf-sparkles"/></svg>Looks like a tax form → Finance/Taxes</span>
+                      <span class="bk-tbtns"><button class="bk-btn bk-btn--prominent bk-btn--sm" type="button" data-triage-move>Move to Taxes</button><span class="bk-btn bk-btn--bordered bk-btn--sm" aria-hidden="true">Move to…<svg class="bk-i"><use href="#sf-chev-down"/></svg></span><span class="bk-btn bk-btn--bordered bk-btn--sm" aria-hidden="true">Make a rule…</span><span class="bk-btn bk-btn--bordered bk-btn--sm bk-btn--danger" aria-hidden="true">Trash</span></span>
+                    </li>
+                    <li class="bk-trow" data-triage-row>
+                      <b>brand-kit-v3.zip</b><small>From dribbble.com.</small>
+                      <span class="bk-suggest"><svg class="bk-i" aria-hidden="true"><use href="#sf-sparkles"/></svg>Looks like design assets → Design/Assets</span>
+                      <span class="bk-tbtns"><button class="bk-btn bk-btn--prominent bk-btn--sm" type="button" data-triage-move>Move to Assets</button><span class="bk-btn bk-btn--bordered bk-btn--sm" aria-hidden="true">Move to…<svg class="bk-i"><use href="#sf-chev-down"/></svg></span><span class="bk-btn bk-btn--bordered bk-btn--sm" aria-hidden="true">Make a rule…</span><span class="bk-btn bk-btn--bordered bk-btn--sm bk-btn--danger" aria-hidden="true">Trash</span></span>
+                    </li>
+                    <li class="bk-trow" data-triage-row>
+                      <b>document (3).pdf</b><small>From mail.google.com.</small>
+                      <span class="bk-suggest"><svg class="bk-i" aria-hidden="true"><use href="#sf-sparkles"/></svg>Looks like a lease → Home/Lease</span>
+                      <span class="bk-tbtns"><button class="bk-btn bk-btn--prominent bk-btn--sm" type="button" data-triage-move>Move to Lease</button><span class="bk-btn bk-btn--bordered bk-btn--sm" aria-hidden="true">Move to…<svg class="bk-i"><use href="#sf-chev-down"/></svg></span><span class="bk-btn bk-btn--bordered bk-btn--sm" aria-hidden="true">Make a rule…</span><span class="bk-btn bk-btn--bordered bk-btn--sm bk-btn--danger" aria-hidden="true">Trash</span></span>
+                    </li>
+                </ul>
+                <p class="bk-triage__empty" data-triage-empty hidden>Nothing in Review. Binky’s on top of it.</p>
               </div>
             </div>
           </div>
@@ -1332,8 +1340,8 @@
     <ul class="ed-grid">
       <li>
         <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd"/></svg>
-        <h3>Smart screenshot names</h3>
-        <p>Screenshots named by their contents. Vision reads the screen; Binky does the filing.</p>
+        <h3>Smart names</h3>
+        <p>Screenshots named by what&apos;s on screen. Turn on Smart names for PDFs and photos and &ldquo;IMG_2041&rdquo; becomes what it is. Names you typed stay put.</p>
       </li>
       <li>
         <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1367,8 +1375,8 @@
         <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M15 3.75C12.1005 3.75 9.75 6.10051 9.75 9L9.75 19.1893L14.4697 14.4697C14.7626 14.1768 15.2374 14.1768 15.5303 14.4697C15.8232 14.7626 15.8232 15.2374 15.5303 15.5303L9.53033 21.5303C9.38968 21.671 9.19891 21.75 9 21.75C8.80109 21.75 8.61032 21.671 8.46967 21.5303L2.46967 15.5303C2.17678 15.2374 2.17678 14.7626 2.46967 14.4697C2.76256 14.1768 3.23744 14.1768 3.53033 14.4697L8.25 19.1893V9C8.25 5.27208 11.2721 2.25 15 2.25C18.7279 2.25 21.75 5.27208 21.75 9V12C21.75 12.4142 21.4142 12.75 21 12.75C20.5858 12.75 20.25 12.4142 20.25 12V9C20.25 6.10051 17.8995 3.75 15 3.75Z" clip-rule="evenodd"/>
         </svg>
-        <h3>Shortcuts</h3>
-        <p>Plug Binky into your own Shortcuts. Sort a folder on a hotkey, after a Focus mode, or as part of a bigger routine.</p>
+        <h3>Siri, Spotlight &amp; Shortcuts</h3>
+        <p>Sort a routine, undo the last sort, check Review, or tidy it. Ask Siri, find it in Spotlight, or chain it in Shortcuts.</p>
       </li>
       <li>
         <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1620,7 +1628,7 @@
 
       <details class="faq-item faq-more" id="faq-is-binky-notarized-why-isn-t-it-on-the-app-store"><summary class="faq-q">Is Binky notarized? Why isn&apos;t it on the App Store?</summary><p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
-      <details class="faq-item faq-more" id="faq-mac-os"><summary class="faq-q">Mac only? Which Mac and macOS?</summary><p class="faq-a">Yes. SwiftUI, native frameworks, no cross-platform runtime. <strong>Apple Silicon or Intel</strong>: one universal app for both, from the DMG or the Homebrew cask. <strong>macOS 14 Sonoma</strong> or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available.</p></details>
+      <details class="faq-item faq-more" id="faq-mac-os"><summary class="faq-q">Mac only? Which Mac and macOS?</summary><p class="faq-a">Yes. SwiftUI, native frameworks, no cross-platform runtime. <strong>Apple Silicon or Intel</strong>: one universal app for both, from the DMG or the Homebrew cask. <strong>macOS 14 Sonoma</strong> or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available. On macOS 27, the menu bar icon opens a glass panel.</p></details>
 
       <details class="faq-item faq-more" id="faq-what-about-dinky-compression"><summary class="faq-q">What about Dinky (compression)?</summary><p class="faq-a"><a href="https://dinkyfiles.com" target="_blank" rel="noopener noreferrer">Dinky</a> shrinks images, video, audio, and PDFs. Its current releases need <strong>Apple Silicon</strong> and <strong>macOS 15 Sequoia</strong> or later — see dinkyfiles.com for download and install help.</p></details>
 
@@ -1630,13 +1638,17 @@
 
       <details class="faq-item faq-more" id="faq-what-about-watching-downloads-or-synced-folders"><summary class="faq-q">What about watching Downloads or synced folders?</summary><p class="faq-a">Binky watches the folder you pick (Downloads by default). For Dropbox, Drive, iCloud, etc., it reacts after the sync client finishes laying bytes on disk — same idea as catching a fussy saver.</p></details>
 
-      <details class="faq-item faq-more" id="faq-can-i-set-custom-routing-rules"><summary class="faq-q">Can I set custom routing rules?</summary><p class="faq-a">Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it&apos;s junk.</p></details>
+      <details class="faq-item faq-more" id="faq-can-i-set-custom-routing-rules"><summary class="faq-q">Can I set custom routing rules?</summary><p class="faq-a">Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints, or what a file looks like (a screenshot, a photo, a scanned page, a ticket or pass) — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it&apos;s junk.</p></details>
+
+      <details class="faq-item faq-more" id="faq-does-binky-use-apple-intelligence"><summary class="faq-q">Does Binky use Apple Intelligence?</summary><p class="faq-a">Where your Mac has it turned on (macOS 26 or later), yes, and only on-device. It suggests a folder for each file in Review, turns a plain-English phrase into a rule, and, if you turn on Smart names for PDFs and photos, renames files like &ldquo;IMG_2041&rdquo; or &ldquo;document (3)&rdquo;. On macOS 27 it can also tell a scanned page or a ticket from a photo. Without it, Binky sorts the same way it always has.</p></details>
+
+      <details class="faq-item faq-more" id="faq-siri-shortcuts"><summary class="faq-q">Can I use Binky with Siri or Shortcuts?</summary><p class="faq-a">Yes. Ask Siri to sort a routine, undo the last sort (Binky asks first), check what&apos;s in Review, or open Review to tidy it. The same actions show up in Spotlight and the Shortcuts app.</p></details>
 
       <details class="faq-item faq-more" id="faq-what-if-binky-isn-t-running-when-files-land"><summary class="faq-q">What if Binky isn't running when files land?</summary><p class="faq-a">The watch folder only acts while Binky is running. Files that arrived while it was off sit untouched — run Sort Now when you're ready and it'll sweep them up.</p></details>
 
       <details class="faq-item faq-more" id="faq-who-made-this-and-why"><summary class="faq-q">Who made this and why?</summary><p class="faq-a"><a href="https://heyderekj.com" target="_blank" rel="noopener">Derek Castelli</a> builds client sites in Figma and Webflow. He wanted a Downloads workflow that behaved without acting sneaky.</p></details>
     </div>
-    <button type="button" class="faq-all" data-faq-all>Show all 14 questions</button>
+    <button type="button" class="faq-all" data-faq-all>Show all 16 questions</button>
 
   </section>
 
