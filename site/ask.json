@@ -1,7 +1,7 @@
 {
  "app": "Binky",
  "line": "Binky sorts your files.",
- "version": "1.5.1",
+ "version": "1.6.0",
  "email": "derek@testamentmade.com",
  "voice": "Warm, plain and a bit playful about mess and calm. Keep it light; never oversell.",
  "faq": [
@@ -28,7 +28,7 @@
   {
    "id": "faq-macos-says-binky-can-t-be-opened-what-do-i-do",
    "q": "macOS says Binky can't be opened — what do I do?",
-   "a": "If Binky’s icon in Applications has a line through it, that copy was built for a different Mac (older releases were Apple Silicon only); download the latest version—see Mac and macOS requirements. Otherwise that’s Gatekeeper."
+   "a": "Binky isn’t notarized yet, so macOS stops the first launch. Click Open Anyway in System Settings › Privacy & Security."
   },
   {
    "id": "faq-is-binky-notarized-why-isn-t-it-on-the-app-store",
@@ -38,7 +38,7 @@
   {
    "id": "faq-mac-os",
    "q": "Mac only? Which Mac and macOS?",
-   "a": "Yes. SwiftUI, native frameworks, no cross-platform runtime. Apple Silicon or Intel: one universal app for both, from the DMG or the Homebrew cask. macOS 14 Sonoma or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available."
+   "a": "Yes. SwiftUI, native frameworks, no cross-platform runtime. Apple Silicon or Intel: one universal app for both, from the DMG or the Homebrew cask. macOS 14 Sonoma or later. On macOS 26 Tahoe, the UI uses Liquid Glass where available. On macOS 27, the menu bar icon opens a glass panel."
   },
   {
    "id": "faq-what-about-dinky-compression",
@@ -63,7 +63,17 @@
   {
    "id": "faq-can-i-set-custom-routing-rules",
    "q": "Can I set custom routing rules?",
-   "a": "Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it's junk."
+   "a": "Yep — names, extensions, kinds, sizes, sheltered Finder tags, download origins, OCR hints, or what a file looks like (a screenshot, a photo, a scanned page, a ticket or pass) — then reroute, rename, tag, unpack archives, install DMGs quietly, trash when you swear it's junk."
+  },
+  {
+   "id": "faq-does-binky-use-apple-intelligence",
+   "q": "Does Binky use Apple Intelligence?",
+   "a": "Where your Mac has it turned on (macOS 26 or later), yes, and only on-device. It suggests a folder for each file in Review, turns a plain-English phrase into a rule, and, if you turn on Smart names for PDFs and photos, renames files like “IMG_2041” or “document (3)”. On macOS 27 it can also tell a scanned page or a ticket from a photo. Without it, Binky sorts the same way it always has."
+  },
+  {
+   "id": "faq-siri-shortcuts",
+   "q": "Can I use Binky with Siri or Shortcuts?",
+   "a": "Yes. Ask Siri to sort a routine, undo the last sort (Binky asks first), check what's in Review, or open Review to tidy it. The same actions show up in Spotlight and the Shortcuts app."
   },
   {
    "id": "faq-what-if-binky-isn-t-running-when-files-land",
