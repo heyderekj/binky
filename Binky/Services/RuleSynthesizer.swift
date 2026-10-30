@@ -59,38 +59,71 @@ enum RuleSynthesizer {
     }
 
     #if canImport(FoundationModels)
+    /// Guided generation: the model fills this shape directly, so there's no JSON to parse or get wrong.
+    /// Case names match the raw values of ``SortFileKindFilter`` and ``SortContentMatchKind``.
+    @available(macOS 26.0, *)
+    @Generable
+    fileprivate struct SynthesizedRule {
+        @Guide(description: "Short rule name, two to four words.")
+        var name: String
+        @Guide(description: "Download origin domains as globs, like *.stripe.com. Empty when the phrase names no site.")
+        var originDomains: [String]
+        @Guide(description: "Destination folder relative to the watched folder, like Finance/Receipts.")
+        var destinationRelativePath: String
+        var fileKindFilter: FileKind
+        @Guide(description: "What the file's content should look like. none unless the phrase says so.")
+        var contentMatchKind: ContentKind
+
+        @Generable
+        enum FileKind {
+            case any, image, movie, audio, archive, pdf, document
+        }
+
+        @Generable
+        enum ContentKind {
+            case none, ocrText, receipt, screenshot, photo, documentScan, ticket
+        }
+    }
+
     @available(macOS 26.0, *)
     private static func synthesizeWithFoundationModels(phrase: String, order: Int) async -> SortRule? {
-        let system = """
-        Output ONLY JSON for an inbox file sort rule. Keys:
-        name (string), originDomains (string array, globs like *.stripe.com), destinationRelativePath (string),
-        fileKindFilter (any|image|movie|audio|archive|pdf|document),
-        contentMatchKind (none|ocrText|receipt).
-        No markdown.
+        guard SystemLanguageModel.default.availability == .available else { return nil }
+        let instructions = """
+        Turn the user's phrase into one inbox file sort rule for a Downloads folder.
+        Leave fields empty or at any/none when the phrase doesn't mention them.
         """
         do {
-            let session = LanguageModelSession(instructions: system)
-            let resp = try await session.respond(to: phrase)
-            let text = resp.content
-            guard let data = text.data(using: .utf8),
-                  let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+            let session = LanguageModelSession(instructions: instructions)
+            let out = try await session.respond(to: phrase, generating: SynthesizedRule.self).content
 
             var rule = SortRule.fresh(order: order)
-            if let n = obj["name"] as? String { rule.name = n }
-            if let d = obj["destinationRelativePath"] as? String, !d.isEmpty { rule.destinationRelativePath = d }
-            if let doms = obj["originDomains"] as? [String] {
-                rule.originDomains = doms.map { $0.lowercased() }
+            let name = out.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !name.isEmpty { rule.name = name }
+            let dest = out.destinationRelativePath.trimmingCharacters(in: CharacterSet(charactersIn: "/ "))
+            if !dest.isEmpty { rule.destinationRelativePath = dest }
+            rule.originDomains = out.originDomains
+                .map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+                .filter { !$0.isEmpty }
+            if let kind = SortFileKindFilter(rawValue: String(describing: out.fileKindFilter)) {
+                rule.fileKindFilter = kind
             }
-            if let fk = obj["fileKindFilter"] as? String, let k = SortFileKindFilter(rawValue: fk) {
-                rule.fileKindFilter = k
-            }
-            if let ck = obj["contentMatchKind"] as? String, let ckEnum = SortContentMatchKind(rawValue: ck) {
-                rule.contentMatch = SortContentMatch(kind: ckEnum)
+            if var content = SortContentMatchKind(rawValue: String(describing: out.contentMatchKind)) {
+                if content.requiresVisionModel, !Self.visionModelAvailable {
+                    content = .none
+                }
+                rule.contentMatch = SortContentMatch(kind: content)
             }
             return rule
         } catch {
             return nil
         }
+    }
+
+    private static var visionModelAvailable: Bool {
+        if #available(macOS 27.0, *) {
+            return SystemLanguageModel.default.capabilities.contains(.vision)
+        }
+        return false
     }
     #endif
 }

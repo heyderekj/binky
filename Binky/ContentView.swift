@@ -215,6 +215,12 @@ private struct MenuBridgeObservers: ViewModifier {
                 let id = note.userInfo?[BinkyNotificationUserInfoKey.sortRoutinePresetID] as? UUID
                 Task { await runSweep(routineID: id) }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .binkyPendingWindowRequest)) { _ in
+                runPendingSorts()
+            }
+            .onAppear {
+                runPendingSorts()
+            }
             .onReceive(NotificationCenter.default.publisher(for: .binkyShowLastBatchSummary)) { _ in
                 vm.showLastSortSummary()
             }
@@ -229,6 +235,13 @@ private struct MenuBridgeObservers: ViewModifier {
     /// One sweep helper that handles all three menu paths:
     /// global Sort Now, Sort All Folders, and per-routine sweep. `routineID` `nil`
     /// uses the count-based fallback (single routine → default sweep, multiple → all).
+    /// Sorts asked for while this window didn't exist yet (Siri, Shortcuts, Spotlight).
+    private func runPendingSorts() {
+        for routineID in PendingWindowRequest.takeSorts() {
+            Task { await runSweep(routineID: routineID) }
+        }
+    }
+
     private func runSweep(routineID: UUID?) async {
         let enabled = prefs.savedPresets.filter {
             $0.isEnabled && !$0.watchFolderPath.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

@@ -14,6 +14,8 @@ extension Notification.Name {
     static let binkyOpenFiles     = Notification.Name("binkyOpenFiles")
     static let binkyCheckUpdates  = Notification.Name("binkyCheckUpdates")
     static let binkyShowHistory     = Notification.Name("binkyShowHistory")
+    /// Something queued work for the main window; see ``PendingWindowRequest``.
+    static let binkyPendingWindowRequest = Notification.Name("binkyPendingWindowRequest")
     /// Re-present the last completed batch summary (menu / shortcut).
     static let binkyShowLastBatchSummary = Notification.Name("binkyShowLastBatchSummary")
     /// `object` is `PreferencesTab.rawValue` (Int)

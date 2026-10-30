@@ -1006,16 +1006,14 @@ public enum SortWork {
                     for: standardized,
                     signals: signals,
                     snapshot: snapshot,
-                    contentIdentitySHA256: pendingFileDigest?.sha256
+                    contentIdentitySHA256: pendingFileDigest?.sha256,
+                    wantsVisualTraits: SortRulesEvaluator.anyRuleRequiresVisualCategory(activeRules)
                 )
             } else {
                 ContentInspector.emptyInspection
             }
 
-            let contentInput = SortRulesEvaluator.ContentRuleMatchInput(
-                hasSignificantOCR: inspection.hasSignificantOCR,
-                isReceiptLike: inspection.isReceiptLike
-            )
+            let contentInput = inspection.ruleMatchInput
             let matchedRule = SortRulesEvaluator.firstMatchingRule(in: activeRules, signals: signals, content: contentInput, fileTags: fileTags)
 
             if let rule = matchedRule, rule.matchAction == .moveToTrash {
@@ -1203,6 +1201,13 @@ public enum SortWork {
                     signals: signals,
                     contentIdentitySHA256: pendingFileDigest?.sha256
                    ) {
+                    preferredFilename = smart
+                } else if snapshot.sortSmartDocumentNamesEnabled, ext == "pdf" || isImageFile,
+                          let smart = await FileUnderstanding.preferredSmartDocumentName(
+                              fileURL: standardized,
+                              category: category,
+                              originHost: signals.originHosts.first
+                          ) {
                     preferredFilename = smart
                 }
                 ruleName = nil

@@ -25,6 +25,8 @@ public struct SortPreferencesSnapshot: Sendable {
     public let sortMoveLooseFoldersEnabled: Bool
     /// Relative path under the sort root for loose folders; empty string means use ``FileSortCategory/folders`` default folder name.
     public let sortLooseFoldersDestinationRelative: String
+    /// Apple Intelligence names for PDFs and images with generic names (`IMG_2041`, `document (3)`).
+    public let sortSmartDocumentNamesEnabled: Bool
 
     public init(
         excludeExtensions: Set<String>,
@@ -45,7 +47,8 @@ public struct SortPreferencesSnapshot: Sendable {
         globalSkipTagSet: Set<String>,
         slowMode: Bool,
         sortMoveLooseFoldersEnabled: Bool,
-        sortLooseFoldersDestinationRelative: String
+        sortLooseFoldersDestinationRelative: String,
+        sortSmartDocumentNamesEnabled: Bool = false
     ) {
         self.excludeExtensions = excludeExtensions
         self.excludeNameFragments = excludeNameFragments
@@ -66,6 +69,7 @@ public struct SortPreferencesSnapshot: Sendable {
         self.slowMode = slowMode
         self.sortMoveLooseFoldersEnabled = sortMoveLooseFoldersEnabled
         self.sortLooseFoldersDestinationRelative = sortLooseFoldersDestinationRelative
+        self.sortSmartDocumentNamesEnabled = sortSmartDocumentNamesEnabled
     }
 }
 

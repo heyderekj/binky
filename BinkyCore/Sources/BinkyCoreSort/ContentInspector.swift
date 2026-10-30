@@ -29,6 +29,8 @@ enum ContentInspector {
         var dominantOCRLine: String?
         var vendorSlug: String?
         var amountSlug: String?
+        /// Only filled when a rule asked (``SortRulesEvaluator/anyRuleRequiresVisualCategory(_:)``).
+        var visualTraits: Set<SortVisualCategory> = []
     }
 
     static let emptyInspection = ContentInspectionResult(
@@ -47,10 +49,7 @@ enum ContentInspector {
         snapshot: SortPreferencesSnapshot
     ) async -> SortRulesEvaluator.ContentRuleMatchInput {
         let r = await inspect(url: url, signals: signals, snapshot: snapshot)
-        return SortRulesEvaluator.ContentRuleMatchInput(
-            hasSignificantOCR: r.hasSignificantOCR,
-            isReceiptLike: r.isReceiptLike
-        )
+        return r.ruleMatchInput
     }
 
     /// Full inspection for smart rename + receipt routing.
@@ -59,35 +58,48 @@ enum ContentInspector {
         for url: URL,
         signals: SortRulesEvaluator.FileSignals,
         snapshot: SortPreferencesSnapshot,
-        contentIdentitySHA256: String? = nil
+        contentIdentitySHA256: String? = nil,
+        wantsVisualTraits: Bool = false
     ) async -> ContentInspectionResult {
-        await inspect(url: url, signals: signals, snapshot: snapshot, contentIdentitySHA256: contentIdentitySHA256)
+        await inspect(
+            url: url,
+            signals: signals,
+            snapshot: snapshot,
+            contentIdentitySHA256: contentIdentitySHA256,
+            wantsVisualTraits: wantsVisualTraits
+        )
     }
 
     private static func inspect(
         url: URL,
         signals: SortRulesEvaluator.FileSignals,
         snapshot: SortPreferencesSnapshot,
-        contentIdentitySHA256: String? = nil
+        contentIdentitySHA256: String? = nil,
+        wantsVisualTraits: Bool = false
     ) async -> ContentInspectionResult {
         if EnergyConditions.shared.shouldPauseFully {
             return emptyInspection
         }
 
-        let cacheKeyNSString = (cacheKeyString(path: url.path, signals: signals, contentIdentitySHA256: contentIdentitySHA256) as NSString)
+        var cacheKey = cacheKeyString(path: url.path, signals: signals, contentIdentitySHA256: contentIdentitySHA256)
+        if wantsVisualTraits { cacheKey += "|visual" }
+        let cacheKeyNSString = cacheKey as NSString
         if let hit = cachedResult(for: cacheKeyNSString) {
             return hit
         }
 
         let ext = signals.ext
         let originHosts = signals.originHosts
-        let result: ContentInspectionResult
+        var result: ContentInspectionResult
         if ext == "pdf" {
             result = inspectPDF(at: url, snapshot: snapshot, originHosts: originHosts)
         } else if isImageExtension(ext) {
             result = await inspectImage(at: url, snapshot: snapshot, originHosts: originHosts)
         } else {
             result = emptyInspection
+        }
+        if wantsVisualTraits, ext == "pdf" || isImageExtension(ext) {
+            result.visualTraits = await VisualClassifier.traits(for: url, isPDF: ext == "pdf")
         }
 
         cacheResult(result, for: cacheKeyNSString)
@@ -139,6 +151,42 @@ enum ContentInspector {
         let ext = fileURL.pathExtension
         let dotExt = ext.isEmpty ? "" : ".\(ext)"
         return "\(dateStr) \(slug)\(dotExt)"
+    }
+
+    // MARK: - Text sample (for the language model)
+
+    /// Up to `maxChars` of readable text: the PDF text layer (OCR when it has none), OCR for images,
+    /// or the start of a plain-text file. Empty when there's nothing to read.
+    static func textSample(for url: URL, maxChars: Int) async -> String {
+        let ext = url.pathExtension.lowercased()
+        var text = ""
+        if ext == "pdf" {
+            if let doc = PDFDocument(url: url), doc.pageCount > 0 {
+                text = (0..<min(doc.pageCount, 2)).compactMap { doc.page(at: $0)?.string }.joined(separator: "\n")
+                if text.trimmingCharacters(in: .whitespacesAndNewlines).count < 40, let page = doc.page(at: 0) {
+                    let thumb = page.thumbnail(of: CGSize(width: 1024, height: 1024), for: .mediaBox)
+                    var rect = CGRect(origin: .zero, size: thumb.size)
+                    if let cg = thumb.cgImage(forProposedRect: &rect, context: nil, hints: nil) {
+                        text = await recognizeText(on: cg, accurate: false)
+                    }
+                }
+            }
+        } else if isImageExtension(ext) {
+            if let cg = cgImageThumbnailForVision(fromFile: url, maxPixelSize: 1600) {
+                text = await recognizeText(on: cg, accurate: false)
+            }
+        } else if UTType(filenameExtension: ext)?.conforms(to: .plainText) == true,
+                  let handle = try? FileHandle(forReadingFrom: url) {
+            defer { try? handle.close() }
+            let data = (try? handle.read(upToCount: maxChars * 4)) ?? Data()
+            text = String(decoding: data, as: UTF8.self)
+        }
+        let collapsed = text
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: "\n")
+        return String(collapsed.prefix(maxChars))
     }
 
     // MARK: - Image + PDF
@@ -321,5 +369,15 @@ enum ContentInspector {
         cacheLock.lock()
         cache.setObject(CacheEntry(result: result), forKey: key)
         cacheLock.unlock()
+    }
+}
+
+extension ContentInspector.ContentInspectionResult {
+    var ruleMatchInput: SortRulesEvaluator.ContentRuleMatchInput {
+        SortRulesEvaluator.ContentRuleMatchInput(
+            hasSignificantOCR: hasSignificantOCR,
+            isReceiptLike: isReceiptLike,
+            visualTraits: visualTraits
+        )
     }
 }

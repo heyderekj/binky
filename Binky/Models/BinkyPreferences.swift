@@ -5,6 +5,8 @@ import SwiftUI
 private let prefsLog = Logger(subsystem: Bundle.main.bundleIdentifier ?? "Binky", category: "BinkyPreferences")
 
 final class BinkyPreferences: ObservableObject {
+    /// The app's one instance, for AppKit and App Intents code outside the SwiftUI environment.
+    nonisolated(unsafe) static weak var current: BinkyPreferences?
 
     init() {
         Self.migrateSortNowShortcutKeyIfNeeded()
@@ -248,6 +250,8 @@ final class BinkyPreferences: ObservableObject {
 
     /// Vision OCR renames default screenshot filenames using the strongest text line.
     @AppStorage("sort.smartScreenshotNames") var sortSmartScreenshotNamesEnabled: Bool = false
+    /// Apple Intelligence names for PDFs and images that arrive with generic names.
+    @AppStorage("sort.smartDocumentNames") var sortSmartDocumentNamesEnabled: Bool = false
 
     /// Heuristic receipt / invoice detection for PDFs and images (routes to Receipts when enabled).
     @AppStorage("sort.detectReceipts") var sortDetectReceiptsEnabled: Bool = false
@@ -507,7 +511,8 @@ extension BinkyPreferences {
             ),
             slowMode: sortSlowModeEnabled,
             sortMoveLooseFoldersEnabled: sortMoveLooseFoldersEnabled,
-            sortLooseFoldersDestinationRelative: sortLooseFoldersDestinationRelative
+            sortLooseFoldersDestinationRelative: sortLooseFoldersDestinationRelative,
+            sortSmartDocumentNamesEnabled: sortSmartDocumentNamesEnabled
         )
     }
 
@@ -526,6 +531,18 @@ extension BinkyPreferences {
     var activePreset: CompressionPreset? {
         guard let uuid = UUID(uuidString: activePresetID) else { return nil }
         return savedPresets.first { $0.id == uuid }
+    }
+
+    /// Files waiting in the active folder's Review subfolder (organizer toolbar, menu bar panel).
+    func reviewFolderItemCount() -> Int {
+        let reviewURL = activeSortSweepRootDirectory()
+            .appendingPathComponent(FileSortCategory.review.downloadsSubfolder, isDirectory: true)
+        guard let contents = try? FileManager.default.contentsOfDirectory(at: reviewURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+            return 0
+        }
+        return contents.filter { url in
+            (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == false
+        }.count
     }
 
     /// Default watched folder used for interactive **Sort Now**, drop routing, preview, Review counts, etc. Uses the active automation’s folder when set.

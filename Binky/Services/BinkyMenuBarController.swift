@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 
 /// Minimal menu bar controls: sort, pause/resume watch, show main window, Settings.
 @MainActor
@@ -8,6 +9,11 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var menuBarPercentTimer: Timer?
     private var menuBarShownPercent: CGFloat = 0
+
+    private var panel: MenuBarPanelWindow?
+    private var panelHost: NSView?
+    private let panelModel = MenuBarPanelModel()
+    private var panelClickMonitors: [Any] = []
 
     private override init() {
         super.init()
@@ -36,14 +42,16 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         if statusItem == nil {
             let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
             item.button?.toolTip = String(localized: "Binky", comment: "Menu bar status item tooltip (idle).")
-            // Small scale gives about 13 × 12pt of ink, in line with the system's own items (Wi-Fi 15 × 11,
-            // Spotlight 14 × 13). The default size is 14 × 15pt, which reads too big for a filled glyph.
-            item.button?.image = NSImage(systemSymbolName: "tray.and.arrow.down.fill", accessibilityDescription: "Binky")?
-                .withSymbolConfiguration(.init(pointSize: 13, weight: .regular, scale: .small))
-            item.button?.image?.isTemplate = true
-            let menu = NSMenu()
-            menu.delegate = self
-            item.menu = menu
+            // The app icon's pacifier, like Dinky's and Slinky's own marks in the menu bar.
+            item.button?.image = BinkyMenuBarIcon.image
+            if #available(macOS 27.0, *) {
+                // Glass panel instead of a menu; the system drives open/close and keyboard navigation.
+                item.expandedInterfaceDelegate = self
+            } else {
+                let menu = NSMenu()
+                menu.delegate = self
+                item.menu = menu
+            }
             statusItem = item
         }
         if let menu = statusItem?.menu {
@@ -53,6 +61,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     }
 
     private func tearDown() {
+        closePanel()
         invalidateMenuBarPercentTimer()
         menuBarShownPercent = 0
         if let item = statusItem {
@@ -63,6 +72,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func sortProgressDidChange() {
         refreshMenuBarProgressChrome()
+        if panel != nil {
+            reloadPanelModel()
+            resizePanelToFit()
+        }
     }
 
     /// Eased `%` beside the tray icon while sorting — reads live state from ``SortProgressTracker``.
@@ -262,6 +275,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
     @objc private func sortRoutineNow(_ sender: NSMenuItem) {
         guard let idString = sender.representedObject as? String,
               let uuid = UUID(uuidString: idString) else { return }
+        sortRoutine(id: uuid)
+    }
+
+    private func sortRoutine(id uuid: UUID) {
         NotificationCenter.default.post(
             name: .binkyStartSortForRoutine,
             object: nil,
@@ -269,7 +286,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         )
     }
 
-    private static func enabledRoutinesFromDefaults() -> [CompressionPreset] {
+    nonisolated static func enabledRoutinesFromDefaults() -> [CompressionPreset] {
         guard let data = UserDefaults.standard.data(forKey: "savedPresetsData"),
               let presets = try? JSONDecoder().decode([CompressionPreset].self, from: data) else {
             return []
@@ -279,7 +296,7 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         }
     }
 
-    private static func menuBarRoutineDisplayTitle(_ preset: CompressionPreset) -> String {
+    nonisolated static func menuBarRoutineDisplayTitle(_ preset: CompressionPreset) -> String {
         let trimmedName = preset.name.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmedName.isEmpty { return trimmedName }
         let path = preset.watchFolderPath.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -304,6 +321,10 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         let next = !UserDefaults.standard.bool(forKey: key)
         UserDefaults.standard.set(next, forKey: key)
         NotificationCenter.default.post(name: .binkyFolderWatchPauseChanged, object: nil)
+        if panel != nil {
+            reloadPanelModel()
+            resizePanelToFit()
+        }
     }
 
     @objc private func showMainWindow() {
@@ -324,4 +345,194 @@ final class BinkyMenuBarController: NSObject, NSMenuDelegate {
         // the organizer window (and `ContentView`) isn’t mounted.
         NotificationCenter.default.post(name: .binkyOpenMacPreferences, object: nil)
     }
+}
+
+// MARK: - macOS 27 glass panel
+
+/// Borderless panel that can take key focus (arrow keys, Esc) without activating Binky.
+final class MenuBarPanelWindow: NSPanel {
+    var onCancel: (() -> Void)?
+
+    override var canBecomeKey: Bool { true }
+
+    override func cancelOperation(_ sender: Any?) {
+        onCancel?()
+    }
+}
+
+extension BinkyMenuBarController {
+    private func reloadPanelModel() {
+        panelModel.watchingPaused = UserDefaults.standard.bool(forKey: "folderWatch.paused")
+        panelModel.reviewCount = BinkyPreferences.current?.reviewFolderItemCount() ?? 0
+        panelModel.lastSort = BinkyPrefsStore().loadSessionHistory().first
+        panelModel.routines = Self.enabledRoutinesFromDefaults()
+            .map { MenuBarPanelModel.Routine(id: $0.id, title: Self.menuBarRoutineDisplayTitle($0)) }
+            .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
+
+    private var panelActions: MenuBarPanelActions {
+        MenuBarPanelActions(
+            sortAll: { [weak self] in self?.sortNow() },
+            sortRoutine: { [weak self] id in self?.sortRoutine(id: id) },
+            togglePauseSorting: { [weak self] in self?.togglePauseSorting() },
+            stopSorting: { [weak self] in self?.stopSortingNow() },
+            togglePauseWatching: { [weak self] in self?.togglePauseWatching() },
+            tidyReview: { [weak self] in
+                self?.dismissPanel()
+                PendingWindowRequest.post(.reviewTriage)
+                self?.showMainWindow()
+            },
+            showHistory: { [weak self] in self?.dismissPanel(); self?.openHistory() },
+            showMainWindow: { [weak self] in self?.dismissPanel(); self?.showMainWindow() },
+            openSettings: { [weak self] in self?.dismissPanel(); self?.openSettings() },
+            about: { [weak self] in
+                self?.dismissPanel()
+                NSApp.activate()
+                showAboutPanel()
+            },
+            quit: { [weak self] in self?.dismissPanel(); self?.terminateApp() }
+        )
+    }
+
+    fileprivate func showPanel(below item: NSStatusItem) {
+        guard let button = item.button, let buttonWindow = button.window else { return }
+        reloadPanelModel()
+
+        let host = NSHostingView(rootView: MenuBarPanelView(model: panelModel, actions: panelActions))
+        let size = host.fittingSize
+        // Same backing as Slinky's panel: the menu material, 12pt corners.
+        let effect = NSVisualEffectView(frame: NSRect(origin: .zero, size: size))
+        effect.material = .menu
+        effect.state = .active
+        effect.blendingMode = .behindWindow
+        effect.wantsLayer = true
+        effect.layer?.cornerRadius = 12
+        effect.layer?.masksToBounds = true
+        host.frame = effect.bounds
+        host.autoresizingMask = [.width, .height]
+        effect.addSubview(host)
+        let panel = panel ?? {
+            let p = MenuBarPanelWindow(
+                contentRect: NSRect(origin: .zero, size: size),
+                styleMask: [.borderless, .nonactivatingPanel],
+                backing: .buffered,
+                defer: true
+            )
+            p.isFloatingPanel = true
+            p.level = .popUpMenu
+            p.backgroundColor = .clear
+            p.isOpaque = false
+            p.hasShadow = true
+            p.hidesOnDeactivate = false
+            p.collectionBehavior = [.canJoinAllSpaces, .transient, .ignoresCycle]
+            p.onCancel = { [weak self] in self?.dismissPanel() }
+            return p
+        }()
+        panel.contentView = effect
+
+        let buttonRect = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
+        let visible = (buttonWindow.screen ?? NSScreen.main)?.visibleFrame ?? .zero
+        var x = buttonRect.midX - size.width / 2
+        x = min(max(x, visible.minX + 8), visible.maxX - size.width - 8)
+        let y = buttonRect.minY - size.height - 6
+        panel.setFrame(NSRect(x: x, y: y, width: size.width, height: size.height), display: true)
+        panel.makeKeyAndOrderFront(nil)
+        self.panel = panel
+        panelHost = host
+
+        // Clicks anywhere else end the session, like a menu.
+        let outside = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            Task { @MainActor in self?.dismissPanel() }
+        }
+        let inside = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            if let self, event.window !== self.panel, event.window !== buttonWindow {
+                self.dismissPanel()
+            }
+            return event
+        }
+        panelClickMonitors = [outside, inside].compactMap { $0 }
+    }
+
+    /// Rows come and go (sorting, Review); grow or shrink downward and keep the top under the menu bar.
+    private func resizePanelToFit() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let panel = self.panel, panel.isVisible, let host = self.panelHost else { return }
+            let size = host.fittingSize
+            let frame = panel.frame
+            guard abs(frame.height - size.height) > 0.5 else { return }
+            panel.setFrame(NSRect(x: frame.minX, y: frame.maxY - size.height, width: frame.width, height: size.height), display: true, animate: false)
+        }
+    }
+
+    /// Ends the expanded-interface session; AppKit then calls back to close the panel.
+    private func dismissPanel() {
+        if #available(macOS 27.0, *), let session = statusItem?.expandedInterfaceSession {
+            session.cancel()
+        } else {
+            closePanel()
+        }
+    }
+
+    fileprivate func closePanel() {
+        panelClickMonitors.forEach(NSEvent.removeMonitor)
+        panelClickMonitors = []
+        panel?.orderOut(nil)
+        panel?.contentView = nil
+        panelHost = nil
+    }
+}
+
+@available(macOS 27.0, *)
+extension BinkyMenuBarController: @MainActor NSStatusItemExpandedInterfaceDelegate {
+    func statusItem(_ statusItem: NSStatusItem, didBegin expandedInterfaceSession: NSStatusItemExpandedInterfaceSession) {
+        showPanel(below: statusItem)
+    }
+
+    func statusItemDidEndExpandedInterfaceSession(_ statusItem: NSStatusItem, animated: Bool) {
+        closePanel()
+    }
+}
+
+/// Binky's pacifier as a template glyph: teat, shield and ring, as in the app icon.
+/// About 12.5 × 11pt of ink, in line with Slinky's mark and the system's own items.
+enum BinkyMenuBarIcon {
+    static let image: NSImage = {
+        let image = NSImage(size: NSSize(width: 18, height: 18), flipped: false) { rect in
+            guard let ctx = NSGraphicsContext.current?.cgContext else { return false }
+            func circle(_ x: CGFloat, _ y: CGFloat, _ r: CGFloat) -> CGRect {
+                CGRect(x: rect.minX + x - r, y: rect.minY + y - r, width: 2 * r, height: 2 * r)
+            }
+            let gap: CGFloat = 1.1
+            let teatFrom = CGPoint(x: rect.minX + 4.4, y: rect.minY + 12.6)
+            let teatTo = CGPoint(x: rect.minX + 7.2, y: rect.minY + 10.4)
+            ctx.setFillColor(NSColor.black.cgColor)
+            ctx.setStrokeColor(NSColor.black.cgColor)
+            ctx.setLineCap(.round)
+
+            // Shield.
+            ctx.fillEllipse(in: circle(10.2, 11.0, 3.1))
+            ctx.fillEllipse(in: circle(8.2, 7.4, 3.3))
+            // Ring, cut free of the shield.
+            ctx.setBlendMode(.clear)
+            ctx.fillEllipse(in: circle(12.6, 6.3, 3.0 + gap))
+            ctx.setBlendMode(.normal)
+            ctx.fillEllipse(in: circle(12.6, 6.3, 3.0))
+            ctx.setBlendMode(.clear)
+            ctx.fillEllipse(in: circle(12.6, 6.3, 1.55))
+            // Teat, on top.
+            ctx.setLineWidth(4.4 + 2 * gap)
+            ctx.move(to: teatFrom)
+            ctx.addLine(to: teatTo)
+            ctx.strokePath()
+            ctx.setBlendMode(.normal)
+            ctx.setLineWidth(4.4)
+            ctx.move(to: teatFrom)
+            ctx.addLine(to: teatTo)
+            ctx.strokePath()
+            return true
+        }
+        image.isTemplate = true
+        image.accessibilityDescription = "Binky"
+        return image
+    }()
 }
